@@ -72,6 +72,7 @@ def parse_cli_help(
 
     blocks: list[dict] = []
     current_block: dict | None = None
+    current_section: str | None = None
 
     # Group each option declaration with its complete multiline description.
     for line_number, line in enumerate(lines, start=1):
@@ -81,6 +82,7 @@ def parse_cli_help(
             if current_block is not None:
                 blocks.append(current_block)
                 current_block = None
+            current_section = stripped.split("----")[0].strip()
             continue
 
         if DECLARATION_LINE_RE.match(line):
@@ -92,6 +94,7 @@ def parse_cli_help(
                 "end_line": line_number,
                 "declaration_line": line,
                 "description_lines": [],
+                "section": current_section,
             }
             continue
 
@@ -156,6 +159,7 @@ def parse_cli_help(
                         parent_command=None,
                         line_start=block["start_line"],
                         line_end=block["end_line"],
+                        section=block["section"],
                     )
                 )
             continue
@@ -182,6 +186,7 @@ def parse_cli_help(
                 parent_command=None,
                 line_start=block["start_line"],
                 line_end=block["end_line"],
+                section=block["section"],
             )
         )
 

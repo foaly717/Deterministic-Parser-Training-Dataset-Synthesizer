@@ -15,6 +15,7 @@ class EvidenceFact:
     parent_command: Optional[str] = None
     line_start: Optional[int] = None
     line_end: Optional[int] = None
+    section: Optional[str] = None
 
 
 @dataclass

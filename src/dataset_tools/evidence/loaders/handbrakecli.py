@@ -46,7 +46,6 @@ class HandBrakeCliLoader(EvidenceLoader):
                     "source_line_start": fact.line_start,
                     "source_line_end": fact.line_end,
                     "section": fact.section,
-                    "section": fact.section,
                 },
             )
             for fact in parse_cli_help(path)
