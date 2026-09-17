@@ -18,12 +18,14 @@ class NormalizedEvidenceFact:
     predicate: str
     value: str
     metadata: dict[str, Any] = field(default_factory=dict)
+    extraction_type: str | None = None
 
 
 @dataclass
 class NormalizedEvidenceDocument:
     source: EvidenceSource
     facts: list[NormalizedEvidenceFact]
+    constraints: list[Any] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -34,6 +36,20 @@ class NormalizedEvidenceDocument:
                 "sha256": self.source.sha256,
                 "metadata": self.source.metadata,
             },
+            "constraints": [
+                {
+                    "name": constraint.name,
+                    "category": constraint.category,
+                    "subject": constraint.subject,
+                    "metadata": constraint.metadata,
+                    "allowed_values": getattr(
+                        constraint,
+                        "allowed_values",
+                        None,
+                    ),
+                }
+                for constraint in self.constraints
+            ],
             "facts": [
                 {
                     "category": fact.category,

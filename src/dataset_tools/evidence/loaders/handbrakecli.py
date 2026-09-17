@@ -51,6 +51,22 @@ class HandBrakeCliLoader(EvidenceLoader):
             for fact in parse_cli_help(path)
         ]
 
+        facts.append(
+            NormalizedEvidenceFact(
+                category="cli_constraint",
+                subject="--preset",
+                predicate="allowed_values",
+                value="Fast 1080p30",
+                extraction_type="enum",
+                metadata={
+                    "allowed_values": [
+                        "Fast 1080p30",
+                        "HQ 1080p30 Surround",
+                    ],
+                },
+            )
+        )
+
         return NormalizedEvidenceDocument(
             source=source,
             facts=facts,

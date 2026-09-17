@@ -1,8 +1,10 @@
 from dataclasses import dataclass, field
 
+from dataset_tools.evidence.index import EvidenceIndex
 from dataset_tools.generator.runner import validate_candidate_structure
 from dataset_tools.validators.command import validate_cli_command
 from dataset_tools.validators.options import validate_cli_response
+from dataset_tools.validators.constraints import validate_constraints
 
 
 @dataclass
@@ -15,9 +17,10 @@ class ValidationResult:
 def validate_candidate(
     item: dict,
     expected_tool: str,
-    valid_options: set[str],
+    evidence_index: EvidenceIndex,
 ) -> ValidationResult:
     """Run candidate validation in deterministic stages."""
+
     if not validate_candidate_structure(item):
         return ValidationResult(
             status="rejected",
@@ -27,34 +30,19 @@ def validate_candidate(
 
     logs = ["Structural validation passed."]
 
-    command_ok, command_message = validate_cli_command(
-        item["response"],
-        expected_tool,
-    )
+    command_ok, command_message = validate_cli_command(item["response"], expected_tool)
     logs.append(command_message)
-
     if not command_ok:
-        return ValidationResult(
-            status="rejected",
-            stage="command",
-            validation_logs=logs,
-        )
+        return ValidationResult(status="rejected", stage="command", validation_logs=logs)
 
-    option_ok, option_message = validate_cli_response(
-        item["response"],
-        valid_options,
-    )
+    option_ok, option_message = validate_cli_response(item["response"], evidence_index=evidence_index)
     logs.append(option_message)
-
     if not option_ok:
-        return ValidationResult(
-            status="rejected",
-            stage="options",
-            validation_logs=logs,
-        )
+        return ValidationResult(status="rejected", stage="options", validation_logs=logs)
 
-    return ValidationResult(
-        status="accepted",
-        stage="complete",
-        validation_logs=logs,
-    )
+    constraint_ok, constraint_message = validate_constraints(item["response"], evidence_index.constraints)
+    logs.append(constraint_message)
+    if not constraint_ok:
+        return ValidationResult(status="rejected", stage="constraints", validation_logs=logs)
+
+    return ValidationResult(status="accepted", stage="complete", validation_logs=logs)

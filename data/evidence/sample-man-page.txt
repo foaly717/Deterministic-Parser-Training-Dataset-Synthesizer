@@ -1,0 +1,3 @@
+.TH SAMPLE 1
+.SH NAME
+sample \\- example command

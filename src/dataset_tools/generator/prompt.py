@@ -1,4 +1,4 @@
-from dataset_tools.schema import EvidenceFact
+from dataset_tools.evidence.schema import NormalizedEvidenceFact
 
 
 GENERATOR_SYSTEM_PROMPT = """You are an automated training data generation engine.
@@ -29,25 +29,26 @@ Rules:
 """
 
 
-def format_evidence_context(facts: list[EvidenceFact]) -> str:
+def format_evidence_context(facts: list[NormalizedEvidenceFact]) -> str:
     """Render structured evidence without discarding provenance."""
     sections: list[str] = []
 
     for fact in facts:
-        aliases = ", ".join(fact.aliases) if fact.aliases else "none"
-        argument = fact.argument or "none"
-        description = (
-            fact.description.replace("\n", " ")
-            if fact.description
-            else "No description"
-        )
+        aliases_list = fact.metadata.get("aliases") or []
+        aliases = ", ".join(aliases_list) if aliases_list else "none"
+        argument = fact.metadata.get("argument") or "none"
+        raw_description = fact.metadata.get("description")
+        description = raw_description.replace("\n", " ") if raw_description else "No description"
+        line_start = fact.metadata.get("source_line_start")
+        line_end = fact.metadata.get("source_line_end")
+
         lines = [
-            f"tool: {fact.tool or 'none'}",
-            f"name: {fact.name}",
+            f"tool: {fact.subject or 'none'}",
+            f"name: {fact.value}",
             f"aliases: {aliases}",
             f"argument: {argument}",
             f"description: {description}",
-            f"source lines: {fact.line_start}-{fact.line_end}",
+            f"source lines: {line_start}-{line_end}",
         ]
         sections.append("\n".join(lines))
 
@@ -55,7 +56,7 @@ def format_evidence_context(facts: list[EvidenceFact]) -> str:
 
 
 def build_candidate_prompt(
-    facts: list[EvidenceFact],
+    facts: list[NormalizedEvidenceFact],
     sample_size: int = 10,
 ) -> str:
     """Build a deterministic grounded prompt for single-example generation."""
@@ -94,7 +95,7 @@ text outside the JSON object.
 
 
 def build_single_fact_prompt(
-    fact: EvidenceFact,
+    fact: NormalizedEvidenceFact,
 ) -> str:
     """Build a generation prompt for exactly one deterministic evidence fact."""
     context = format_evidence_context([fact])

@@ -1,10 +1,10 @@
-from dataset_tools.schema import EvidenceFact
+from dataset_tools.evidence.schema import NormalizedEvidenceFact
 
 
 def select_generation_fact(
-    facts: list[EvidenceFact],
+    facts: list[NormalizedEvidenceFact],
     index: int,
-) -> EvidenceFact:
+) -> NormalizedEvidenceFact:
     """Select one deterministic evidence fact for generation."""
     if not facts:
         raise ValueError("At least one evidence fact is required")

@@ -1,25 +1,21 @@
 #!/usr/bin/env python3
 
 import argparse
-import hashlib
 import json
 import re
 import urllib.request
 from pathlib import Path
 
+from dataset_tools.evidence.registry import load_evidence
+from dataset_tools.evidence.index import build_evidence_index
 from dataset_tools.generator.planner import select_generation_fact
 from dataset_tools.generator.prompt import build_single_fact_prompt
-from dataset_tools.parsers.cli_help import parse_cli_help
 from dataset_tools.validators.pipeline import validate_candidate
 
 
 DEFAULT_ENDPOINT = "http://127.0.0.1:8080/v1/chat/completions"
 DEFAULT_HELP = Path("data/evidence/handbrakecli-help.txt")
 DEFAULT_OUTPUT = Path("data/raw/livefire_20.jsonl")
-
-
-def source_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def request_model(endpoint: str, prompt: str, model: str, max_tokens: int) -> str:
@@ -57,21 +53,20 @@ def main() -> int:
     parser.add_argument("--count", type=int, default=20)
     args = parser.parse_args()
 
-    facts = parse_cli_help(args.help_file)
-    valid_options = {
-        option
-        for fact in facts
-        for option in [fact.name, *fact.aliases]
-    }
-    tools = {fact.tool for fact in facts if fact.tool}
+    document = load_evidence(args.help_file)
+    evidence_index = build_evidence_index(document)
 
+    # Restrict to cli_option facts for both tool detection and generation —
+    # the constraint fact's subject is an option name (e.g. "--preset"), not
+    # a tool name, and would corrupt the tool-uniqueness check below if included.
+    cli_option_facts = [fact for fact in document.facts if fact.category == "cli_option"]
+
+    tools = {fact.subject for fact in cli_option_facts if fact.subject}
     if len(tools) != 1:
-        raise ValueError(
-            f"Expected exactly one documented tool, found: {sorted(tools)}"
-        )
+        raise ValueError(f"Expected exactly one documented tool, found: {sorted(tools)}")
 
     expected_tool = next(iter(tools))
-    sha256 = source_sha256(args.help_file)
+    sha256 = document.source.sha256
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
     accepted = 0
@@ -96,7 +91,7 @@ def main() -> int:
             }
 
             try:
-                fact = select_generation_fact(facts, attempt)
+                fact = select_generation_fact(cli_option_facts, attempt)
                 prompt = build_single_fact_prompt(fact)
                 raw = request_model(args.endpoint, prompt, args.model, 1024)
                 record["raw_response"] = raw
@@ -116,11 +111,7 @@ def main() -> int:
                 print(f"{attempt + 1:02d}: JSON SHAPE REJECTED")
                 continue
 
-            result = validate_candidate(
-                parsed,
-                expected_tool,
-                valid_options,
-            )
+            result = validate_candidate(parsed, expected_tool, evidence_index)
 
             record["validation"] = result.validation_logs
 
@@ -153,6 +144,7 @@ def main() -> int:
     print(f"Option rejects:        {option_rejections}")
     print(f"Report:                {args.output}")
     print(f"Evidence SHA-256:      {sha256}")
+
     return 0
 
 
