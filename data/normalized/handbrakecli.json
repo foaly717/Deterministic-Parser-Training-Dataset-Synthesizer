@@ -1,0 +1,4778 @@
+{
+  "source": {
+    "source_id": "handbrakecli-help",
+    "path": "data/evidence/handbrakecli-help.txt",
+    "source_type": "text",
+    "sha256": "5c55f1476e98d1c90e05deec848cc994fe0f262f6b1f816ac974a7fff55b7aaf",
+    "metadata": {}
+  },
+  "facts": [
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "Usage: HandBrakeCLI [options] -i <source> -o <destination>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "General Options --------------------------------------------------------------",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -h, --help              Print help",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --version               Print version",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --json                  Log title, progress, and version info in",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           JSON format",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -v, --verbose[=number]  Be verbose (optional argument: logging level)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -Z. --preset <string>   Select preset by name (case-sensitive)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Enclose names containing spaces in double quotation",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           marks (e.g. \"Preset Name\")",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -z, --preset-list       List available presets",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --preset-import-file <filespec>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Import presets from a json preset file.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           'filespec' may be a list of files separated",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           by spaces, or it may use shell wildcards.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --preset-import-gui     Import presets from GUI config preset file.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --preset-export <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Create a new preset from command line options and",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           write a json representation of the preset to the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           console or a file if '--preset-export-file' is",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           specified. The required argument will be the name",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           of the new preset.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --preset-export-file <filename>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Write new preset generated by '--preset-export'",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           to file 'filename'.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --preset-export-description <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Add a description to the new preset created with",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           '--preset-export'",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --queue-import-file <filename>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Import an encode queue file created by the GUI",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --no-dvdnav         Do not use dvdnav for reading DVDs",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "Source Options ---------------------------------------------------------------",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -i, --input <string>    Set input file or device (\"source\")",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -t, --title <number>    Select a title to encode (0 to scan all titles",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           only, default: 1)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --min-duration      Set the minimum title duration (in seconds).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Shorter titles will be ignored (default: 10).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --scan              Scan selected title only.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --main-feature      Detect and select the main feature title.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -c, --chapters <string> Select chapters (e.g. \"1-3\" for chapters",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           1 to 3 or \"3\" for chapter 3 only,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           default: all chapters)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --angle <number>    Select the video angle (DVD or Blu-ray only)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --previews <number:boolean>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Select how many preview images are generated,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           and whether to store to disk (0 or 1).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (default: 10:0)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --start-at-preview <number>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Start encoding at a given preview.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --start-at <string:number>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Start encoding at a given offset in seconds,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           frames, or pts (on a 90kHz clock)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (e.g. seconds:10, frames:300, pts:900000).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Units must match --stop-at units, if specified.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --stop-at  <string:number>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Stop encoding after a given duration in seconds,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           frames, or pts (on a 90kHz clock) has passed",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (e.g. seconds:10, frames:300, pts:900000).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Duration is relative to --start-at, if specified.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Units must match --start-at units, if specified.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "Destination Options ----------------------------------------------------------",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -o, --output <filename> Set destination file name",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -f, --format <string>   Select container format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               av_mp4",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               av_mkv",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               av_webm",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           default: auto-detected from destination file name)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -m, --markers           Add chapter markers",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --no-markers        Disable preset chapter markers",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -O, --optimize          Optimize MP4 files for HTTP streaming (fast start,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           s.s. rewrite file to place MOOV atom at beginning)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --no-optimize       Disable preset 'optimize'",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -I, --ipod-atom         Add iPod 5G compatibility atom to MP4 container",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --no-ipod-atom      Disable iPod 5G atom",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --align-av          Add audio silence or black video frames to start",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           of streams so that all streams start at exactly",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the same time",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --inline-parameter-sets Create adaptive streaming compatible output.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Inserts parameter sets (SPS and PPS) inline",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           in the video stream before each IDR.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "Video Options ----------------------------------------------------------------",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -e, --encoder <string>  Select video encoder:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               svt_av1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               svt_av1_10bit",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               x264",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               x264_10bit",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               qsv_h264",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               x265",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               x265_10bit",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               x265_12bit",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               qsv_h265",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mpeg4",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mpeg2",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               VP8",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               VP9",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               VP9_10bit",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               theora",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --encoder-preset <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Adjust video encoding settings for a particular",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           speed/efficiency tradeoff (encoder-specific)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --encoder-preset-list <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           List supported --encoder-preset values for the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           specified video encoder",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --encoder-tune <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Adjust video encoding settings for a particular",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           type of source or situation (encoder-specific)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --encoder-tune-list <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           List supported --encoder-tune values for the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           specified video encoder",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -x, --encopts <string>  Specify advanced encoding options in the same",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           style as mencoder (all encoders except theora):",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           option1=value1:option2=value2",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --encoder-profile <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Ensure compliance with the requested codec",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           profile (encoder-specific)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --encoder-profile-list <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           List supported --encoder-profile values for the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           specified video encoder",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --encoder-level <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Ensures compliance with the requested codec",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           level (encoder-specific)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --encoder-level-list <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           List supported --encoder-level values for the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           specified video encoder",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -q, --quality <float>   Set video quality (e.g. 22.0)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -b, --vb <number>       Set video bitrate in kbit/s (default: 1000)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --multi-pass            Use multi-pass mode",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --no-multi-pass     Disable multi-pass mode",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -T, --turbo             When using multi-pass use \"turbo\" options on the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           first pass to improve speed",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (works with x264 and x265)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --no-turbo          Disable 2-pass mode's \"turbo\" first pass",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -r, --rate <float>      Set video framerate",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (5/10/12/15/20/23.976/24/25/29.97/",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           30/48/50/59.94/60/72/75/90/100/120",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           or a number between 1 and 1000).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Be aware that not specifying a framerate lets",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           HandBrake preserve a source's time stamps,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           potentially creating variable framerate video",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --vfr, --cfr, --pfr     Select variable, constant or peak-limited",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           frame rate control. VFR preserves the source",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           timing. CFR makes the output constant rate at",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the rate given by the -r flag (or the source's",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           average rate if no -r is given). PFR doesn't",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           allow the rate to go over the rate specified",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           with the -r flag but won't change the source",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           timing if it's below that rate.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           If none of these flags are given, the default",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           is --pfr when -r is given and --vfr otherwise",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --enable-hw-decoding <string>                                        ",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Use 'nvdec' to enable NVDec                  ",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --disable-hw-decoding   Disable hardware decoding of the video track,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           forcing software decoding instead",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "Audio Options ----------------------------------------------------------------",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --audio-lang-list <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Specify a comma separated list of audio",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           languages you would like to select from the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           source title. By default, the first audio",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           matching each language will be added to your",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           output. Provide the language's ISO 639-2 code",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (e.g. fre, eng, spa, dut, et cetera)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Use code 'any' to match all languages.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --all-audio         Select all audio tracks matching languages in",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the specified language list (--audio-lang-list).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Any language if list is not specified.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --first-audio       Select first audio track matching languages in",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the specified language list (--audio-lang-list).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Any language if list is not specified.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -a, --audio <string>    Select audio track(s), separated by commas",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (\"none\" for no audio, \"1,2,3\" for multiple",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           tracks, default: first one).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Multiple output tracks can be used for one input.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -E, --aencoder <string> Select audio encoder(s):",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               none",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               av_aac",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy:aac",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               ac3",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy:ac3",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               eac3",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy:eac3",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy:truehd",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy:dts",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy:dtshd",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy:mp2",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mp3",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy:mp3",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               vorbis",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               flac16",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               flac24",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy:flac",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               opus",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy:opus",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               copy",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           \"copy:<type>\" will pass through the corresponding",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           audio track without modification, if pass through",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           is supported for the audio type.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Defaults:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               av_mp4   av_aac",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               av_mkv   mp3",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               av_webm  vorbis",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --audio-copy-mask <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Set audio codecs that are permitted when the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           \"copy\" audio encoder option is specified",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (aac/ac3/eac3/truehd/dts/dtshd/mp2/mp3/flac/opus)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separated by commas for multiple allowed options.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --audio-fallback <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Set audio codec to use when it is not possible",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           to copy an audio track without re-encoding.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -B, --ab <number>       Set audio track bitrate(s) in kbit/s.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (default: determined by the selected codec, mixdown,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           and samplerate combination).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -Q, --aq <float>        Set audio quality metric.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -C, --ac <float>        Set audio compression metric.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (available depending on selected codec)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -6, --mixdown <string>  Format(s) for audio downmixing/upmixing:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mono",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               left_only",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               right_only",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               stereo",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               dpl1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               dpl2",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               5point1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               6point1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               7point1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               5_2_lfe",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Defaults:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               none             up to dpl2",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               av_aac           up to 7point1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               ac3              up to 5point1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               eac3             up to 5point1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mp3              up to dpl2",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               vorbis           up to dpl2",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               flac16           up to 7point1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               flac24           up to 7point1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               opus             up to 7point1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --normalize-mix     Normalize audio mix levels to prevent clipping.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "              <string>     Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           0 = Disable Normalization (default)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           1 = Enable Normalization",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -R, --arate             Set audio samplerate(s)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (8/11.025/12/16/22.05/24/32/44.1/48 kHz)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           or \"auto\". Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -D, --drc <float>       Apply extra dynamic range compression to the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           audio, making soft sounds louder. Range is 1.0",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           to 4.0 (too loud), with 1.5 - 2.5 being a useful",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           range.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --gain <float>      Amplify or attenuate audio before encoding.  Does",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           NOT work with audio passthru (copy). Values are",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           in dB.  Negative values attenuate, positive",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           values amplify. A 1 dB difference is barely",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           audible.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --adither <string>  Select dithering to apply before encoding audio:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               auto (default)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               none",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               rectangular",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               triangular",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               triangular_hp",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               lipshitz_ns",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Supported by encoder(s):",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               flac16",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -A, --aname <string>    Set audio track name(s).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "Picture Options --------------------------------------------------------------",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -w, --width  <number>   Set storage width in pixels",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -l, --height <number>   Set storage height in pixels",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --crop-mode <string> auto|conservative|none|custom",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                            Choose which crop mode to operate in.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                            Default: auto unless --crop is set in which case custom ",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --crop   <top:bottom:left:right>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Set picture cropping in pixels",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (default: automatically remove black bars)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --crop-threshold-pixels <number>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Number of pixels difference before we consider the frame",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           to be a different aspect ratio",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (default: 9)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --crop-threshold-frames <number>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Number of frames that must be different to trigger",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           smart crop ",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (default: 4, 6 or 8 scaling with preview count)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -Y, --maxHeight <number>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Set maximum height in pixels",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -X, --maxWidth  <number>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Set maximum width in pixels",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --non-anamorphic        Set pixel aspect ratio to 1:1",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --auto-anamorphic       Store pixel aspect ratio that maximizes storage",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           resolution",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --loose-anamorphic      Store pixel aspect ratio that is as close as",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           possible to the source video pixel aspect ratio",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --custom-anamorphic     Store pixel aspect ratio in video stream and",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           directly control all parameters.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --display-width <number>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Set display width in pixels, for custom anamorphic.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           This determines the display aspect during playback,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           which may differ from the storage aspect.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --keep-display-aspect   Preserve the source's display aspect ratio",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           when using custom anamorphic",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-keep-display-aspect",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Disable preset 'keep-display-aspect'",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --pixel-aspect <par_x:par_y>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Set pixel aspect for custom anamorphic",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (--display-width and --pixel-aspect are mutually",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           exclusive.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --itu-par               Use wider ITU pixel aspect values for loose and",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           custom anamorphic, useful with underscanned sources",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-itu-par            Disable preset 'itu-par'",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --modulus <number>      Set storage width and height modulus",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Dimensions will be made divisible by this number.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (default: set by preset, typically 2)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -M, --color-matrix <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Set the color space signaled by the output:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Overrides color signalling with no conversion.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               2020",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               709",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               601",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               ntsc (same as 601)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               pal",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (default: auto-detected from source)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "Filters Options --------------------------------------------------------------",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --comb-detect[=string]  Detect interlace artifacts in frames.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           If not accompanied by the decomb or deinterlace",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           filters, this filter only logs the interlaced",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           frame count to the activity log.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           If accompanied by the decomb or deinterlace",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           filters, it causes these filters to selectively",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           deinterlace only those frames where interlacing",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           is detected.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               permissive",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               fast",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mode=m:spatial-metric=s:motion-thresh=m:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               spatial-thresh=s:filter-mode=f:block-thresh=b:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               block-width=b:block-height=b:disable=d",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mode=3:spatial-metric=2:motion-thresh=1:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               spatial-thresh=1:filter-mode=2:block-thresh=40:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               block-width=16:block-height=16",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-comb-detect        Disable preset comb-detect filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -d, --deinterlace[=string]",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Deinterlace video using FFmpeg yadif.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               skip-spatial",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               bob",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mode=m:parity=p",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mode=3",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "       --no-deinterlace    Disable preset deinterlace filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --bwdif[=string]    Deinterlace video using FFmpeg bwdif.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               bob",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mode=m:parity=p",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mode=3",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-bwdif              Disable preset bwdif deinterlace filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -5, --decomb[=string]   Deinterlace video using a combination of yadif,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           blend, cubic, or EEDI2 interpolation.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               bob",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               eedi2",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               eedi2bob",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mode=m:magnitude-thresh=m:variance-thresh=v:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               laplacian-thresh=l:dilation-thresh=d:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               erosion-thresh=e:noise-thresh=n:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               search-distance=s:postproc=p:parity=p",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               mode=7",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-decomb             Disable preset decomb filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -9, --detelecine[=string]",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Detelecine (ivtc) video with pullup filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Note: this filter drops duplicate frames to",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           restore the pre-telecine framerate, unless you",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           specify a constant framerate",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (--rate 29.97 --cfr)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               skip-left=s:skip-right=s:skip-top=s:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               skip-bottom=s:strict-breaks=s:plane=p:parity=p:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               disable=d",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               skip-left=1:skip-right=1:skip-top=4:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               skip-bottom=4:plane=0",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-detelecine         Disable preset detelecine filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -8, --hqdn3d[=string]   Denoise video with hqdn3d filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               ultralight",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               light",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               medium",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               strong",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-spatial=y:cb-spatial=c:cr-spatial=c:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-temporal=y:cb-temporal=c:cr-temporal=c",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-spatial=3:cb-spatial=2:cr-spatial=2:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-temporal=2:cb-temporal=3:cr-temporal=3",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-hqdn3d             Disable preset hqdn3d filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --denoise[=string]      Legacy alias for '--hqdn3d'",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --nlmeans[=string]      Denoise video with NLMeans filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               ultralight",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               light",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               medium",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               strong",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-strength=y:y-origin-tune=y:y-patch-size=y:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-range=y:y-frame-count=y:y-prefilter=y:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cb-strength=c:cb-origin-tune=c:cb-patch-size=c:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cb-range=c:cb-frame-count=c:cb-prefilter=c:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cr-strength=c:cr-origin-tune=c:cr-patch-size=c:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cr-range=c:cr-frame-count=c:cr-prefilter=c:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               threads=t",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-strength=6:y-origin-tune=1:y-patch-size=7:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-range=3:y-frame-count=2:y-prefilter=0:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cb-strength=6:cb-origin-tune=1:cb-patch-size=7:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cb-range=3:cb-frame-count=2:cb-prefilter=0",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-nlmeans            Disable preset NLMeans filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --nlmeans-tune <string> Tune NLMeans filter to content type",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Tunes:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               none",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               film",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               grain",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               highmotion",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               animation",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               tape",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               sprite",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Applies to NLMeans presets only (does not affect",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           custom settings)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --chroma-smooth[=string]      Sharpen video with chroma smooth filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               ultralight",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               light",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               medium",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               strong",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               stronger",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               verystrong",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cb-strength=c:cb-size=c:cr-strength=c:cr-size=c",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cb-strength=1.2:cb-size=7",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-chroma-smooth            Disable preset chroma smooth filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --chroma-smooth-tune <string> Tune chroma smooth filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Tunes:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               none",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               tiny",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               small",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               medium",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               wide",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               verywide",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                                 Applies to chroma smooth presets only (does",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                                 not affect custom settings)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --unsharp[=string]      Sharpen video with unsharp filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               ultralight",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               light",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               medium",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               strong",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               stronger",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               verystrong",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-strength=y:y-size=y:cb-strength=c:cb-size=c:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cr-strength=c:cr-size=c",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-strength=0.25:y-size=7:cb-strength=0.25:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cb-size=7",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-unsharp            Disable preset unsharp filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --unsharp-tune <string> Tune unsharp filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Tunes:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               none",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               ultrafine",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               fine",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               medium",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               coarse",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               verycoarse",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Applies to unsharp presets only (does not affect",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           custom settings)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --lapsharp[=string]     Sharpen video with lapsharp filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               ultralight",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               light",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               medium",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               strong",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               stronger",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               verystrong",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-strength=y:y-kernel=y:cb-strength=c:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cb-kernel=c:cr-strength=c:cr-kernel=c",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               y-strength=0.2:y-kernel=isolap:cb-strength=0.2:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               cb-kernel=isolap",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-lapsharp           Disable preset lapsharp filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --lapsharp-tune <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Tune lapsharp filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Tunes:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               none",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               film",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               grain",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               animation",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               sprite",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Applies to lapsharp presets only (does not affect",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           custom settings)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -7, --deblock[=string]  Deblock video with avfilter deblock",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               ultralight",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               light",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               medium",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               strong",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               stronger",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               verystrong",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               strength=s:thresh=t:blocksize=b:disable=d",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               strength=strong:thresh=20",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-deblock            Disable preset deblock filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --deblock-tune <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Tune deblock filter",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Tunes:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               small",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               medium",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               large",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Applies to deblock presets only (does not affect",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           custom settings)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --rotate[=string]       Rotate image or flip its axes.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           angle rotates clockwise, can be one of:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               0, 90, 180, 270",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           hflip=1 flips the image on the x axis (horizontally).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               angle=a:hflip=h:disable=d",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Default:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               angle=180:hflip=0",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --pad <string>          Pad image with borders (e.g. letterbox).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           The padding color may be set (default black).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Color may be an HTML color name or RGB value.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           The position of image in pad may also be set.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               width=w:height=h:color=c:x=x:y=y:top=t:bottom=b:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               left=l:right=r",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --colorspace <string>   Convert colorspace, transfer characteristics or color primaries.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Presets:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               bt2020",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               bt709",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               bt601-6-525",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               bt601-6-625",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Custom Format:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               primaries=p:transfer=t:matrix=m:range=r:",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                               tonemap=t:param=p:desat=d",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   -g, --grayscale         Grayscale encoding",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --no-grayscale          Disable preset 'grayscale'",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "Subtitles Options ------------------------------------------------------------",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "  --subtitle-lang-list <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Specify a comma separated list of subtitle",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           languages you would like to select from the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           source title. By default, the first subtitle",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           matching each language will be added to your",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           output. Provide the language's ISO 639-2 code",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (e.g. fre, eng, spa, dut, et cetera)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "      --all-subtitles      Select all subtitle tracks matching languages in",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the specified language list",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (--subtitle-lang-list).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Any language if list is not specified.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "      --first-subtitle     Select first subtitle track matching languages in",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the specified language list",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (--subtitle-lang-list).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Any language if list is not specified.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "  -s, --subtitle <string>  Select subtitle track(s), separated by commas",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           More than one output track can be used for one",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           input. \"none\" for no subtitles.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Example: \"1,2,3\" for multiple tracks.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           A special track name \"scan\" adds an extra first",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           pass. This extra pass scans subtitles matching",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the language of the first audio or the language ",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           selected by --native-language.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           The one that's only used 10 percent of the time",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           or less is selected. This should locate subtitles",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           for short foreign language segments. Best used in",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           conjunction with --subtitle-forced.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "  -S, --subname <string>   Set subtitle track name(s).",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "  -F, --subtitle-forced[=string]",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Only display subtitles from the selected stream",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           if the subtitle has the forced flag set. The",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           values in 'string' are indexes into the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           subtitle list specified with '--subtitle'.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate tracks by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Example: \"1,2,3\" for multiple tracks.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           If \"string\" is omitted, the first track is",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           forced.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "      --subtitle-burned[=number, \"native\", or \"none\"]",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           \"Burn\" the selected subtitle into the video",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           track. If \"subtitle\" is omitted, the first",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           track is burned. \"subtitle\" is an index into",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the subtitle list specified with '--subtitle'",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           or \"native\" to burn the subtitle track that may",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           be added by the 'native-language' option.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "      --subtitle-default[=number or \"none\"]",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Flag the selected subtitle as the default",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           subtitle to be displayed upon playback.  Setting",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           no default means no subtitle will be displayed",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           automatically. 'number' is an index into the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           subtitle list specified with '--subtitle'.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           \"none\" may be used to override an automatically",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           selected default subtitle track.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "  -N, --native-language <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Specify your language preference. When the first",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           audio track does not match your native language",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           then select the first subtitle that does. When",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           used in conjunction with --native-dub the audio",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           track is changed in preference to subtitles.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Provide the language's ISO 639-2 code",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (e.g. fre, eng, spa, dut, et cetera)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "      --native-dub         Used in conjunction with --native-language",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           requests that if no audio tracks are selected the",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           default selected audio track will be the first",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           one that matches the --native-language. If there",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           are no matching audio tracks then the first",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           matching subtitle track is used instead.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --srt-file <string>   SubRip SRT filename(s), separated by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --srt-codeset <string>",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Character codeset(s) that the SRT file(s) are",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           encoded as, separated by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           If not specified, 'latin1' is assumed.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Command 'iconv -l' provides a list of valid codesets.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --srt-offset <string> Offset (in milliseconds) to apply to the SRT",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           file(s), separated by commas. If not specified,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           zero is assumed. Offsets may be negative.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --srt-lang <string>   SRT track language as an ISO 639-2 code",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (e.g. fre, eng, spa, dut, et cetera)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           If not specified, then 'und' is used.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --srt-default[=number]",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Flag the selected SRT as the default subtitle",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           to be displayed during playback.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Setting no default means no subtitle will be",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           automatically displayed. If 'number' is omitted,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the first SRT is the default.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           'number' is a 1-based index into the 'srt-file' list",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --srt-burn[=number]   \"Burn\" the selected SRT subtitle into",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the video track.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           If 'number' is omitted, the first SRT is burned.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           'number' is a 1-based index into the 'srt-file' list",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --ssa-file <string>   SubStationAlpha SSA filename(s), separated by",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --ssa-offset <string> Offset (in milliseconds) to apply to the SSA",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           file(s), separated by commas. If not specified,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           zero is assumed. Offsets may be negative.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --ssa-lang <string>   SSA track language as an ISO 639-2 code",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (e.g. fre, eng, spa, dut, et cetera)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           If not specified, then 'und' is used.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Separate by commas.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --ssa-default[=number]",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Flag the selected SSA as the default subtitle",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           to be displayed during playback.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Setting no default means no subtitle will be",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           automatically displayed. If 'number' is omitted,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the first SSA is the default.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           'number' is a 1-based index into the 'ssa-file' list",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "     --ssa-burn[=number]   \"Burn\" the selected SSA subtitle into",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           the video track.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           If 'number' is omitted, the first SSA is burned.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           'number' is a 1-based index into the 'ssa-file' list",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "-- Intel Quick Sync Video Options --------------------------------------------",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --enable-qsv-decoding   Allow QSV hardware decoding of the video track",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --disable-qsv-decoding  Disable QSV hardware decoding of the video track,",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           forcing software decoding instead",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --qsv-async-depth[=number]",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Set the number of asynchronous operations that",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           should be performed before the result is",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           explicitly synchronized.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Omit 'number' for zero.",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (default: 4)",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "   --qsv-adapter[=index]",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           Set QSV hardware graphics adapter index",
+      "metadata": {}
+    },
+    {
+      "category": "text",
+      "subject": "handbrakecli-help.txt",
+      "predicate": "contains",
+      "value": "                           (default: QSV hardware graphics adapter with highest hardware generation)",
+      "metadata": {}
+    }
+  ]
+}
