@@ -5,9 +5,7 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from dataset_tools.parsers.cli_help import parse_cli_help
-
-
+from dataset_tools.evidence.registry import load_evidence
 
 
 def main() -> int:
@@ -16,10 +14,12 @@ def main() -> int:
     parser.add_argument("--evidence", type=Path, required=True)
     args = parser.parse_args()
 
+    document = load_evidence(args.evidence)
+
     documented = {
-        fact.name
-        for fact in parse_cli_help(args.evidence)
-        if fact.name.startswith("-")
+        fact.value
+        for fact in document.facts
+        if fact.category == "cli_option"
     }
 
     observed = Counter()
@@ -28,6 +28,7 @@ def main() -> int:
         for line in handle:
             record = json.loads(line)
             parsed = record.get("parsed")
+
             if not isinstance(parsed, dict):
                 continue
 
@@ -44,10 +45,13 @@ def main() -> int:
     print(f"Coverage:           {len(covered & documented) / len(documented):.1%}")
     print()
     print("Observed:")
+
     for option, count in observed.most_common():
         print(f"  {option}: {count}")
+
     print()
     print("Uncovered:")
+
     for option in uncovered:
         print(f"  {option}")
 
