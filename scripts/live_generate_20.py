@@ -114,41 +114,32 @@ def main() -> int:
                 print(f"{attempt + 1:02d}: JSON SHAPE REJECTED")
                 continue
 
-            items = [parsed]
-            valid_items = 0
+            result = validate_candidate(
+                parsed,
+                expected_tool,
+                valid_options,
+            )
 
-            for item in items:
-                result = validate_candidate(
-                    item,
-                    expected_tool,
-                    valid_options,
-                )
+            record["validation"] = result.validation_logs
 
-                record["validation"] = result.validation_logs
+            if result.stage != "structure":
+                record["structurally_valid"] = True
 
-                if result.stage != "structure":
-                    valid_items += 1
-                    record["structurally_valid"] = True
-
-                if result.status != "accepted":
-                    if result.stage == "structure":
-                        structural_rejections += 1
-                    elif result.stage == "command":
-                        command_rejections += 1
-                    elif result.stage == "options":
-                        option_rejections += 1
-                    continue
-
+            if result.status != "accepted":
+                if result.stage == "structure":
+                    structural_rejections += 1
+                elif result.stage == "command":
+                    command_rejections += 1
+                elif result.stage == "options":
+                    option_rejections += 1
+            else:
                 accepted += 1
                 record["status"] = "accepted"
                 record["command_valid"] = True
                 record["option_valid"] = True
 
-            if valid_items == 0:
-                record["validation"] = ["No structurally valid candidates."]
-
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-            print(attempt + 1, record["status"].upper(), valid_items)
+            print(attempt + 1, record["status"].upper())
 
     print()
     print("=== LIVEFIRE SUMMARY ===")
