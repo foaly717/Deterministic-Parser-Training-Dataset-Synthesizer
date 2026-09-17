@@ -38,7 +38,7 @@ class HandBrakeCliLoader(EvidenceLoader):
                 predicate="supports",
                 value=fact.name,
                 metadata={
-                    "kind": fact.kind,
+                    "kind": "option",
                     "aliases": fact.aliases,
                     "argument": fact.argument,
                     "description": fact.description,
@@ -49,7 +49,6 @@ class HandBrakeCliLoader(EvidenceLoader):
                 },
             )
             for fact in parse_cli_help(path)
-            if fact.kind == "option"
         ]
 
         return NormalizedEvidenceDocument(

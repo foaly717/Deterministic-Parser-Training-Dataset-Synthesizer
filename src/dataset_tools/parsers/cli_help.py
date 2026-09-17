@@ -2,7 +2,7 @@ import hashlib
 import re
 from pathlib import Path
 
-from dataset_tools.schema import EvidenceFact
+from dataset_tools.parsers.cli_models import CLIOption
 
 
 # A declaration must begin with a CLI flag after optional indentation.
@@ -64,7 +64,7 @@ def _parse_declaration(
 def parse_cli_help(
     file_path: Path,
     tool_name: str = "HandBrakeCLI",
-) -> list[EvidenceFact]:
+) -> list[CLIOption]:
     """Parse HandBrakeCLI help output into deterministic evidence facts."""
     text = file_path.read_text(encoding="utf-8")
     source_sha256 = hashlib.sha256(text.encode("utf-8")).hexdigest()
@@ -112,7 +112,7 @@ def parse_cli_help(
     if current_block is not None:
         blocks.append(current_block)
 
-    facts: list[EvidenceFact] = []
+    options: list[CLIOption] = []
 
     for block in blocks:
         flags, argument, inline_description = _parse_declaration(
@@ -146,20 +146,19 @@ def parse_cli_help(
         # independent options, not aliases.
         if len(long_flags) > 1:
             for long_flag in long_flags:
-                facts.append(
-                    EvidenceFact(
-                        source_id=source_id,
-                        source_sha256=source_sha256,
-                        tool=tool_name,
-                        kind="option",
+                options.append(
+                    CLIOption(
                         name=long_flag,
                         description=description,
                         aliases=[],
                         argument=argument,
+                        section=block["section"],
+                        source_id=source_id,
+                        source_sha256=source_sha256,
                         parent_command=None,
                         line_start=block["start_line"],
                         line_end=block["end_line"],
-                        section=block["section"],
+                        tool=tool_name,
                     )
                 )
             continue
@@ -173,21 +172,20 @@ def parse_cli_help(
 
         aliases = short_flags if long_flags else []
 
-        facts.append(
-            EvidenceFact(
-                source_id=source_id,
-                source_sha256=source_sha256,
-                tool=tool_name,
-                kind="option",
+        options.append(
+            CLIOption(
                 name=primary_name,
                 description=description,
                 aliases=aliases,
                 argument=argument,
+                section=block["section"],
+                source_id=source_id,
+                source_sha256=source_sha256,
                 parent_command=None,
                 line_start=block["start_line"],
                 line_end=block["end_line"],
-                section=block["section"],
+                tool=tool_name,
             )
         )
 
-    return facts
+    return options
