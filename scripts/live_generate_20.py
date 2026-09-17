@@ -8,10 +8,8 @@ import urllib.request
 from pathlib import Path
 
 from dataset_tools.generator.prompt import build_candidate_prompt
-from dataset_tools.generator.runner import validate_candidate_structure
 from dataset_tools.parsers.cli_help import parse_cli_help
-from dataset_tools.validators.command import validate_cli_command
-from dataset_tools.validators.options import validate_cli_response
+from dataset_tools.validators.pipeline import validate_candidate
 
 
 DEFAULT_ENDPOINT = "http://127.0.0.1:8080/v1/chat/completions"
@@ -113,43 +111,34 @@ def main() -> int:
             valid_items = 0
 
             for item in items:
-                if not validate_candidate_structure(item):
-                    structural_rejections += 1
-                    continue
-
-                valid_items += 1
-                record["structurally_valid"] = True
-
-                command_ok, command_message = validate_cli_command(
-                    item["response"],
+                result = validate_candidate(
+                    item,
                     expected_tool,
-                )
-
-                if not command_ok:
-                    command_rejections += 1
-                    record["validation"] = command_message
-                    continue
-
-                record["command_valid"] = True
-
-                option_ok, option_message = validate_cli_response(
-                    item["response"],
                     valid_options,
                 )
 
-                if not option_ok:
-                    option_rejections += 1
-                    record["validation"] = option_message
+                record["validation"] = result.validation_logs
+
+                if result.stage != "structure":
+                    valid_items += 1
+                    record["structurally_valid"] = True
+
+                if result.status != "accepted":
+                    if result.stage == "structure":
+                        structural_rejections += 1
+                    elif result.stage == "command":
+                        command_rejections += 1
+                    elif result.stage == "options":
+                        option_rejections += 1
                     continue
 
                 accepted += 1
                 record["status"] = "accepted"
+                record["command_valid"] = True
                 record["option_valid"] = True
-                record["validation"] = option_message
 
             if valid_items == 0:
-                structural_rejections += 1
-                record["validation"] = "No structurally valid candidates."
+                record["validation"] = ["No structurally valid candidates."]
 
             handle.write(json.dumps(record, ensure_ascii=False) + "\n")
             print(attempt + 1, record["status"].upper(), valid_items)
