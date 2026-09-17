@@ -29,3 +29,14 @@ def test_handbrakecli_loader_produces_cli_facts():
     assert preset.metadata["description"]
     assert "-Z" in preset.metadata["aliases"]
     assert preset.metadata["source_line_start"]
+    assert preset.metadata["section"]
+    preset = next(
+        fact
+        for fact in document.facts
+        if fact.value == "--preset"
+    )
+
+    assert preset.metadata["section"] == "General Options"
+    assert preset.metadata["argument"] == "<string>"
+    assert preset.metadata["description"]
+    assert preset.metadata["source_line_start"]
