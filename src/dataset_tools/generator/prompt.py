@@ -22,6 +22,10 @@ Rules:
 10. The "response" field must be exactly one terminal command.
 11. The command must begin with the documented tool name.
 12. Do not include explanatory prose, Markdown, or additional commands.
+13. Generate a different CLI task each time.
+14. Prefer different documented options when multiple options are available.
+15. Do not reuse the same command pattern unless no alternatives exist.
+16. Select options from different parts of the evidence when possible.
 """
 
 
@@ -58,7 +62,11 @@ def build_candidate_prompt(
     if sample_size < 1:
         raise ValueError("sample_size must be >= 1")
 
-    selected = facts[:sample_size]
+    if sample_size < len(facts):
+        step = max(1, len(facts) // sample_size)
+        selected = facts[::step][:sample_size]
+    else:
+        selected = facts
 
     if not selected:
         raise ValueError("At least one evidence fact is required")
@@ -76,6 +84,32 @@ grounded exclusively in the evidence above.
 
 The "response" field must be exactly one terminal command that the user can
 run. It must begin with the exact documented tool name from the evidence.
+
+Output exactly ONE JSON object with these fields:
+"instruction", "context", "response".
+
+Do not output additional JSON objects, arrays, Markdown fences, or explanatory
+text outside the JSON object.
+"""
+
+
+def build_single_fact_prompt(
+    fact: EvidenceFact,
+) -> str:
+    """Build a generation prompt for exactly one deterministic evidence fact."""
+    context = format_evidence_context([fact])
+
+    return f"""{GENERATOR_SYSTEM_PROMPT}
+
+Target CLI evidence:
+
+{context}
+
+Generate exactly ONE terminal instruction-response training pair
+demonstrating this documented capability.
+
+The response field must be exactly one terminal command that the user can run.
+It must begin with the exact documented tool name from the evidence.
 
 Output exactly ONE JSON object with these fields:
 "instruction", "context", "response".
