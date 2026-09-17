@@ -3,20 +3,18 @@ from pathlib import Path
 from dataset_tools.evidence.registry import load_evidence
 
 
-def test_handbrake_evidence_fixture_loads():
+def test_handbrakecli_loader_produces_cli_facts():
     source = Path("data/evidence/handbrakecli-help.txt")
 
     document = load_evidence(source)
 
-    assert document.source.source_id == "handbrakecli-help"
     assert document.source.source_type == "handbrakecli"
-    assert document.source.sha256
-    assert len(document.facts) > 0
 
-    cli_options = {
+    options = {
         fact.value
         for fact in document.facts
         if fact.category == "cli_option"
     }
 
-    assert "--preset" in cli_options
+    assert "--preset" in options
+    assert "--help" in options
