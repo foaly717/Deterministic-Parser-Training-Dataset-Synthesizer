@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import json
 from collections import Counter
 from pathlib import Path
@@ -7,20 +8,23 @@ from pathlib import Path
 from dataset_tools.parsers.cli_help import parse_cli_help
 
 
-EVIDENCE = Path("data/evidence/handbrakecli-help.txt")
-INPUT = Path("data/raw/livefire_20.jsonl")
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=Path, required=True)
+    parser.add_argument("--evidence", type=Path, required=True)
+    args = parser.parse_args()
+
     documented = {
         fact.name
-        for fact in parse_cli_help(EVIDENCE)
+        for fact in parse_cli_help(args.evidence)
         if fact.name.startswith("-")
     }
 
     observed = Counter()
 
-    with INPUT.open(encoding="utf-8") as handle:
+    with args.input.open(encoding="utf-8") as handle:
         for line in handle:
             record = json.loads(line)
             parsed = record.get("parsed")
