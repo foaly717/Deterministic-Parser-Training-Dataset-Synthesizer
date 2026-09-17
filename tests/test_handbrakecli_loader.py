@@ -18,3 +18,14 @@ def test_handbrakecli_loader_produces_cli_facts():
 
     assert "--preset" in options
     assert "--help" in options
+
+    preset = next(
+        fact
+        for fact in document.facts
+        if fact.value == "--preset"
+    )
+
+    assert preset.metadata["argument"] == "<string>"
+    assert preset.metadata["description"]
+    assert "-Z" in preset.metadata["aliases"]
+    assert preset.metadata["source_line_start"]

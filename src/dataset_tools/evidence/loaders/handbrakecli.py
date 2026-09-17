@@ -34,12 +34,21 @@ class HandBrakeCliLoader(EvidenceLoader):
         facts = [
             NormalizedEvidenceFact(
                 category="cli_option",
-                subject="HandBrakeCLI",
+                subject=fact.tool or "HandBrakeCLI",
                 predicate="supports",
                 value=fact.name,
+                metadata={
+                    "kind": fact.kind,
+                    "aliases": fact.aliases,
+                    "argument": fact.argument,
+                    "description": fact.description,
+                    "source_id": fact.source_id,
+                    "source_line_start": fact.line_start,
+                    "source_line_end": fact.line_end,
+                },
             )
             for fact in parse_cli_help(path)
-            if fact.name.startswith("-")
+            if fact.kind == "option"
         ]
 
         return NormalizedEvidenceDocument(
