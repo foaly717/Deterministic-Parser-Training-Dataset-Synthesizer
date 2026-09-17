@@ -7,7 +7,8 @@ import re
 import urllib.request
 from pathlib import Path
 
-from dataset_tools.generator.prompt import build_candidate_prompt
+from dataset_tools.generator.planner import select_generation_fact
+from dataset_tools.generator.prompt import build_single_fact_prompt
 from dataset_tools.parsers.cli_help import parse_cli_help
 from dataset_tools.validators.pipeline import validate_candidate
 
@@ -71,7 +72,6 @@ def main() -> int:
 
     expected_tool = next(iter(tools))
     sha256 = source_sha256(args.help_file)
-    prompt = build_candidate_prompt(facts, sample_size=20)
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
     accepted = 0
@@ -96,6 +96,8 @@ def main() -> int:
             }
 
             try:
+                fact = select_generation_fact(facts, attempt)
+                prompt = build_single_fact_prompt(fact)
                 raw = request_model(args.endpoint, prompt, args.model, 1024)
                 record["raw_response"] = raw
                 parsed = parse_model_json(raw)
