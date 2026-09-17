@@ -107,7 +107,14 @@ def main() -> int:
                 print(f"{attempt + 1:02d}: PARSE/REQUEST REJECTED — {exc}")
                 continue
 
-            items = parsed if isinstance(parsed, list) else [parsed]
+            if not isinstance(parsed, dict):
+                record["validation"] = "JSON output must be exactly one object."
+                parse_rejections += 1
+                handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+                print(f"{attempt + 1:02d}: JSON SHAPE REJECTED")
+                continue
+
+            items = [parsed]
             valid_items = 0
 
             for item in items:
