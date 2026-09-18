@@ -1,4 +1,4 @@
-from dataset_tools.evidence.constraints import EnumConstraint
+from dataset_tools.evidence.schema import EnumConstraint
 
 
 def test_enum_constraint_preserves_documented_value():

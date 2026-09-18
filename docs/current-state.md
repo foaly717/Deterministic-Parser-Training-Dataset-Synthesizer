@@ -24,6 +24,4 @@ Generation:
 ## Next work
 
 - Expand evidence ingestion with additional loaders.
-- Add evidence loaders.
-- Convert evidence loaders into NormalizedEvidenceDocument objects.
 - Keep generation pipeline independent of source format and model.
