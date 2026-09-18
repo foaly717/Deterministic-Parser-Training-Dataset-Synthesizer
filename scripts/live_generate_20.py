@@ -3,8 +3,10 @@
 import argparse
 import json
 import re
-import urllib.request
 from pathlib import Path
+
+from dataset_tools.config.settings import get_settings
+from dataset_tools.llm import create_llm_client
 
 from dataset_tools.evidence.registry import load_evidence
 from dataset_tools.evidence.index import build_evidence_index
@@ -13,27 +15,9 @@ from dataset_tools.generator.prompt import build_single_fact_prompt
 from dataset_tools.validators.pipeline import validate_candidate
 
 
-DEFAULT_ENDPOINT = "http://127.0.0.1:8080/v1/chat/completions"
+
 DEFAULT_HELP = Path("data/evidence/handbrakecli-help.txt")
 DEFAULT_OUTPUT = Path("data/raw/livefire_20.jsonl")
-
-
-def request_model(endpoint: str, prompt: str, model: str, max_tokens: int) -> str:
-    payload = {
-        "model": model,
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0,
-        "max_tokens": max_tokens,
-    }
-    request = urllib.request.Request(
-        endpoint,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    with urllib.request.urlopen(request, timeout=180) as response:
-        data = json.loads(response.read())
-    return data["choices"][0]["message"]["content"]
 
 
 def parse_model_json(text: str):
@@ -46,12 +30,21 @@ def parse_model_json(text: str):
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", required=True)
-    parser.add_argument("--endpoint", default=DEFAULT_ENDPOINT)
+    settings = get_settings()
+
+    parser.add_argument("--provider", default=settings.provider)
+    parser.add_argument("--model", default=settings.model)
+    parser.add_argument("--endpoint", default=settings.endpoint)
     parser.add_argument("--help-file", type=Path, default=DEFAULT_HELP)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--count", type=int, default=20)
     args = parser.parse_args()
+
+    client = create_llm_client(
+        provider=args.provider,
+        endpoint=args.endpoint,
+        model=args.model,
+    )
 
     document = load_evidence(args.help_file)
     evidence_index = build_evidence_index(document)
@@ -80,6 +73,7 @@ def main() -> int:
             record = {
                 "attempt": attempt + 1,
                 "source_sha256": sha256,
+                "generator_provider": args.provider,
                 "generator_model": args.model,
                 "raw_response": None,
                 "parsed": None,
@@ -93,7 +87,7 @@ def main() -> int:
             try:
                 fact = select_generation_fact(cli_option_facts, attempt)
                 prompt = build_single_fact_prompt(fact)
-                raw = request_model(args.endpoint, prompt, args.model, 1024)
+                raw = client.generate(prompt, 1024)
                 record["raw_response"] = raw
                 parsed = parse_model_json(raw)
                 record["parsed"] = parsed

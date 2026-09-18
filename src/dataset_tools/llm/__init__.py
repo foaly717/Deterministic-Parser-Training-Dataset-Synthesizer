@@ -9,3 +9,5 @@ __all__ = [
     "OpenAICompatibleClient",
     "MockLLMClient",
 ]
+
+from dataset_tools.llm.factory import create_llm_client

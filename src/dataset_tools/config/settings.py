@@ -5,6 +5,7 @@ from pathlib import Path
 
 @dataclass(frozen=True)
 class RuntimeSettings:
+    provider: str
     model: str
     endpoint: str
     help_file: Path
@@ -13,6 +14,7 @@ class RuntimeSettings:
 
 def get_settings() -> RuntimeSettings:
     return RuntimeSettings(
+        provider=os.getenv("MODEL_PROVIDER", "openai_compatible"),
         model=os.getenv("MODEL_NAME", "default"),
         endpoint=os.getenv(
             "MODEL_ENDPOINT",
