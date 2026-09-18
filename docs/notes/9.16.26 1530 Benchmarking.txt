@@ -1,0 +1,653 @@
+9.16.26 1530 Benchmarking Tests: Expanded Domain
+Uses run_benchmarks.sh script to test models against multiple domains
+
+lincolnbrennan@LKB-media-desktop:/mnt/local_compute/scripts$ ./run_benchmarks.sh
+
+========== SQL ==========
+Active Model: /mnt/local_compute/models/DeepSeek-Coder-V2-Lite-Instruct-Q4_K_M.gguf
+
+ To find each customer's second most recent order date using a window function in SQL, you can use the `ROW_NUMBER()` window function. This function assigns a unique rank to each row within a partition of the result set, starting from 1 for the first row in each partition. You can then filter to get the second most recent order date.
+
+Here's how you can write the query:
+
+```sql
+SELECT customer_id, order_date
+FROM (
+    SELECT customer_id, order_date,
+           ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY order_date DESC) AS rn
+    FROM orders
+) sub
+WHERE rn = 2;
+```
+
+### Explanation:
+1. **Subquery**: The subquery within the parentheses uses the `ROW_NUMBER()` function to assign a unique rank (`rn`) to each order within each customer's partition, ordered by `order_date` in descending order.
+2. **PARTITION BY**: This clause ensures that the `ROW_NUMBER()` function partitions the data by `customer_id`, so the ranking is done separately for each customer.
+3. **ORDER BY**: Within each partition, orders are ordered by `order_date` in descending order.
+4. **WHERE Clause**: The outer query filters the results to include only those rows where the rank (`rn`) is 2, which corresponds to the second most recent order date for each customer.
+
+This query will return the `customer_id` and `order_date` for each customer's second most recent order.
+
+[SQL]  wall: 27s  completion_tokens: 335  gen_speed: 13.21 tok/s  finish: stop
+
+========== Docker ==========
+ To create a `docker-compose.yml` file for Jellyfin with the specified configurations, you can follow the example below. This configuration includes exposing port 8096, mapping a volume for media files, and enabling hardware transcoding by accessing `/dev/dri`.
+
+Here's the `docker-compose.yml` file:
+
+```yaml
+version: '3.8'
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    ports:
+      - "8096:8096"
+    volumes:
+      - /mnt/media:/media
+      - /etc/localtime:/etc/localtime:ro
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      - TZ=Europe/London  # Set your timezone
+    restart: unless-stopped
+```
+
+### Explanation:
+1. **Version**: Specifies the version of the Docker Compose file format.
+2. **Services**: Defines the Jellyfin service.
+3. **Image**: Specifies the Jellyfin Docker image to use.
+4. **Container_name**: Names the container as `jellyfin`.
+5. **Ports**: Maps port 8096 on the host to port 8096 in the container.
+6. **Volumes**: 
+   - `/mnt/media:/media`: Maps the host directory `/mnt/media` to the container's `/media` directory.
+   - `/etc/localtime:/etc/localtime:ro`: Maps the host's timezone configuration to the container. `:ro` makes the volume read-only.
+7. **Devices**: 
+   - `/dev/dri:/dev/dri`: Allows access to the `/dev/dri` directory for hardware transcoding.
+8. **Environment**: 
+   - `TZ`: Sets the timezone. Replace `Europe/London` with your desired timezone.
+9. **Restart**: Specifies the restart policy (`unless-stopped` means the container will always restart unless it is explicitly stopped).
+
+### Additional Notes:
+- Ensure that the directory `/mnt/media` exists on your host machine and that it is writable by the Docker container.
+- The `/dev/dri` directory should also exist on your host and should be accessible to the Docker container. This is typically necessary for hardware acceleration in media playback.
+- The timezone setting is optional but recommended for accurate time-based functionalities in Jellyfin.
+
+This setup will allow Jellyfin to run in a Docker container, accessible via port 8096 on your host machine, with the specified media directory and hardware transcoding capabilities.
+
+[Docker]  wall: 46s  completion_tokens: 583  gen_speed: 12.9 tok/s  finish: stop
+
+========== HandBrakeCLI ==========
+ To batch-convert all `.mkv` files in a folder to H.265 (x265) using HandBrakeCLI with a quality setting of 22, while keeping the first audio and subtitle tracks, you can use the following command. This command assumes you have HandBrakeCLI installed and properly configured on your system.
+
+```bash
+for file in *.mkv; do
+  HandBrakeCLI -i "$file" -o "${file%.mkv}_h265.mp4" --encoder x265 --quality 22 --keep-subs --keep-audio --subtitle-lang-list eng --audio-lang-list eng
+done
+```
+
+Here's a breakdown of the command:
+
+- `for file in *.mkv; do ... done`: This loop iterates over each `.mkv` file in the current directory.
+- `HandBrakeCLI -i "$file" -o "${file%.mkv}_h265.mp4"`: Specifies the input file (`-i`) and output file (`-o`). The output file name is derived from the input file name by replacing the `.mkv` extension with `_h265.mp4`.
+- `--encoder x265`: Sets the encoder to x265 (H.265).
+- `--quality 22`: Sets the encoding quality to 22.
+- `--keep-subs`: Keeps the subtitle tracks.
+- `--keep-audio`: Keeps the audio tracks.
+- `--subtitle-lang-list eng`: Specifies the language of the subtitle tracks to be kept (in this case, English).
+- `--audio-lang-list eng`: Specifies the language of the audio tracks to be kept (in this case, English).
+
+Make sure to adjust the `--subtitle-lang-list` and `--audio-lang-list` options if you need to keep subtitles or audio in different languages. If you want to keep all available subtitles and audio tracks, you can omit the `--subtitle-lang-list` and `--audio-lang-list` options.
+
+Also, ensure that HandBrakeCLI is installed and accessible from your command line environment. You can download and install HandBrake from [HandBrake's official website](https://handbrake.fr/).
+
+[HandBrakeCLI]  wall: 40s  completion_tokens: 501  gen_speed: 13.12 tok/s  finish: stop
+
+========== MakeMKV ==========
+ To rip title 0 from disc index 0 to `/output` as an MKV file with minimal output verbosity using MakeMKV's `makemkvcon` command, you can use the following command:
+
+```sh
+makemkvcon -r --minv --output=/output mkv disc:0 title:0
+```
+
+Here's a breakdown of the command:
+- `makemkvcon`: The command to run MakeMKV.
+- `-r`: This option tells MakeMKV to run in raw mode, which is useful for scripting.
+- `--minv`: This option sets minimal output verbosity, meaning it will show only essential information and errors.
+- `--output=/output`: This option specifies the output file path and name. Replace `/output` with the desired path and filename.
+- `mkv`: This specifies the output container format as Matroska (MKV).
+- `disc:0`: This specifies the disc to rip, where `0` is the disc index.
+- `title:0`: This specifies the title to rip from the disc, where `0` is the title index.
+
+Make sure to replace `/output` with the actual path where you want the output file to be saved.
+
+[MakeMKV]  wall: 20s  completion_tokens: 269  gen_speed: 13.66 tok/s  finish: stop
+
+========== Jellyfin ==========
+ To configure Jellyfin's Docker Compose to correctly detect a NAS-mounted media library at `/mnt/nas/media` and handle permissions for a non-root container user, you need to ensure that the Docker container has the necessary access to the mounted directory and that it runs with the appropriate user permissions. Here’s a step-by-step guide to achieve this:
+
+### Step 1: Create or Edit the `docker-compose.yml` File
+
+First, create or edit your `docker-compose.yml` file to mount the NAS-mounted media library correctly.
+
+```yaml
+version: '3.8'
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    ports:
+      - "8096:8096"
+    volumes:
+      - /mnt/nas/media:/media
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    restart: unless-stopped
+```
+
+### Step 2: Set User and Group IDs (PUID and PGID)
+
+The `PUID` and `PGID` environment variables should be set to the user ID and group ID of the user running the Jellyfin container. This ensures that the files in the `/media` directory are owned by the same user inside the container.
+
+- `PUID`: User ID of the user running Jellyfin.
+- `PGID`: Group ID of the user running Jellyfin.
+
+In the example above, `PUID` and `PGID` are set to `1000`, which means the user inside the container will be `user` with UID `1000` and GID `1000`.
+
+### Step 3: Ensure Permissions
+
+To ensure that the Jellyfin container can read and write to the mounted directory, you need to make sure that the user `1000` has the necessary permissions.
+
+1. **Create the User and Group:**
+
+   If the user `1000` does not exist on the host machine, you need to create it. You can do this by running the following commands as root:
+
+   ```sh
+   sudo adduser --uid 1000 user
+   ```
+
+   Replace `user` with the desired username.
+
+2. **Adjust Permissions:**
+
+   Ensure that the directory `/mnt/nas/media` is owned by `user` with `group` and has the correct permissions. You can do this by running the following commands as root:
+
+   ```sh
+   sudo chown -R 1000:1000 /mnt/nas/media
+   sudo chmod -R 755 /mnt/nas/media
+   ```
+
+### Step 4: Verify Configuration
+
+After setting up the `docker-compose.yml` file and ensuring the correct permissions, start or restart your Docker Compose setup:
+
+```sh
+docker-compose up -d
+```
+
+### Additional Considerations
+
+- **Security:** Ensure that the NAS-mounted media library is accessible only to the user running the Jellyfin container to avoid security risks.
+- **Docker Run Permissions:** If you are not using Docker Compose, you can use the `--user` option with the `docker run` command to specify the user and group IDs:
+
+  ```sh
+  docker run --user 1000:1000 -v /mnt/nas/media:/media jellyfin/jellyfin:latest
+  ```
+
+By following these steps, Jellyfin should correctly detect the NAS-mounted media library and run with the appropriate user permissions, ensuring smooth operation and access to your media files.
+
+[Jellyfin]  wall: 65s  completion_tokens: 825  gen_speed: 12.79 tok/s  finish: stop
+
+========== Suite complete ==========
+
+
+lincolnbrennan@LKB-media-desktop:/mnt/local_compute/scripts$ ./run_benchmarks.sh
+
+========== SQL ==========
+Active Model: /mnt/local_compute/models/Qwen3-4B-Instruct-2507-Q4_K_M.gguf
+
+To find each customer's **second most recent order date**, we can use a **window function** in SQL. The idea is to:
+
+1. Order each customer's orders by `order_date` in descending order (most recent first).
+2. Use a window function to assign a **rank** to each order per customer (rank = 1 for most recent, 2 for second most recent, etc.).
+3. Filter only those with rank = 2 (the second most recent).
+
+Here's the SQL query:
+
+```sql
+SELECT 
+    customer_id,
+    order_date
+FROM (
+    SELECT 
+        customer_id,
+        order_date,
+        RANK() OVER (PARTITION BY customer_id ORDER BY order_date DESC) AS order_rank
+    FROM orders
+) ranked_orders
+WHERE order_rank = 2;
+```
+
+---
+
+### Explanation:
+
+- `PARTITION BY customer_id`: Groups the data by customer so that each customer's orders are considered separately.
+- `ORDER BY order_date DESC`: Orders each customer's orders from most recent to oldest.
+- `RANK()`: Assigns a rank to each order within the partition. The most recent order gets rank 1, the next gets rank 2, etc.
+- `WHERE order_rank = 2`: Selects only the second most recent order per customer.
+
+---
+
+### Notes:
+
+- This assumes that each customer has **at least two orders**. If a customer has only one order, they won't appear in the result (since rank 2 doesn't exist).
+- If you want to include customers with only one order (and return `NULL` or a placeholder), you'd need a different approach (e.g., using `DENSE_RANK()` or a `LEFT JOIN` with a subquery). But based on the requirement ("second most recent"), we assume at least two orders per customer.
+
+✅ This query works in standard SQL databases like PostgreSQL, MySQL (8.0+), SQL Server, and Oracle.
+
+[SQL]  wall: 48s  completion_tokens: 405  gen_speed: 8.57 tok/s  finish: stop
+
+========== Docker ==========
+Here's a complete `docker-compose.yml` service definition for Jellyfin that meets your requirements:
+
+```yaml
+version: '3.8'
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    ports:
+      - "8096:8096"
+    volumes:
+      - /mnt/media:/media
+      - /dev/dri:/dev/dri
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York  # Optional: adjust timezone as needed
+    restart: unless-stopped
+    # Enable hardware transcoding by mounting /dev/dri (required for GPU acceleration)
+    # Jellyfin will automatically detect and use available GPU hardware acceleration
+    # when the /dev/dri directory is available
+```
+
+### Key Points:
+
+- **Port Mapping**: `8096:8096` exposes Jellyfin's default web interface on port 8096.
+- **Volume Mounts**:
+  - `/mnt/media:/media` mounts your external media directory to Jellyfin's media folder.
+  - `/dev/dri:/dev/dri` enables hardware transcoding via GPU (e.g., NVIDIA or AMD via VDPAU/VA-API).
+- **Hardware Transcoding**: Jellyfin uses the GPU through the `/dev/dri` device when available. This allows for hardware-accelerated video encoding/decoding, improving performance and reducing CPU load.
+- **PUID/PGID**: These are optional but recommended for proper file permissions. Adjust `1000` to match your user/group IDs if needed.
+- **Restart Policy**: `unless-stopped` ensures the container restarts if it crashes.
+
+> ⚠️ **Note**: Ensure your host system has a compatible GPU (NVIDIA, AMD, or Intel with appropriate drivers) and that the GPU drivers are properly installed. The `/dev/dri` device must be accessible on the host (typically available on Linux systems with proper GPU driver support).
+
+You can customize the timezone (`TZ`) or adjust user IDs if needed. This setup will enable smooth, efficient video playback and transcoding using hardware acceleration.
+
+[Docker]  wall: 56s  completion_tokens: 469  gen_speed: 8.61 tok/s  finish: stop
+
+========== HandBrakeCLI ==========
+To batch-convert all `.mkv` files in a folder to H.265 (x265) at quality 22, while keeping the first audio and subtitle tracks, you can use the following **HandBrakeCLI** command:
+
+```bash
+handbrake-cli -i "path/to/your/folder/*.mkv" -o "path/to/output/folder/%FILENAME%.mp4" -t 1 -q 22 --preset "High Quality" --audio-tracks 0 --subtitles 0 --audio-keep-first --subtitles-keep-first
+```
+
+### Explanation of key options:
+- `-i "path/to/your/folder/*.mkv"`: Input pattern (batch all `.mkv` files in the folder).
+- `-o "path/to/output/folder/%FILENAME%.mp4"`: Output path with filename preserved (e.g., `output/file1.mp4`).
+- `-t 1`: Use the first (default) video track (optional, but useful for clarity).
+- `-q 22`: Set video quality to 22 (lower is better, 22 is a good balance for H.265).
+- `--preset "High Quality"`: This ensures good settings (you can skip this if you're using custom settings).
+- `--audio-tracks 0`: Keeps the first audio track (index 0).
+- `--subtitles 0`: Keeps the first subtitle track (index 0).
+- `--audio-keep-first`: Ensures the first audio track is preserved (if multiple, only first is kept).
+- `--subtitles-keep-first`: Ensures the first subtitle track is preserved.
+
+> ⚠️ **Note**: HandBrakeCLI does not have a direct `--keep-first-audio` or `--keep-first-subtitles` flag. Instead, the `--audio-tracks 0` and `--subtitles 0` options **select** the first track. To **preserve** them, you must ensure they are not removed during encoding. The `--audio-keep-first` and `--subtitles-keep-first` flags are **not officially documented** in HandBrakeCLI, so they may not work as expected.
+
+### ✅ Recommended (more reliable) version:
+```bash
+handbrake-cli -i "path/to/your/folder/*.mkv" -o "path/to/output/folder/%FILENAME%.mp4" -q 22 --preset "High Quality" --audio-tracks 0 --subtitles 0
+```
+
+This will:
+- Encode all `.mkv` files to H.265 (x265) at quality 22.
+- Keep the first audio and subtitle tracks (by selecting them explicitly).
+- Output to a new folder with the original filename.
+
+---
+
+### 📝 Tips:
+- Replace `"path/to/your/folder"` and `"path/to/output/folder"` with actual paths.
+- Ensure HandBrakeCLI is installed and in your PATH.
+- For better control, you can use a script (e.g., Bash) to loop through files and run the command for each one.
+
+### Example Bash script (optional):
+```bash
+#!/bin/bash
+for file in ./input/*.mkv; do
+    output=$(basename "$file" .mkv).mp4
+    handbrake-cli -i "$file" -o "./output/$output" -q 22 --preset "High Quality" --audio-tracks 0 --subtitles 0
+done
+```
+
+> This script processes all `.mkv` files in the `input/` folder and outputs to `output/`.
+
+Let me know if you'd like to add specific audio or subtitle language filtering, or use a custom preset!
+
+[HandBrakeCLI]  wall: 103s  completion_tokens: 793  gen_speed: 7.8 tok/s  finish: stop
+
+========== MakeMKV ==========
+To rip title 0 from disc index 0 to `/output` as an MKV file with minimal verbosity using `MakeMKV`, you would use the following `makemkvcon` command:
+
+```bash
+makemkvcon.exe "rip -t 0 -d 0 -o /output.mkv --quiet"
+```
+
+### Explanation:
+- `rip`: Initiates the ripping process.
+- `-t 0`: Specifies title 0 (the first title on the disc).
+- `-d 0`: Specifies disc index 0 (the first disc in a multi-disc set).
+- `-o /output.mkv`: Outputs the file to `/output.mkv`. (Note: The path should be absolute or relative, and the file extension `.mkv` is implied.)
+- `--quiet`: Minimizes output verbosity (equivalent to minimal logging).
+
+> ⚠️ Note:  
+> - `makemkvcon.exe` is the Windows executable. On macOS or Linux, you may need to use `makemkvcon` (if available) or ensure the correct binary is installed.  
+> - The output path `/output` should be a full path (e.g., `/home/user/output.mkv`) to avoid ambiguity.  
+> - If you want to output to a directory without a file name, you may need to specify the full path with a filename (e.g., `/output/output.mkv`).  
+> - Ensure that the MakeMKV CLI is properly installed and accessible in your PATH.
+
+✅ Final recommended command (with full path and minimal verbosity):
+
+```bash
+makemkvcon.exe "rip -t 0 -d 0 -o /output/output.mkv --quiet"
+```
+
+This will rip title 0 from disc 0 and save it as `output.mkv` in the `/output` directory with minimal output.
+
+[MakeMKV]  wall: 48s  completion_tokens: 385  gen_speed: 8.21 tok/s  finish: stop
+
+========== Jellyfin ==========
+To configure Jellyfin using `docker-compose` to correctly detect a NAS-mounted media library at `/mnt/nas/media`, and ensure proper **permissions** for a **non-root container user**, you need to follow several key steps:
+
+---
+
+### ✅ Step-by-Step Configuration
+
+#### 1. **Mount the NAS Directory Correctly**
+
+Ensure the volume is mounted from the host (`/mnt/nas/media`) into the container at the expected path (e.g., `/media` inside Jellyfin).
+
+> **Important**: The container must have **read and write permissions** on the mounted directory, and the **file system permissions** must be set so that the container user can access the files.
+
+---
+
+#### 2. **Use a Non-Root User in Jellyfin (Recommended)**
+
+By default, Jellyfin runs as root. Running as a non-root user improves security and avoids permission issues with media files.
+
+---
+
+#### 3. **Set Proper File System Permissions**
+
+The host directory (`/mnt/nas/media`) must be **owned by a user** that matches the one used by the Jellyfin container (e.g., `jellyfin`), and the directory must be **world-readable** (or at least readable by the container user).
+
+---
+
+### 📄 Example `docker-compose.yml`
+
+```yaml
+version: '3.8'
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - JELLYFIN_DATA=/config
+      - JELLYFIN_MEDIA=/media
+    volumes:
+      - ./jellyfin-config:/config
+      - /mnt/nas/media:/media
+      - ./jellyfin-data:/config
+    user: "1000:1000"
+    networks:
+      - jellyfin-network
+    ports:
+      - "8096:8096"
+      - "443:443"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  jellyfin-network:
+    driver: bridge
+```
+
+---
+
+### 🔍 Key Explanations
+
+#### 🔹 `PUID` and `PGID`
+- `PUID=1000`: User ID (UID) for the container user (e.g., `jellyfin` user).
+- `PGID=1000`: Group ID (GID) for the container group.
+
+> These values must match the **UID/GID** of the user on the host system that owns `/mnt/nas/media`.
+
+#### 🔹 `user: "1000:1000"`
+- Sets the container to run as a non-root user with UID 1000 and GID 1000.
+- This ensures the container can **read and write** to the mounted media directory **without root privileges**.
+
+#### 🔹 Volume Mount: `/mnt/nas/media:/media`
+- Mounts the NAS path into the container at `/media`.
+- Jellyfin will detect media files in this path when it starts.
+
+#### 🔹 Permissions on Host (`/mnt/nas/media`)
+You **must** ensure that the host directory has correct permissions:
+
+```bash
+# Example: Set ownership and permissions
+sudo chown -R 1000:1000 /mnt/nas/media
+sudo chmod -R 755 /mnt/nas/media
+```
+
+> ⚠️ **Important**: If the directory is owned by `root:root` or another user, the container will **not** be able to read or write to it, even with correct UID/GID.
+
+---
+
+### 🛠️ How to Find Correct UID/GID on Host
+
+1. **Find the UID/GID of your user**:
+   ```bash
+   id -u jellyfin   # if you have a user named jellyfin
+   id -g jellyfin
+   ```
+   If you don’t have a user, create one:
+   ```bash
+   sudo useradd -m -u 1000 -g 1000 jellyfin
+   ```
+
+2. **Set ownership of the NAS mount**:
+   ```bash
+   sudo chown -R 1000:1000 /mnt/nas/media
+   ```
+
+3. **Ensure the directory is readable by the container user**:
+   - The container user (UID 1000) must have **read access** to the media files.
+   - The directory should be **world-readable** (or at least readable by UID 1000).
+
+---
+
+### 🚀 After Setup: Verify
+
+1. Start the
+
+⚠ Truncated: hit the 1024-token limit (finish_reason=length).
+
+[Jellyfin]  wall: 140s  completion_tokens: 1024  gen_speed: 7.41 tok/s  finish: length
+
+========== Suite complete ==========
+
+lincolnbrennan@LKB-media-desktop:/mnt/local_compute/scripts$ ./run_benchmarks.sh
+
+========== SQL ==========
+Active Model: /mnt/local_compute/models/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf
+
+To find each customer's second most recent order date using a window function, you can use the `ROW_NUMBER()` function to assign a rank to each order for every customer based on the order date in descending order. Then, you can filter out the orders to get the second most recent one for each customer. Here's how you can do it:
+
+```sql
+WITH RankedOrders AS (
+  SELECT
+    customer_id,
+    order_id,
+    order_date,
+    ROW_NUMBER() OVER(PARTITION BY customer_id ORDER BY order_date DESC) AS rn
+  FROM
+    orders
+)
+SELECT
+  customer_id,
+  order_id,
+  order_date
+FROM
+  RankedOrders
+WHERE
+  rn = 2;
+```
+
+In this query, the `WITH` clause creates a Common Table Expression (CTE) named `RankedOrders` that ranks orders for each customer based on the `order_date` in descending order. The `ROW_NUMBER()` function assigns a unique rank (`rn`) to each order within a partition of the same `customer_id`, with the most recent order getting the rank of 1. By filtering on `rn = 2`, we get the second most recent order for each customer.
+
+[SQL]  wall: 30s  completion_tokens: 248  gen_speed: 8.82 tok/s  finish: stop
+
+========== Docker ==========
+To create a `docker-compose.yml` file for Jellyfin with the specified requirements, you'll need to ensure that Jellyfin is configured to expose port 8096, map `/mnt/media` to `/media`, and enable hardware transcoding via `/dev/dri`. However, Jellyfin does not natively support hardware transcoding through `/dev/dri` as it's a software-based transcoding solution. Hardware transcoding would typically require a different setup, often involving a dedicated hardware device or software that can interface with `/dev/dri`. Jellyfin's transcoding capabilities are primarily managed through its settings and supported codecs.
+
+Below is a basic `docker-compose.yml` example that sets up Jellyfin, exposing port 8096 and mapping `/mnt/media` to `/media`. Note that for hardware transcoding, you would need to ensure Jellyfin is running on a system that supports it and that the necessary drivers and software for transcoding are installed and configured outside of Jellyfin's Docker container. Jellyfin's Docker image does not directly support hardware transcoding through `/dev/dri` as Jellyfin itself does not manage transcoding through this interface.
+
+```yaml
+version: '3.8'
+services:
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    networks:
+      - jellyfin_net
+    volumes:
+      - /mnt/media:/media
+    ports:
+      - 8096:8096/tcp
+    restart: always
+    environment:
+      - JELLYFIN_SERVER_NAME=MyJellyfinServer
+      - JELLYFIN_SERVER_HOSTNAME=localhost
+      - JELLYFIN_PORT=8096
+      - JELLYFIN_ADMIN_USER=admin
+      - JELLYFIN_ADMIN_PASSWORD=YourStrongPassword
+      - JELLYFIN_SERVER_ROOT_PASSWORD=YourStrongRootPassword
+    networks:
+      - jellyfin_net:
+
+networks:
+  jellyfin_net:
+    driver: bridge
+```
+
+**Important Notes:**
+
+1. **Ports and Volumes**: This configuration exposes Jellyfin on port 8096 and maps `/mnt/media` on the host to `/media` inside the container. Adjust the volume path as necessary to match your host's media directory.
+2. **Environment Variables**: Replace `YourStrongPassword` and `YourStrongRootPassword` with your desired passwords. These are used for the Jellyfin admin user and the server root password, respectively.
+3. **Hardware Transcoding**: Jellyfin does not directly support hardware transcoding through `/dev/dri` within its Docker container. Hardware transcoding would require additional setup outside of Jellyfin, such as using a dedicated transcoding device or software that can interface with Jellyfin. You would need to configure Jellyfin to use this transcoding solution, which might involve setting up transcoding profiles within Jellyfin's web interface rather than through Docker configuration.
+4. **Security**: Exposing Jellyfin on a network can pose security risks. Ensure you understand these risks and take appropriate measures, such as using a VPN, securing your network, and keeping Jellyfin updated.
+
+**Hardware Transcoding Setup (General Guidance):**
+
+For hardware transcoding, you would typically need to:
+- Ensure your hardware supports transcoding and is recognized by your system.
+- Install any necessary drivers or software for transcoding.
+- Configure Jellyfin to use the hardware transcoder. This is usually done within Jellyfin's settings under the "Transcoding" section, where you can select your hardware transcoder.
+
+**Disclaimer**: This example focuses on setting up Jellyfin with Docker and does not directly address hardware transcoding through `/dev/dri` due to Jellyfin's limitations in this context. For hardware transcoding, consider using Jellyfin's built-in transcoding features or a dedicated transcoding solution that integrates with Jellyfin.
+
+[Docker]  wall: 93s  completion_tokens: 785  gen_speed: 8.54 tok/s  finish: stop
+
+========== HandBrakeCLI ==========
+To batch-convert all .mkv files in a folder to H.265 (x265) at quality 22 while keeping the first audio and subtitle tracks using HandBrakeCLI, you can use the following command:
+
+```bash
+for file in *.mkv; do handbrake-cli -i "$file" -o "${file%.mkv}.mp4" -e x265 -q 22 -a 1 -s 1; done
+```
+
+This command will loop through all .mkv files in the current directory, convert them to .mp4 format with H.265 encoding at quality 22, and keep the first audio and subtitle tracks. The `-i` option specifies the input file, `-o` specifies the output file, `-e` specifies the encoder (x265), `-q` specifies the quality (22), `-a` specifies the audio track (1), and `-s` specifies the subtitle track (1). The `${file%.mkv}.mp4` expression removes the .mkv extension from the input file and appends .mp4 instead.
+
+[HandBrakeCLI]  wall: 27s  completion_tokens: 231  gen_speed: 9.08 tok/s  finish: stop
+
+========== MakeMKV ==========
+To rip the title 0 from disc index 0 to an MKV file with minimal output verbosity using MakeMKV, you can use the following command:
+
+```
+makemkvcon -d 0 -s mkv -o /output/ -v 0
+```
+
+Make sure to replace `/output/` with the actual path where you want to save the MKV file. This command will rip the first title (index 0) from disc index 0 and save it as an MKV file in the specified output directory. The `-v 0` option ensures minimal verbosity.
+
+[MakeMKV]  wall: 14s  completion_tokens: 124  gen_speed: 9.21 tok/s  finish: stop
+
+========== Jellyfin ==========
+To configure Jellyfin's Docker Compose to correctly detect a NAS-mounted media library at `/mnt/nas/media`, you'll need to ensure that Jellyfin can access the directory and that the permissions are set correctly for a non-root container user. Here's a step-by-step guide to achieve this:
+
+1. **Mount the NAS Media Directory**: First, you need to mount the NAS media directory to the Jellyfin container. You can do this by adding a volume to your `docker-compose.yml` file that points to the desired mount point on your NAS.
+
+```yaml
+version: '3.8'
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    volumes:
+      - /mnt/nas/media:/mnt/jellyfin/media:ro
+    # ... other configurations ...
+```
+
+In this example, `/mnt/nas/media` is the path on your NAS where the media files are stored, and `/mnt/jellyfin/media` is the path inside the Jellyfin container where it will access the media files.
+
+2. **Set Permissions**: Since Jellyfin runs as a non-root user by default, you need to ensure that the Jellyfin user inside the container has the necessary permissions to read the media files. You can achieve this by setting the correct permissions on the NAS media directory before starting Jellyfin.
+
+On your NAS, you can set the permissions using the following command (replace `username` with the actual username Jellyfin runs as):
+
+```bash
+chown -R username:username /mnt/nas/media
+```
+
+3. **Configure Jellyfin**: Jellyfin should automatically detect the media library at the mounted path. However, you can also specify the media library path in the Jellyfin configuration if needed. You can do this by editing the Jellyfin configuration file (`jellyfin.config`), which is usually located at `/mnt/jellyfin/config/jellyfin.config` inside the container.
+
+4. **Restart Jellyfin**: After making these changes, restart the Jellyfin service to apply the new configuration and permissions.
+
+```bash
+docker-compose down
+docker-compose up -d
+```
+
+5. **Considerations for Non-Root User**: If you want to run Jellyfin as a non-root user for additional security, you can create a user with the necessary permissions on the NAS and then specify this user in the Jellyfin configuration. However, this approach is more complex and may require additional configuration depending on your NAS and Jellyfin setup.
+
+Remember that the exact commands and configurations may vary depending on your NAS model and the Jellyfin version you are using. Always refer to the official Jellyfin documentation and your NAS documentation for specific instructions.
+
+[Jellyfin]  wall: 64s  completion_tokens: 551  gen_speed: 8.79 tok/s  finish: stop
+
+========== Suite complete ==========
+

@@ -1,0 +1,19 @@
+OS: Ubuntu 24.04.5 LTS
+Processor: intel® Core™ i7-6700 × 8
+
+## Hardware Information:
+- **Hardware Model:**                              HP HP ProDesk 600 G2 SFF
+- **Memory:**                                      24.0 GiB
+- **Processor:**                                   Intel® Core™ i7-6700 × 8
+- **Graphics:**                                    Intel® HD Graphics 530 (SKL GT2)
+- **Disk Capacity:**                               756.2 GB
+
+## Software Information:
+- **Firmware Version:**                            N02 Ver. 02.16
+- **OS Name:**                                     Ubuntu 24.04.5 LTS
+- **OS Build:**                                    (null)
+- **OS Type:**                                     64-bit
+- **GNOME Version:**                               46
+- **Windowing System:**                            Wayland
+- **Kernel Version:**                              Linux 6.17.0-14-generic
+

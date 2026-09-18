@@ -1,0 +1,124 @@
+lincolnbrennan@LKB-media-desktop:/mnt/local_compute/models$ cd /mnt/local_compute/models
+
+for t in 4 6 8; do
+  echo "=== $t threads ==="
+  ~/llama.cpp/build/bin/llama-bench \
+    -m ./Qwen3-8B-Q4_K_M.gguf \
+    -t "$t" \
+    -p 512 \
+    -n 128
+done
+=== 4 threads ===
+| model                          |       size |     params | backend    | threads |            test |                  t/s |
+| ------------------------------ | ---------: | ---------: | ---------- | ------: | --------------: | -------------------: |
+| qwen3 8B Q4_K - Medium         |   4.68 GiB |     8.19 B | CPU        |       4 |           pp512 |         19.55 ± 0.35 |
+| qwen3 8B Q4_K - Medium         |   4.68 GiB |     8.19 B | CPU        |       4 |           tg128 |          4.99 ± 0.01 |
+
+build: 2f3fd0252 (11007)
+=== 6 threads ===
+| model                          |       size |     params | backend    | threads |            test |                  t/s |
+| ------------------------------ | ---------: | ---------: | ---------- | ------: | --------------: | -------------------: |
+| qwen3 8B Q4_K - Medium         |   4.68 GiB |     8.19 B | CPU        |       6 |           pp512 |         19.75 ± 0.06 |
+| qwen3 8B Q4_K - Medium         |   4.68 GiB |     8.19 B | CPU        |       6 |           tg128 |          5.09 ± 0.01 |
+
+build: 2f3fd0252 (11007)
+=== 8 threads ===
+| model                          |       size |     params | backend    | threads |            test |                  t/s |
+| ------------------------------ | ---------: | ---------: | ---------- | ------: | --------------: | -------------------: |
+| qwen3 8B Q4_K - Medium         |   4.68 GiB |     8.19 B | CPU        |       8 |           pp512 |         21.04 ± 0.11 |
+| qwen3 8B Q4_K - Medium         |   4.68 GiB |     8.19 B | CPU        |       8 |           tg128 |          4.85 ± 0.05 |
+
+build: 2f3fd0252 (11007)
+
+
+With cd /mnt/local_compute/models
+
+~/llama.cpp/build/bin/llama-server \
+  -m ./gemma-4-E4B-it-Q4_K_M.gguf \
+  --host 127.0.0.1 \
+  --port 8080 \
+  -c 8192 \
+  -np 1 \
+  -t 4 \
+  -tb 6 \
+  -b 256 \
+  -ub 128 \
+  -fa auto
+
+Prompt:
+lincolnbrennan@LKB-media-desktop:/mnt/local_compute/models$ curl -s http://127.0.0.1:8080/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "gemma-4-E4B-it-Q4_K_M.gguf",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Write a Bash one-liner that prints the number of .mkv files in /mnt/local_compute. Give only the command and no explanation."
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 256
+  }'
+{"choices":[{"finish_reason":"stop","index":0,"message":{"role":"assistant","content":"find /mnt/local_compute -maxdepth 1 -name \"*.mkv\" | wc -l"}}],"created":1789582819,"model":"./gemma-4-E4B-it-Q4_K_M.gguf","system_fingerprint":"b11007-2f3fd0252","object":"chat.completion","usage":{"completion_tokens":23,"prompt_tokens":47,"total_tokens":70,"prompt_tokens_details":{"cached_tokens":0}},"id":"chatcmpl-mSH1pUl6auXHA58pdJ5hkk9XrFkdOkzN","timings":{"cache_n":0,"prompt_n":47,"prompt_ms":1588.268,"prompt_per_token_ms":33.79293617021277,"prompt_per_second":29.5919832169382,"predicted_n":23,"predicted_ms":3053.312,"predicted_per_token_ms":138.7869090909091,"predicted_per_second":7.205290517313658}}
+
+With server: 
+~/llama.cpp/build/bin/llama-server   -m ./gemma-4-E4B-it-Q4_K_M.gguf   --host 127.0.0.1   --port 8080   -c 8192   -np 1   -t 6   -tb 6   -b 256   -ub 128   -fa auto
+0.00.003.136 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.003.822 W srv  llama_server: -----------------
+0.00.003.824 W srv  llama_server: CORS is set to allow all origins ('*') and no API key is set
+0.00.003.825 W srv  llama_server: this can be a security risk (cross-origin attacks)
+
+
+Prompt:lincolnbrennan@LKB-media-desktop:/mnt/local_compute/models$ curl -s http://127.0.0.1:8080/v1/chat/completions   -H 'Content-Type: application/json'   -d '{
+    "model": "gemma-4-E4B-it-Q4_K_M.gguf",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Write a Bash one-liner that prints the number of .mkv files in /mnt/local_compute. Give only the command and no explanation."
+      }
+    ],
+    "temperature": 0.2,
+    "max_tokens": 256
+  }'
+{"choices":[{"finish_reason":"stop","index":0,"message":{"role":"assistant","content":"find /mnt/local_compute -maxdepth 1 -name \"*.mkv\" | wc -l"}}],"created":1789582856,"model":"./gemma-4-E4B-it-Q4_K_M.gguf","system_fingerprint":"b11007-2f3fd0252","object":"chat.completion","usage":{"completion_tokens":23,"prompt_tokens":47,"total_tokens":70,"prompt_tokens_details":{"cached_tokens":0}},"id":"chatcmpl-0EQKlQfm4sWdSv9kzIcB1KnzOJP51aXm","timings":{"cache_n":0,"prompt_n":47,"prompt_ms":1619.429,"prompt_per_token_ms":34.455936170212766,"prompt_per_second":29.02257524102631,"predicted_n":23,"predicted_ms":3233.423,"predicted_per_token_ms":146.97377272727272,"predicted_per_second":6.803935024894671}}l
+
+Summary:
+llama.cpp build: 2f3fd0252
+
+Gemma 4 E4B Q4_K_M
+-------------------
+4 threads:
+  pp512: 33.09 tok/s
+  tg128: 7.34 tok/s
+
+6 threads:
+  pp512: 32.48 tok/s
+  tg128: 7.30 tok/s
+
+8 threads:
+  pp512: 34.51 tok/s
+  tg128: 6.86 tok/s
+
+Server API test, -t 4:
+  prompt: 29.59 tok/s
+  generation: 7.21 tok/s
+
+Server API test, -t 6:
+  prompt: 29.02 tok/s
+  generation: 6.80 tok/s
+
+
+Qwen3 8B Q4_K_M
+----------------
+4 threads:
+  pp512: 19.55 tok/s
+  tg128: 4.99 tok/s
+
+6 threads:
+  pp512: 19.75 tok/s
+  tg128: 5.09 tok/s
+
+8 threads:
+  pp512: 21.04 tok/s
+  tg128: 4.85 tok/s
+

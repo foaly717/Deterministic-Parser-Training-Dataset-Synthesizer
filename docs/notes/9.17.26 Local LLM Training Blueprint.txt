@@ -1,0 +1,1315 @@
+9.17.26 Local LLM Training Blueprint:
+Prompt:
+I'm interested in downloading model training datasets to train a local model from the following:
+Bash datasets:
+
+The Bash dataset from the "bash" repository on GitHub: 
+bash/dataset
+This dataset contains a large collection of Bash scripts and their corresponding outputs.
+
+UV datasets:
+
+The UV dataset from the "uv" repository on GitHub: 
+uv/uv
+This dataset contains a large collection of Unified Verbal datasets for various programming languages, including Python.
+SQL datasets:
+The SQL dataset from the "sql" repository on GitHub: 
+sql/sql
+This dataset contains a large collection of SQL scripts and their corresponding outputs.
+Maybe:
+The "Code Snippets" repository on GitHub: 
+https://github.com/CodeSnippets
+This repository contains a large collection of code snippets from various programming languages.
+
+Assess viability and which of these models would be the best fit for training:
+DeepSeek-Coder-V2-Lite-Instruct-Q4_K_M.gguf Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf
+microsoft_Phi-4-mini-instruct-Q4_K_M.gguf Qwen3-4B-Instruct-2507-Q4_K_M.gguf
+
+======================
+ChatGPT assessment:
+Dataset quality and training format will determine whether this experiment teaches the model useful terminal-assistant behavior.
+
+1. What I would actually train
+
+For your goal, I would not attempt to "train a model on Bash, UV, and SQL repositories." I would build a domain-specific instruction/SFT corpus around:
+
+Linux shell + Python + SQL + Docker + HandBrakeCLI + MakeMKV + Jellyfin + system administration + documentation-grounded command generation
+
+The training examples should look more like:
+
+USER: How do I list all files larger than 1 GB under /media?
+
+ASSISTANT: find /media -type f -size +1G -print
+
+or
+
+USER: Using only the supplied HandBrakeCLI documentation, what option selects the main feature?
+DOCUMENTATION: xyz
+ASSISTANT: --main-feature
+
+rather than simply dumping source code into training. The latter teaches behavior rather than merely increasing the model's exposure to code.
+
+2. The four candidate models:
+There is an important technical issue first: Do not train the GGUF files you currently have. Your:
+DeepSeek-Coder-V2-Lite-Instruct-Q4_K_M.gguf
+Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf
+Phi-4-mini-instruct-Q4_K_M.gguf
+Qwen3-4B-Instruct-2507-Q4_K_M.gguf
+
+are inference-oriented quantized representations.
+
+IBM's Granite-4.0-Micro is a 3B instruct model explicitly emphasizing instruction following and tool calling. Its model card says it was fine-tuned using open instruction datasets with permissive licenses plus synthetic data, followed by alignment and model merging. 
+
+Allen Institute for AI's OLMo project is unusually relevant to what you're trying to learn. OLMo 3 has 7B and 32B families, with base → SFT → DPO → RLVR stages, and AI2 releases the model checkpoints, training code, and associated training details. The 7B model was pretrained on 5.93T tokens with a 65,536-token context. AI2 explicitly publishes the intermediate SFT/DPO stages for OLMo 3, so there is unusually good visibility into how those models were constructed. 
+
+Shortlist of models for training:
+
+Qwen3-4B-Instruct-2507 -- still the top choice
+OLMo 3 7B Instruct 
+Granite-4.0-Micro 
+Phi-4-mini-Instruct 
+SmolLM3-3B 
+DeepSeek-Coder-V2-Lite-Instruct 
+Ministral-3B-Instruct 
+OLMo-3.1-7B-RL-Zero-Code 
+
+Keep Qwen3-30B-A3B-Instruct-2507 as the teacher/reference model.
+
+
+For practical LoRA/QLoRA training, you would normally start from the corresponding original Hugging Face model weights, train an adapter, and then convert/quantize the resulting model for llama.cpp. So the workflow is:
+
+HF model weights
+       ↓
+SFT / LoRA / QLoRA
+       ↓
+adapter
+       ↓
+merge/export if desired
+       ↓
+GGUF
+       ↓
+Q4_K_M
+       ↓
+llama.cpp
+
+3. My assessment of the four:
+Qwen3-4B-Instruct-2507	Very strong candidate	Small enough to experiment with repeatedly; current Qwen instruction/coding/tool capabilities This is particularly interesting for your project. Qwen describes the 2507 model as a 4.0B-parameter non-thinking model with improvements in instruction following, logical reasoning, text comprehension, coding and tool usage. It has a native 262K context window. More importantly for your experiment, it is:
+4B parameters
++
+modern architecture
++
+instruction tuned
++
+coding capability
++
+tool-use capability
++
+small enough for experimentation
+
+That's a good combination for a local terminal assistant. You don't actually need to teach it programming from scratch. You want to teach it: "Given this kind of request, behave like THIS particular terminal assistant."
+Phi-4-mini-instruct	Very strong candidate	3.8B dense model explicitly designed for constrained/latency-sensitive environments and has documented SFT support
+I would specifically start with Qwen3-4B-Instruct-2507 or Phi-4-mini-instruct, not the 30B model. You don't actually need to teach it programming from scratch. You want to teach it: "Given this kind of request, behave like THIS particular terminal assistant." That's exactly the sort of specialization where a 4B instruction model is interesting. You could train it toward:
+concise responses
+command-first responses
+uv rather than pip
+Linux conventions
+safe command construction
+documentation grounding
+structured tool calls
+explicit uncertainty
+no invented flags
+
+That is much more interesting than trying to teach it generic Python syntax.
+
+
+Phi-4-mini-instruct is a 3.8B model, and Microsoft's model card explicitly describes it as intended for memory-constrained and latency-bound environments. Microsoft also provides a basic SFT example using TRL/Accelerate. It is also MIT licensed. That makes it a very convenient control experiment:
+
+Qwen3-4B vs. Phi-4-mini with essentially the same training corpus.
+
+You could therefore measure:
+
+             base       fine-tuned
+Qwen3-4B       X             Y
+Phi-4-mini    X             Y
+
+against a fixed evaluation suite.
+
+That would tell you much more than trying to guess which model is theoretically best.
+
+Your assistant isn't just a code generator. It needs to understand:
+Linux
+shell
+documentation
+system state
+file operations
+Docker
+Python
+SQL
+media tooling
+safe execution
+
+That's a broader task than pure code completion.
+
+7. The datasets you proposed need to be replaced/reframed This is the most important part.
+
+Bash: The claimed bash/dataset repository isn't currently available at that URL; GitHub returns 404. Instead, I would build a Bash corpus from specific, licensed sources and transform it into training examples.
+
+For example:
+shell script
++
+README/documentation
++
+command output
++
+natural-language task
+The last two pieces are much more valuable than simply collecting .sh files.
+
+uv :  the actual Astral uv documentation and source project are highly relevant training material. You specifically want the model to learn:
+uv init
+uv add
+uv run
+uv sync
+uv venv
+uv lock
+
+and the associated workflows.
+
+I'd therefore construct a small uv task dataset from its documentation rather than treating the repository as a generic training corpus.
+
+SQL: For SQL, I'd use purpose-built Text-to-SQL datasets instead. There are established collections covering schema linking, SQL generation, cross-domain generalization, and conversational Text-to-SQL. But I'd filter them heavily for your use case. You don't need "generate SQL for arbitrary enterprise database X"
+as much as you need:
+USER: Select all rows sorted by row_id ascending.
+ASSISTANT: SELECT * FROM table_name ORDER BY row_id ASC;
+
+plus increasingly complex SQLite/PostgreSQL/MySQL examples.
+
+You want task → solution → explanation/constraints examples.
+
+8. The training corpus I'd build instead I'd structure approximately like this:
+terminal_assistant_dataset/
+│
+├── bash/
+│   ├── commands.jsonl
+│   ├── scripting.jsonl
+│   └── troubleshooting.jsonl
+│
+├── python/
+│   ├── uv.jsonl
+│   ├── pandas.jsonl
+│   ├── filesystem.jsonl
+│   └── scripting.jsonl
+│
+├── sql/
+│   ├── basic.jsonl
+│   ├── sqlite.jsonl
+│   ├── postgres.jsonl
+│   └── analytical.jsonl
+│
+├── docker/
+│   ├── lifecycle.jsonl
+│   ├── volumes.jsonl
+│   ├── networking.jsonl
+│   └── troubleshooting.jsonl
+│
+├── media/
+│   ├── handbrake.jsonl
+│   ├── makemkv.jsonl
+│   └── jellyfin.jsonl
+│
+├── documentation/
+│   ├── extraction.jsonl
+│   ├── grounded_commands.jsonl
+│   └── uncertainty.jsonl
+│
+└── safety/
+    ├── destructive_commands.jsonl
+    ├── sandboxing.jsonl
+    └── permission_boundaries.jsonl
+
+And the examples should be instruction-oriented.
+
+9. The really interesting dataset for your project: I'd put substantial effort into documentation-grounded behavior. You have already demonstrated that prompting alone doesn't work reliably:
+documentation
+      ↓
+Qwen
+      ↓
+"ONLY use supplied documentation"
+      ↓
+Qwen still uses pretrained knowledge
+
+That's an excellent training target.
+
+You could create examples such as:
+{
+  "instruction": "Using only the supplied documentation, identify the option that selects the main feature.",
+  "documentation": "...",
+  "response": "--main-feature"
+}
+
+And negative examples:
+{
+  "instruction": "Using only the supplied documentation, give the command for X.",
+  "documentation": "...",
+  "response": "NOT SPECIFIED IN SUPPLIED DOCUMENTATION."
+}
+
+Then another class:
+supplied documentation
+        +
+user request
+        ↓
+extract relevant evidence
+        ↓
+construct command
+
+This directly targets the failure mode you've been testing.
+
+
+10. I would use the 30B model as a teacher, not the student
+
+This is probably the most interesting experimental design given what you already have.
+                   Qwen3-30B-A3B
+                         │
+                  generate examples
+                         │
+                         ▼
+                 deterministic filter
+                         │
+                         ▼
+                  evaluation/review
+                         │
+                         ▼
+              ┌──────────┴──────────┐
+              ▼                     ▼
+         Qwen3-4B             Phi-4-mini
+              │                     │
+              ▼                     ▼
+         fine-tune A            fine-tune B
+              │                     │
+              └──────────┬──────────┘
+                         ▼
+                  identical eval set
+
+The 30B model can generate candidate:
+
+Bash solutions
+Python solutions
+SQL solutions
+documentation-grounded examples
+tool-selection examples
+refusal/uncertainty examples
+command explanations
+
+But do not blindly train on its output. Your earlier MakeMKV response is already an excellent demonstration of why: it confidently included questionable or unsupported claims. Generated data needs deterministic validation and/or human review.
+
+11. My proposed first experiment
+I would make this deliberately small.
+Student: Qwen3-4B-Instruct-2507
+
+Training method: LoRA/QLoRA SFT
+Initial corpus oomething like:
+1,000–5,000 high-quality examples
+
+25% Bash/Linux
+20% Python/uv
+15% SQL
+15% Docker
+15% media tooling
+10% documentation grounding/safety
+
+Not because those percentages are intrinsically optimal, but because they roughly represent the behavior you want the assistant to acquire.
+
+Keep the evaluation set completely separate:
+100 Bash tasks
+100 Python tasks
+100 SQL tasks
+100 Docker tasks
+100 media-tool tasks
+100 documentation-grounding tasks
+100 safety/command-construction tasks
+
+Then compare Qwen3-4B base vs Qwen3-4B fine-tuned on the exact same prompts. That will tell you whether the training actually improves your terminal assistant rather than merely making it produce more domain-flavored text.
+
+For your specific project, my experimental order would be:
+1. Qwen3-4B-Instruct-2507 — first student. Modern, small, instruction/coding/tool capable, and much more practical to iterate on.
+2. Phi-4-mini-instruct — second student/control. 3.8B, explicitly targeted at constrained/latency-sensitive deployments, with Microsoft's SFT example available.
+3. DeepSeek-Coder-V2-Lite-Instruct — coding-specialist comparison.
+4. Qwen3-30B-A3B-Instruct-2507 — keep as your larger reference/teacher model initially rather than attempting to fine-tune it on this desktop. Its MoE architecture makes it interesting, but the total model size makes the training experiment substantially more demanding.
+The next step should be identifying real, licensed source datasets for Bash/Linux, Python/uv, SQL, Docker, and code instruction, then constructing a clean JSONL SFT corpus around the behavior you actually want.
+
+
+
+Parser and Dataset Generation: Start with authoritative material. For example, suppose you have:
+HandBrakeCLI --help stored as: data/source/handbrakecli-help.txt A deterministic parser can extract things such as:
+{
+  "source": "handbrakecli-help.txt",
+  "tool": "HandBrakeCLI",
+  "option": "--main-feature",
+  "description": "Detect and select the main feature title."
+}
+
+The important part is that Qwen does not decide whether --main-feature exists. Your parser does.
+
+2. Give Qwen the source and a narrowly defined generation task, for example:
+Generate 20 terminal-assistant training examples from the supplied
+documentation.
+Requirements:
+
+- Every answer must be completely supported by the supplied documentation.
+- Do not introduce undocumented options.
+- Do not introduce external URLs.
+- Do not add capabilities not established by the documentation.
+- Include some questions whose answer cannot be established.
+- Those examples must answer:
+  NOT SPECIFIED IN SUPPLIED DOCUMENTATION.
+- Return JSONL only. 
+
+Then supply the actual documentation. Qwen might produce:
+{"instruction":"How do I select the main feature title?","response":"--main-feature"}
+{"instruction":"How do I select title 3?","response":"--title 3"}
+{"instruction":"How do I set a minimum title duration of 60 seconds?","response":"--min-duration 60"}
+{"instruction":"How do I enable GPU encoding?","response":"NOT SPECIFIED IN SUPPLIED DOCUMENTATION."}
+
+Some of those may be good. Some may be wrong. You don't trust the model's judgment about which ones are good.
+
+3. Deterministic validation
+This is where your project becomes substantially more robust. Suppose the source contains exactly:
+-t, --title <number>
+--min-duration
+--main-feature
+
+Your validator can construct:
+known_options = {
+    "-t",
+    "--title",
+    "--min-duration",
+    "--main-feature",
+}
+
+Then inspect generated answers.
+For example:
+
+--main-feature
+
+passes. But:
+--some-gpu-option
+
+fails immediately. Likewise:
+--preset fast
+could be rejected if the generated example claims that fast is a documented value but the supplied source doesn't establish that.
+
+4. Validators should be task-specific: You don't want one giant "AI quality checker." Build small deterministic validators. For example:
+
+validators/
+    schema.py
+    options.py
+    commands.py
+    paths.py
+    documentation.py
+    safety.py
+    python.py
+    sql.py
+    
+Documentation validator
+Checks:
+referenced options actually occur in supplied documentation
+referenced commands occur in supplied documentation
+quoted values occur in supplied documentation
+URLs aren't invented
+answer doesn't introduce unsupported capabilities
+Command validator
+
+For a generated: HandBrakeCLI -i input.mkv -o output.mp4 --main-feature
+you can tokenize it and check that every option is known. You can also require that the example's command be syntactically parseable where appropriate.
+
+SQL validator
+You can actually execute generated SQL against a temporary database. For example:
+generated SQL
+     │
+     ▼
+SQLite temporary DB
+     │
+     ├── parses?
+     ├── executes?
+     ├── expected result?
+     └── modifies data?
+This is much stronger than asking Qwen whether its SQL is correct.
+
+Python validator
+You can:
+parse with ast
+compile it
+run it in a restricted test environment
+execute unit tests
+compare expected output
+
+Again: LLM says "this works", actually test it
+
+Safety examples need especially hard validation/ This is where I would put your sandbox architecture to work. Suppose Qwen generates:
+{
+  "instruction": "Convert all TXT files to CSV.",
+  "response": "for f in *.txt; do ...; done"
+}
+
+Your validator can check the resulting command for:
+rm
+rm -rf
+mv
+dd
+mkfs
+fdisk
+chmod
+chown
+sudo
+>
+>>
+
+
+6. Generate negative examples deliberately: This is particularly important for your assistant. Don't merely generate question → correct command , Generate:
+question → correct command
+question → insufficient information
+question → unsafe request
+question → unsupported option
+question → ambiguous request
+question → supplied documentation contradiction
+
+For example:
+{
+  "instruction": "Using only the supplied HandBrakeCLI documentation, how do I enable AV1 hardware encoding?",
+  "context": "...",
+  "response": "NOT SPECIFIED IN SUPPLIED DOCUMENTATION."
+}
+
+That teaches the model something your current prompt-only approach isn't reliably teaching: absence of evidence should produce an explicit uncertainty response.
+
+
+7. Have Qwen generate adversarial candidates too: This is where the 30B model becomes particularly useful. After generating an example, ask it to produce failure cases. For example, Given this documentation and this valid example:
+QUESTION: How do I select the main feature?
+ANSWER: --main-feature
+
+Generate five plausible but unsupported answers that a model
+might incorrectly produce.
+You might get:
+--feature main
+--main-title
+--select-main-feature
+--title main
+--main-feature=true
+
+You then create negative training examples or use them to test your validator.
+
+9. Store provenance with every example. This is one of the things I would strongly recommend for your project. Instead of: {"instruction":"How do I select the main feature?","response":"--main-feature"} store:
+{
+  "id": "hb-main-feature-0001",
+  "source": {
+    "type": "documentation",
+    "file": "handbrakecli-help.txt",
+    "sha256": "..."
+  },
+  "generator": {
+    "model": "Qwen3-30B-A3B-Instruct-2507",
+    "synthetic": true
+  },
+  "instruction": "How do I select the main feature?",
+  "context": "...",
+  "response": "--main-feature",
+  "validation": {
+    "schema": true,
+    "documented_options": true,
+    "unsupported_tokens": false
+  },
+  "status": "accepted"
+}
+
+Then your final SFT conversion can strip the metadata. But you retain it in your master dataset. That gives you traceability when you discover six months later that a training example was bad.
+
+11. The first version can be surprisingly small, you don't need a massive infrastructure project initially. I would start with approximately:
+10–20 source documents
+       ↓
+500–2,000 generated candidates
+       ↓
+deterministic validation
+       ↓
+500–1,000 accepted examples
+       ↓
+SFT
+       ↓
+evaluation
+
+Then inspect what failed. If grounding improves but coding ability degrades, change the corpus. If command formatting improves but safety doesn't, add safety examples. If the model starts refusing too much, add positive examples showing when it can answer. This makes the dataset itself an iterative engineering artifact.
+
+For your project, I would construct the deterministic parser as a small Python data-ingestion/validation package, not another LLM component. Its job is to turn authoritative source material into structured facts that can later be used to validate Qwen-generated examples.
+source material
+     │
+     ├── man pages
+     ├── --help output
+     ├── official documentation
+     ├── source repositories
+     ├── real commands
+     └── test cases
+            │
+            ▼
+    deterministic parser
+            │
+            ▼
+      normalized facts
+            │
+            ▼
+      validation database
+            │
+            ▼
+    Qwen-generated examples
+            │
+            ▼
+     deterministic checks
+1. Core implementation
+
+I would use:
+Python 3.12+
+Astral uv for the project/environment
+re for simple structured extraction
+json / JSONL for interchange
+pathlib for filesystem handling
+hashlib for source fingerprints
+sqlite3 for the persistent fact/metadata store
+ast for Python validation
+subprocess execution only inside your existing execution/sandbox layer
+dedicated parsers for formats that actually require parsing
+No LangChain or vector database is required for this part. A project might look like:
+
+terminal_assistant_data/
+├── pyproject.toml
+├── src/
+│   └── dataset_tools/
+│       ├── __init__.py
+│       ├── models.py
+│       ├── ingest.py
+│       ├── normalize.py
+│       ├── provenance.py
+│       ├── validate.py
+│       │
+│       ├── parsers/
+│       │   ├── help_text.py
+│       │   ├── man_page.py
+│       │   ├── markdown.py
+│       │   ├── python.py
+│       │   └── sql.py
+│       │
+│       └── validators/
+│           ├── options.py
+│           ├── commands.py
+│           ├── python.py
+│           ├── sql.py
+│           └── safety.py
+└── tests/
+
+
+The parser should extract facts, not attempt to understand natural language. For example, from:
+
+-t, --title <number>    Select a title to encode
+-Z, --preset <string>   Select preset by name
+--main-feature           Detect and select the main feature title
+
+it could produce:
+{"kind":"option","short":"-t","long":"--title","argument":"<number>"}
+{"kind":"option","short":"-Z","long":"--preset","argument":"<string>"}
+{"kind":"option","long":"--main-feature"}
+
+The description can be retained:
+{
+  "kind": "option",
+  "long": "--main-feature",
+  "description": "Detect and select the main feature title."
+}
+
+The parser doesn't decide whether --main-feature is the right answer to a question. It merely establishes
+" --main-feature is present in this source". That's a much easier property to verify deterministically.
+
+Each source type gets an appropriate parser
+--help output: This is probably your first and easiest target. A parser can recognize common option forms:
+--foo
+--foo <value>
+-f, --foo <value>
+-f,--foo
+
+and retain the surrounding description. But importantly, don't assume every help format follows one grammar. The parser should identify the format and either parse it confidently or mark it:
+parse_status = unsupported_format rather than guessing. That matches your existing requirement of not inventing syntax.
+
+4. Man pages
+For man pages, I'd avoid trying to parse raw troff directly at first.
+Use:
+man HandBrakeCLI
+or another explicitly controlled source to produce normalized text, then feed that text to a man-page parser. Eventually you can support sections such as:
+NAME
+SYNOPSIS
+DESCRIPTION
+OPTIONS
+EXAMPLES
+
+The parser might produce:
+
+{
+  "kind": "section",
+  "name": "OPTIONS",
+  "source_offset": [1200, 8400]
+}
+
+and:
+
+{
+  "kind": "option",
+  "name": "--main-feature",
+  "source": "handbrakecli-man.txt",
+  "location": 3821
+}
+
+Again, location/provenance matters.
+
+5. Markdown/HTML documentation: For official documentation, use a real document parser where necessary. For Markdown, the pipeline could be:
+Markdown
+   ↓
+AST/document structure
+   ↓
+headings
+code blocks
+lists
+tables
+inline code
+links
+   ↓
+normalized records
+
+For example:
+
+{
+  "kind": "code",
+  "language": "bash",
+  "text": "uv add pandas"
+}
+
+and:
+
+{
+  "kind": "term",
+  "value": "uv add",
+  "source": "uv-docs.md"
+}
+
+You don't need semantic embeddings at this stage.
+
+6. Source repositories are different. For GitHub repositories, I'd treat source code as a separate ingestion class. For Python:
+.py
+ ↓
+Python AST
+ ↓
+functions
+classes
+imports
+docstrings
+signatures
+
+For Bash, parsing is substantially less clean because shell syntax is complex. I would therefore distinguish:
+Bash source
+   │
+   ├── lexical extraction
+   │
+   ├── shell parser where appropriate
+   │
+   └── actual execution tests
+
+The execution test is often more valuable than trying to prove semantic correctness statically.
+
+7. SQL can be handled particularly well: SQL gives you a good opportunity for deterministic validation.
+Suppose Qwen generates:
+SELECT name
+FROM users
+WHERE age > 30;
+
+Your validator can parse it with an appropriate SQL parser and, where a database/schema is available, actually execute it against a disposable database. For training examples you can have:
+question
+   ↓
+generated SQL
+   ↓
+parse
+   ↓
+schema validation
+   ↓
+execute
+   ↓
+expected-result comparison
+
+This gives you much stronger labels than another LLM saying "yes, this SQL looks correct."
+
+8. The central data structure:
+I would normalize everything into something like:
+{
+  "source_id": "handbrakecli-help-2026-09-16",
+  "source_sha256": "...",
+  "tool": "HandBrakeCLI",
+  "kind": "option",
+  "name": "--main-feature",
+  "aliases": [],
+  "argument": null,
+  "description": "Detect and select the main feature title.",
+  "location": {
+    "file": "handbrakecli-help.txt",
+    "line_start": 142,
+    "line_end": 143
+  }
+}
+
+Then your validator has a very simple interface:
+Is --main-feature documented? YES
+Is --restart documented? NO
+
+That alone solves a large portion of the hallucination problem you encountered.
+
+9. Provenance should be built in from day one
+Every extracted fact should know where it came from.
+source
+  ├── source_id
+  ├── URL/path
+  ├── retrieval timestamp
+  ├── SHA-256
+  ├── license
+  └── version
+
+fact
+  ├── source_id
+  ├── kind
+  ├── value
+  └── source location
+
+Then an accepted synthetic example can say:
+
+{
+  "instruction": "How do I select the main feature?",
+  "response": "--main-feature",
+  "evidence": [
+    {
+      "source_id": "handbrakecli-help-2026-09-16",
+      "fact": "--main-feature"
+    }
+  ]
+}
+
+This lets you audit the training corpus later. Validation becomes straightforward. Imagine Qwen generates:
+
+{
+  "instruction": "How do I select the main feature?",
+  "response": "HandBrakeCLI --main-feature"
+}
+
+The validator can extract:
+HandBrakeCLI
+--main-feature
+
+and check:
+HandBrakeCLI       → known
+--main-feature     → documented
+
+Pass.
+
+If it generates:
+HandBrakeCLI --main-feature --magic-fast-mode
+you get:
+HandBrakeCLI          → known
+--main-feature        → documented
+--magic-fast-mode     → NOT documented
+
+Reject, no model judgment required.
+
+11. This also enables "NOT SPECIFIED" training, this is one of the most useful consequences. Given a documentation-derived fact set:
+KNOWN OPTIONS:
+--title
+--preset
+--preset-list
+--main-feature
+
+Qwen generates:
+
+Question:
+How do I enable --turbo-encoding?
+
+The validator extracts:
+--turbo-encoding
+and determines:
+--turbo-encoding ∉ known_options
+
+If the candidate response is:
+NOT SPECIFIED IN SUPPLIED DOCUMENTATION.
+that's potentially a positive training example.
+
+If Qwen instead responds:
+Use --turbo-encoding.
+that's a deterministic rejection.
+
+12. I would separate parser and validator:
+Parser Answers: What does the source contain?
+Validator Answers: Is this generated example consistent with what the source contains?
+
+LLM Answers: What candidate example should we try?
+
+
+Tree-sitter has a maintained Bash grammar with Python bindings, and the current tree-sitter Python package is actively maintained. SQLGlot already parses SQL into structured expression trees and detects syntax/dialect problems. Python itself provides ast for Python source. I would not write a Bash parser, Python parser, or SQL parser. Your custom component is essentially a documentation evidence extractor. For example, given:
+
+-t, --title <number>    Select a title to encode
+-Z, --preset <string>   Select preset by name
+--main-feature          Detect and select the main feature title
+
+you want to normalize it into:
+{
+  "kind": "cli_option",
+  "name": "--main-feature",
+  "aliases": [],
+  "argument": null,
+  "description": "Detect and select the main feature title.",
+  "source": "HandBrakeCLI --help",
+  "line": 3
+}
+
+There isn't a universal library that can reliably do this for arbitrary CLI programs because --help output isn't a standardized machine-readable format.
+
+
+For your first experiment
+
+I would use only four components:
+
+1. Tree-sitter
+
+For source-code validation.
+
+Bash
+Python
+JavaScript
+etc.
+
+Tree-sitter has a Bash grammar specifically, including Python bindings.
+
+2. SQLGlot
+
+For SQL parsing/validation.
+
+SQL
+ ↓
+SQLGlot AST
+ ↓
+syntax/dialect validation
+
+SQLGlot already provides syntax checking and dialect handling.
+
+3. Markdown parser
+
+For official documentation.
+
+You don't need to invent Markdown parsing. Extract:
+
+heading
+paragraph
+code block
+list
+table
+inline code
+link
+
+and retain source locations.
+
+4. Your own cli_help.py
+
+This is probably only a few hundred lines initially.
+
+Its job is not to understand CLI semantics.
+
+It extracts obvious declarations:
+
+--foo
+-f, --foo
+--foo <value>
+--foo=value
+
+and associates them with their nearby description.
+
+Anything ambiguous gets:
+
+parse_status = "uncertain"
+
+rather than being guessed.
+
+The really important distinction
+
+There are actually two different problems here.
+
+Parsing: Does this text contain --main-feature? Existing tooling + small custom code solves this.
+Evidence validation: Is Qwen's answer --main-feature supported by the supplied documentation? That's where your custom code becomes valuable.
+
+You can reduce that to a deterministic set-membership operation:
+generated_options <= documented_options
+For example:
+documented:
+    --title
+    --preset
+    --main-feature
+generated:
+    --main-feature
+→ PASS
+
+versus:
+documented:
+    --title
+    --preset
+    --main-feature
+
+generated:
+    --main-feature
+    --turbo-mode
+
+→ FAIL
+That's considerably easier to make reliable than trying to build a general-purpose documentation parser.
+
+
+Shortcut: For your own training corpus, you don't necessarily need to parse every piece of documentation at all. You can deliberately generate authoritative structured records yourself.
+For example:
+HandBrakeCLI --help
+
+becomes:
+raw help output
+       ↓
+cli_help parser
+       ↓
+options.jsonl
+
+Then future Qwen generation operates against options.jsonl. That means your system becomes:
+official source
+      ↓
+deterministic extraction
+      ↓
+structured evidence
+      ↓
+Qwen generation
+      ↓
+deterministic validation
+      ↓
+training example
+
+The LLM never has to be responsible for extracting the authoritative facts.
+
+
+I would pin compatible versions rather than blindly installing "latest". There have been compatibility issues between Tree-sitter core and language grammar ABI versions; for example, the Bash grammar has had an incompatibility reported against an older Python Tree-sitter version. Given your preference for reproducible uv environments, I'd put the parser versions directly in pyproject.toml and lock them. 
+
+Don't build parsers from scratch. Build a small evidence/normalization layer around existing parsers:
+Tree-sitter ────────┐
+SQLGlot ────────────┤
+Markdown parser ────┤
+Python AST ─────────┤
+CLI help extractor ─┤
+                    ▼
+             your evidence model --> deterministic validator
+That is probably 10–20% custom infrastructure rather than 100%, and the custom 10–20% is the part that is actually specific to your terminal-assistant training problem.
+
+Collect source material in its original form.
+Parse structured source code deterministically.
+Use ASTs to inspect/validate code.
+Have separate handling for Python, Bash, SQL, Markdown, etc.
+Build preprocessing around the characteristics of each source type.
+
+
+Suppose your raw dataset contains:
+def convert_file(input_path, output_path):
+    ...
+You could use Tree-sitter to determine:
+{
+  "language": "python",
+  "functions": ["convert_file"],
+  "syntax_valid": true
+}
+
+But the SFT example should look more like:
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Write a Python function that converts the input file..."
+    },
+    {
+      "role": "assistant",
+      "content": "def convert_file(input_path, output_path):\n    ..."
+    }
+  ]
+}
+
+Tree-sitter verifies the generated Python. It doesn't need to become part of what the model sees. 
+
+Where Tree-sitter becomes extremely useful:
+Suppose Qwen generates 10,000 Python examples.
+Instead of trusting them:
+Examples go to Tree-sitter and if they don't parse, discard, if they do parse, become candidates
+Then add Python AST, compile, unit tests, and sandbox execution
+
+argparse isn't really a general-purpose parser for arbitrary CLI documentation. It is a Python library for constructing command-line interfaces. If you're trying to determine what options a real program supports from:
+HandBrakeCLI --help
+argparse doesn't magically parse that output.
+
+You need either: the program's own machine-readable interface, if it provides one; its argument parser/API directly, if you're controlling the program; a purpose-built parser for its help output; or extraction rules appropriate to that particular help format. This is exactly where your small custom --help extractor makes sense.
+
+
+Next Steps: Deterministic Dataset Validation Blueprint
+To avoid scope creep, build a lightweight Python validation package in a clean `uv` environment. The goal of the first experiment is **not** to build a general-purpose documentation parser or training system. It is to establish a reproducible pipeline that can generate candidate SFT examples and reject examples that cannot be supported by the source material.
+
+The key design principle is:
+Parsers extract authoritative evidence. Validators check generated examples against that evidence. The parsed AST/evidence is not itself the training representation.
+
+1. Setup Environment & Project Structure
+Initialize a clean Python 3.12 workspace:
+```bash
+uv init terminal_assistant_data
+cd terminal_assistant_data
+uv add tree-sitter tree-sitter-python tree-sitter-bash sqlglot pytest
+```
+Use Python's built-in `ast` for Python syntax validation. Use Tree-sitter primarily for structural analysis of Bash/Python source rather than converting source code into AST-based training examples.
+Initial structure:
+
+```text
+terminal_assistant_data/
+├── pyproject.toml
+├── src/
+│   └── dataset_tools/
+│       ├── __init__.py
+│       ├── schema.py
+│       ├── parsers/
+│       │   ├── cli_help.py       # Extract CLI options/evidence
+│       │   └── markdown.py       # Extract document structure/code blocks
+│       └── validators/
+│           ├── schema.py         # Candidate record validation
+│           ├── evidence.py       # Validate answers against supplied evidence
+│           ├── options.py        # CLI option validation
+│           ├── python_ast.py     # Python syntax/AST validation
+│           └── sql.py             # SQLGlot syntax/dialect validation
+└── tests/
+```
+
+Do not build custom Python, Bash, or SQL parsers. Use existing parser libraries and add only the project-specific extraction and validation logic.
+
+2. Define Evidence and Training Schemas
+Keep provenance with every extracted fact and generated example so that accepted data can later be traced back to its source.
+```python
+from dataclasses import dataclass, field
+from typing import Optional
+
+@dataclass
+class EvidenceFact:
+    source_id: str
+    source_sha256: str
+    tool: Optional[str]
+    kind: str
+    name: str
+    description: Optional[str] = None
+    aliases: list[str] = field(default_factory=list)
+    parent_command: Optional[str] = None
+    line_start: Optional[int] = None
+    line_end: Optional[int] = None
+
+
+@dataclass
+class TrainingExample:
+    id: str
+    instruction: str
+    context: Optional[str]
+    response: str
+    source_sha256: str
+    generator_model: str
+    status: str = "candidate"
+    validation_logs: list[str] = field(default_factory=list)
+```
+
+Possible statuses:
+
+```text
+candidate
+accepted
+rejected
+needs_review
+```
+
+The raw generated candidates should be retained separately from the final accepted SFT dataset.
+
+3. Build Deterministic Evidence Extraction
+Start with one concrete source, such as:
+```bash
+HandBrakeCLI --help
+```
+The CLI-help parser should extract obvious option declarations such as:
+
+```text
+-t, --title <number>
+-Z, --preset <string>
+--main-feature
+```
+
+into structured evidence:
+
+```json
+{
+  "kind": "option",
+  "name": "--main-feature",
+  "description": "Detect and select the main feature title."
+}
+```
+
+The parser should be conservative. If the format is ambiguous, mark the record as uncertain rather than guessing. For Markdown documentation, extract document structure, headings, code blocks, lists, tables, and inline code while retaining source locations.
+
+4. Build Deterministic Validators
+The first validator can check whether CLI options appearing in a generated response are present in the extracted evidence. For example:
+
+```python
+import re
+OPTION_RE = re.compile(r"--?[A-Za-z0-9][A-Za-z0-9-]*")
+def validate_cli_response(
+    response: str,
+    valid_options: set[str],
+) -> tuple[bool, str]:
+    extracted_flags = set(OPTION_RE.findall(response))
+
+    invalid_flags = extracted_flags - valid_options
+
+    if invalid_flags:
+        return False, f"Unsupported options detected: {sorted(invalid_flags)}"
+
+    return True, "All detected options are supported by the supplied evidence."
+```
+
+This is intentionally narrow. Option membership does not establish that an argument value is valid; those should be represented separately when the source documents allowed values.
+
+Additional validators should be applied according to the type of example:
+
+```text
+Python example → ast.parse() / Tree-sitter
+SQL example    → SQLGlot
+CLI example    → evidence/options validator
+Bash example   → Tree-sitter + safety checks
+```
+
+Do not run every validator against every example.
+
+5. Add Candidate Schema Validation and Deduplication
+Before semantic validation, verify that Qwen returned a structurally valid training example:
+
+```text
+instruction
+context
+response
+```
+
+Reject malformed records before they reach language/tool-specific validators. Also perform deterministic exact deduplication using a normalized hash of the instruction, context, and response.
+
+Keep:
+
+```text
+candidates.jsonl
+accepted.jsonl
+rejected.jsonl
+```
+
+separate so that rejection patterns can be analyzed rather than discarded.
+
+6. Generate Candidate Examples with Qwen3-30B-A3B
+Use Qwen3-30B-A3B as a synthetic data generator and critic, not as the authority on whether an answer is correct. For Experiment 1, provide the model with a bounded source document/evidence set and ask it to generate candidate instruction/response pairs.
+Generate both:
+* positive examples where the answer is explicitly supported;
+* negative examples where the requested information is absent from the supplied documentation.
+
+For example:
+
+```text
+Question:
+Using only the supplied documentation, how do I select the main feature?
+
+Expected response:
+--main-feature
+```
+
+and:
+
+```text
+Question:
+Using only the supplied documentation, how do I enable turbo encoding?
+
+Expected response:
+NOT SPECIFIED IN SUPPLIED DOCUMENTATION.
+```
+
+The deterministic evidence layer must independently verify whether the examples actually satisfy those conditions.
+
+7. Execution Workflow for Experiment 1
+Start with a small controlled experiment rather than immediately generating thousands of examples:
+
+```text
+HandBrakeCLI --help --> deterministic extraction --> structured evidence --> Qwen3-30B-A3B --> ~300 candidate examples --> schema validation --> deduplication --> evidence/tool-specific validation
+        │
+        ├── accepted
+        ├── rejected
+        └── needs_review
+        │
+        ▼
+manual inspection/sample audit --> SFT JSONL
+```
+
+The initial objective is to measure the quality of the **data-generation and validation pipeline**, not to maximize dataset size.
+Track at least:
+
+* candidate count;
+* malformed candidate count;
+* duplicate count;
+* accepted count;
+* rejected count;
+* rejection reasons;
+* manually confirmed false accepts;
+* manually confirmed false rejects.
+
+8. Convert Accepted Examples to SFT Format
+The model should be trained on normal conversational examples, not Tree-sitter AST representations. For example:
+
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Using only the supplied documentation, how do I select the main feature?\n\n<documentation>..."
+    },
+    {
+      "role": "assistant",
+      "content": "--main-feature"
+    }
+  ]
+}
+```
+
+Retain provenance and validation metadata in the master dataset, but omit it from the model-facing SFT representation if the training framework does not require it.
+
+Result:
+The first experiment should establish this reproducible pipeline:
+
+authoritative source
+       ↓
+deterministic parser
+       ↓
+evidence records
+       ↓
+Qwen3-30B candidate generation
+       ↓
+schema validation
+       ↓
+deduplication
+       ↓
+deterministic evidence/code validation
+       ↓
+human audit
+       ↓
+SFT JSONL
+
+This keeps the responsibilities separate:
+Existing parsers handle language/source syntax.
+Our extraction layer converts source material into structured evidence.
+Qwen3-30B proposes useful training examples.
+Deterministic validators decide whether those examples are supported.
+The SFT dataset contains ordinary instruction/response examples.
+The evaluation set remains separate from the training pipeline.

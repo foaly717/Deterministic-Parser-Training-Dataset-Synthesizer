@@ -1,0 +1,653 @@
+You are building a portable, local-first terminal coding assistant. It is a thin terminal interface around llama.cpp/llama-server and a local coding-oriented GGUF model.
+
+The assistant is generative only:
+
+prompt -> local LLM -> text/code/commands -> user
+
+It does not execute commands, inspect files, modify files, call tools, or operate autonomously.
+
+The user remains the execution boundary. If the model generates a Bash command, Python script, SQL query, configuration change, etc., the user decides whether to inspect, copy, paste, and execute it.
+
+The intended use is day-to-day coding and technical assistance from a terminal, particularly:
+
+Python/pandas/numpy
+SQL
+R
+Bash/Linux administration
+Docker
+media tooling such as Jellyfin, HandBrake, and MakeMKV
+general coding/debugging
+generating scripts and commands
+explaining technical problems
+
+The project should remain deliberately small. There is no planned agent framework, tool system, sandboxed executor, autonomous loop, or model-controlled filesystem access.
+
+The fundamental architecture is:
+
+User
+|
+| prompt
+v
+ask-ds
+|
+v
+llama-server
+|
+v
+DeepSeek-Coder-V2-Lite
+|
+v
+generated response
+|
+v
+User decides what to do
+
+WHAT WE HAVE ACCOMPLISHED SO FAR
+
+Established a working local inference stack
+
+We have a working llama.cpp/llama-server setup on Ubuntu using DeepSeek-Coder-V2-Lite-Instruct Q4_K_M.
+
+Model:
+
+DeepSeek-Coder-V2-Lite-Instruct-Q4_K_M.gguf
+
+Size:
+
+9.7 GB
+10,364,416,768 bytes
+
+SHA-256:
+
+603bd3f8a0281d16571da7c08bd661ee17ff0d1be6fcbd1b42242da257ef0bb8
+
+The model is stored locally rather than being downloaded or accessed through a remote API.
+
+Established the current server configuration
+
+Current default endpoint:
+
+127.0.0.1:8080
+
+Current llama-server tuning:
+
+context: 8192
+parallel: 1
+threads: 4
+flash attention: auto
+
+Generation:
+
+max tokens: 1536
+temperature: 0
+
+Temperature 0 has produced deterministic/repeatable responses during testing.
+
+Separated lifecycle management from inference
+
+The command responsibilities are now clearly separated.
+
+ds-start:
+Starts and manages llama-server.
+
+ask-ds:
+Performs inference only.
+
+ds-status:
+Reports state and configuration only.
+
+ds-stop:
+Stops the managed llama-server and cleans up runtime state.
+
+This is an important architectural boundary.
+
+ask-ds no longer starts the server automatically.
+
+If the server is unavailable, ask-ds tells the user to run ds-start.
+
+Hardened process ownership
+
+We found and fixed a potentially serious lifecycle problem where ds-stop could theoretically kill an unrelated process if its PID happened to be in the PID file.
+
+ds-stop now verifies the process identity before killing it.
+
+The verification includes:
+
+executable identity
+configured model
+configured host
+configured port
+process command line
+
+We explicitly tested this against an unrelated process and confirmed that the unrelated process was not killed.
+
+Built a portable bundle structure
+
+Current working bundle:
+
+working_portable_agent_bundle/
+
+config/
+    assistant.env
+    system-prompt.txt
+
+docs/
+    current-environment.txt
+    current-server-process.txt
+    llama-ds-server.log
+
+lib/
+    common.sh
+
+models/
+    DeepSeek-Coder-V2-Lite-Instruct-Q4_K_M.gguf
+
+scripts/
+    ask-ds
+    ds-start
+    ds-status
+    ds-stop
+
+install.sh
+
+The model, configuration, scripts, and supporting files now live together in a relocatable bundle.
+
+Removed machine-specific assumptions from the scripts
+
+The scripts now resolve their own actual location rather than assuming a fixed installation directory.
+
+This was necessary because the commands are installed through symlinks in ~/.local/bin.
+
+We found and fixed a real symlink-resolution bug where the scripts incorrectly attempted to find common.sh under ~/.local instead of inside the bundle.
+
+All four scripts now resolve the actual bundle location through readlink -f.
+
+Established the installation model
+
+The user chooses where the bundle lives.
+
+The installer then creates:
+
+~/.local/bin/ask-ds
+~/.local/bin/ds-start
+~/.local/bin/ds-status
+~/.local/bin/ds-stop
+
+as symlinks into that bundle.
+
+The bundle itself is not moved.
+
+The model is not copied.
+
+llama.cpp is not installed by the bundle.
+
+The shell startup files are not modified by the installer.
+
+The server is not started by the installer.
+
+Runtime state is not created by the installer.
+
+This is the intended portable installation model.
+
+Added conservative installer behavior
+
+install.sh validates the bundle and scripts before installing anything.
+
+It:
+
+checks required paths
+checks executable bits
+checks Bash shebangs
+runs bash -n
+creates ~/.local/bin if necessary
+creates command symlinks
+refuses to overwrite unrelated regular files
+refuses to overwrite unrelated symlinks
+handles symlinks belonging to the current bundle
+verifies the resulting links
+
+This has already been exercised against the existing installation.
+
+Established runtime state outside the bundle
+
+Runtime state is kept under:
+
+/tmp/terminal-assistant
+
+Rather than inside the portable bundle.
+
+Current state includes:
+
+llama-server.pid
+active-port
+llama-server.log
+
+This prevents runtime artifacts from contaminating the portable bundle.
+
+Added alternate-port handling
+
+If the configured port is already occupied by an unrelated service, ds-start does not blindly attempt to start llama-server.
+
+It reports the conflict and asks:
+
+Try a different port? [y/N]
+
+If the user chooses yes, they can provide an alternate port.
+
+The alternate port is intended to be temporary session state and does not modify assistant.env.
+
+Broadened port conflict detection
+
+The original detection relied on an HTTP health endpoint.
+
+That was too narrow because another service could occupy the TCP port without speaking HTTP.
+
+The check now uses ss to detect TCP listeners:
+
+ss -H -ltn "sport = :${PORT}"
+
+This was tested with:
+
+python3 -m http.server 8080 --bind 127.0.0.1
+
+and:
+
+nc -l 8080
+
+Both were correctly detected as port conflicts.
+
+Improved ds-stop cleanup
+
+ds-stop now explicitly removes both:
+
+${PID_FILE}
+${ACTIVE_PORT_FILE}
+
+after a successful stop.
+
+That means temporary alternate-port state is explicitly cleaned up rather than relying on a later startup to remove it.
+
+Established the system-prompt direction
+
+The system prompt establishes the assistant as a local terminal coding/technical assistant.
+
+It emphasizes:
+
+direct answers
+commands/code first
+concise explanations
+Astral uv for Python environment/dependency workflows
+avoiding pip unless specifically requested or required
+not inventing CLI flags/configuration/environment variables
+acknowledging uncertainty rather than fabricating tool syntax
+
+This is aligned with the intended generative-only role.
+
+BIG-PICTURE NEXT STEPS
+
+There are now two major goals:
+
+Finish and freeze the portable runtime.
+Improve the quality and usability of the generative assistant.
+
+There is no third agentic/execution layer.
+
+PHASE 1 — FINISH THE PORTABLE RUNTIME
+
+The lifecycle infrastructure is close to finished but needs systematic testing.
+
+We need to establish that:
+
+ds-start -> server starts reliably
+
+ask-ds -> only performs inference
+
+ds-status -> only observes
+
+ds-stop -> only stops the managed server
+
+and that unusual states do not cause unsafe behavior.
+
+PHASE 2 — FREEZE THE PORTABLE BUNDLE
+
+Once lifecycle testing passes:
+
+freeze common.sh
+freeze the four command scripts
+verify installer behavior
+test relocation of the bundle
+create a new known-good/frozen bundle snapshot
+
+At that point the runtime infrastructure should stop changing casually.
+
+PHASE 3 — FOCUS ON GENERATIVE QUALITY
+
+This becomes the primary development area.
+
+The questions are:
+
+How good is the model at the actual tasks you care about?
+How well does the system prompt shape responses?
+What context size is actually useful?
+What generation limits are appropriate?
+How should long code responses be handled?
+What output format works best in a terminal?
+How should errors and uncertainty be expressed?
+What prompts produce reliable Linux/Python/SQL/R/media-tool assistance?
+
+The current model's occasional hallucination of things such as nonexistent uv commands should be treated as a model/prompt-quality issue, not an architecture problem.
+
+The goal is to tune the generative interface rather than build machinery around the model.
+
+THINGS TO CLEAN UP
+
+Make configured port versus active port explicit
+
+There is a subtle distinction between:
+
+configured port = what assistant.env says
+
+active port = what the current server session actually uses
+
+That distinction should be explicit in common.sh.
+
+For example:
+
+CONFIGURED_PORT=8080
+ACTIVE_PORT=8081
+
+rather than relying on PORT being dynamically overwritten.
+
+This prevents stale runtime state from accidentally affecting future startup decisions.
+
+Make alternate-port state completely deterministic
+
+We need to verify:
+
+8080 occupied
+-> choose 8081
+-> server runs on 8081
+-> ds-status reports 8081
+-> ask-ds uses 8081
+-> ds-stop removes active-port
+-> next ds-start returns to 8080
+
+This is an important final test of the new state mechanism.
+
+Handle managed-but-unhealthy state cleanly
+
+There is a meaningful difference between:
+
+no server
+our server running and healthy
+our server running but unhealthy
+another service occupying the port
+
+ds-start and ds-status should distinguish these states rather than collapsing them into "port occupied" or "stopped."
+
+Clean startup failure state
+
+If llama-server fails during startup or exceeds the startup timeout, the PID and active-port state should be cleaned consistently.
+
+Finish stale-PID testing
+
+Test:
+
+stale PID file
+PID reused by another process
+missing PID file
+server already exited
+unrelated llama-server
+unrelated service using the configured port
+
+The fundamental rule remains:
+
+ds-stop must only stop a process whose identity has been positively verified as belonging to this installation/session.
+
+Test installer relocation
+
+Copy the bundle somewhere else and run install.sh there.
+
+Verify that ~/.local/bin points to the new location.
+
+This is particularly important because portability is one of the project's explicit goals.
+
+Keep the frozen bundle immutable
+
+The frozen known-good bundle should remain untouched.
+
+The workflow should be:
+
+working bundle
+-> tests
+-> validated
+-> new frozen snapshot
+
+rather than modifying the baseline during development.
+
+Decide whether llama.cpp stays an external dependency
+
+For now, llama.cpp is intentionally external.
+
+The bundle owns:
+
+model
+configuration
+scripts
+UX
+
+The machine provides:
+
+llama-server
+
+This is simpler and more portable across hardware than immediately bundling a specific llama.cpp binary.
+
+A bundled llama-server can be reconsidered later if there is a concrete reason.
+
+IMMEDIATE ACTION ITEMS
+
+The next work should be narrowly focused.
+
+Run the alternate-port lifecycle test.
+
+With 8080 occupied:
+
+ds-start
+
+Choose:
+
+y
+
+Choose:
+
+8081
+
+Then verify:
+
+ds-status
+
+and:
+
+ask-ds "What is 2 + 2?"
+
+Then:
+
+ds-stop
+
+Then inspect:
+
+ls -l /tmp/terminal-assistant/
+
+Verify both:
+
+llama-server.pid
+active-port
+
+are gone.
+
+Start again.
+
+Run:
+
+ds-start
+
+Verify it attempts 8080 rather than remembering 8081.
+
+Test normal lifecycle again.
+
+Run:
+
+ds-status
+ask-ds "..."
+ds-stop
+ds-status
+
+Test stopped inference.
+
+After stopping:
+
+ask-ds "What is a CSV file?"
+
+Verify it fails cleanly and instructs the user to run ds-start.
+
+Test process-ownership edge cases.
+
+Especially:
+
+stale PID
+unrelated process
+unrelated llama-server
+server on another port
+Test installer relocation.
+
+Move/copy the working bundle to a different directory and run its install.sh.
+
+Verify all four ~/.local/bin links resolve to that new bundle.
+
+Fix any remaining lifecycle issues found by those tests.
+Freeze the resulting runtime as the next known-good bundle.
+Then shift attention away from infrastructure and toward the actual generative experience:
+system prompt
+model behavior
+response formatting
+context
+token limits
+latency
+terminal UX
+prompt patterns
+coding-task evaluation
+
+The project's end state should remain deliberately simple:
+
+A user invokes a local model from the terminal, gives it whatever prompt/context they choose, receives generated text/code/commands, and retains complete control over what happens next.
+
+No agent loop. No automatic execution. No model-controlled tools. No sandboxed execution subsystem.
+
+18:55 update:
+Since the last progress summary, the terminal assistant has advanced from single-file context handling to fully validated multiple-file context support. ask-ds now accepts repeated leading --file <path> arguments, validates each file, reads their UTF-8 contents, preserves their order, and supplies each as explicitly framed user-provided context alongside optional standard input. The system prompt was strengthened so supplied file contents are treated as the actual contents of the named files and the model is instructed not to reopen or reread them unless explicitly asked to write code that does so. Testing initially revealed that DeepSeek-Coder-V2-Lite continued generating Python to reopen supplied files, but a targeted prompt test demonstrated that the implementation and context delivery are correct and that explicit user instructions reliably produce direct answers from the supplied contents. The relevant changes to config/system-prompt.txt and scripts/ask-ds were then synchronized into the renamed Phase 2 checkpoint at /mnt/staging/portable_terminal_assistant_phase2_context_frozen, with both files verified identical to the live working versions. The project therefore has validated stdin, single-file, and multiple-file context support while retaining its generative-only, inference-only architecture.
+
+1945 update:
+Since the last summary, Phase 4.1.13 and Phase 4.2 Batch A have been completed and validated. For 4.1.13 — interrupted startup, we deliberately launched ds-start in the background, waited for the managed PID file and confirmed the real llama-server process was running with the expected model, host, port, context, parallelism, threads, and flash-attention settings, then sent SIGINT to the ds-start process. The newly added startup cleanup handler correctly detected the interruption, verified the managed server PID, stopped llama-server, removed both the PID and active-port files, released port 8080, and returned exit status 128; subsequent checks confirmed no llama-server, stale runtime state, or occupied test port remained. We then ran 4.2 Batch A — valid configuration, verifying the complete configured environment, a clean stopped state, ds-status diagnostics while stopped, successful startup, correct PID and active-port state, an actual listener on 127.0.0.1:8080, successful ds-status reporting while running, normal ds-stop, and a clean final state with no PID or active-port files. This also served as a regression test confirming that the interrupted-startup hardening did not disrupt the normal lifecycle. After Batch A passed, we created a lightweight Phase 4.2 Batch A source/config checkpoint containing assistant.env, system-prompt.txt, common.sh, and all four lifecycle/inference scripts; each file was verified byte-for-byte against the working bundle. An attempted full-bundle freeze exposed a disk-space problem because it began duplicating the ~9.7 GB model and filled /mnt/staging; the incomplete 4 GB checkpoint was removed. We then audited the staging area, confirmed four additional historical GGUF copies in the Phase 1, Phase 2, Phase 3.2, and older frozen bundles, verified the canonical working model's SHA-256 as 603bd3f8a0281d16571da7c08bd661ee17ff0d1be6fcbd1b42242da257ef0bb8, and deleted only those four duplicate historical model files. The historical checkpoints remain intact as source/config references, while the working bundle retains the sole physical GGUF. Disk usage consequently dropped from 100% full with effectively zero free space to 9.8 GB used / 43 GB free / 19% utilization, eliminating the immediate storage constraint. The project is now positioned to proceed with Phase 4.2 Batch B — missing/invalid files and backend validation without duplicating the large model.
+
+After 4.2, the remaining roadmap is:
+
+4.2A  Valid configuration          PASS
+4.2B  Missing/invalid resources    NEXT
+4.2C  Numeric configuration
+4.2D  Dependencies/diagnostics
+
+4.3   Model/server compatibility
+4.4   Graceful interruption
+4.5   Portability
+4.6   Performance/resources
+4.7   UX
+4.8   Install/uninstall
+4.9   Documentation
+
+Phase 4 overall
+
+After 4.2, the remaining roadmap is:
+
+4.3 — Model/server compatibility
+
+Verify the configured GGUF and llama-server combination.
+Exercise inference against the actual model.
+Confirm configured context/generation parameters are honored.
+Look for compatibility failures that configuration validation cannot detect.
+
+4.4 — Graceful interruption
+
+We effectively addressed the major ds-start interruption case in 4.1.13.
+Remaining work would be targeted only at concrete interruption behavior that testing exposes rather than increasingly hypothetical signal edge cases.
+
+4.5 — Portability testing
+
+Move/copy the bundle to another environment.
+Verify path resolution.
+Verify external llama-server discovery.
+Verify installation and runtime behavior without relying on this machine's absolute paths.
+Test alternate hardware/software environments as available.
+
+4.6 — Performance/resource characterization
+
+Startup/model-load time
+Generation throughput
+Memory usage
+CPU utilization
+Context-size implications
+Behavior under sustained use
+Resource consumption with the actual terminal-assistant workload
+
+This is characterization rather than optimization at first.
+
+4.7 — UX refinement
+
+Error messages
+Status output
+Prompt/file/stdin presentation
+Startup messaging
+Interrupt behavior
+Help/usage
+Any remaining CLI inconsistencies
+
+4.8 — Install/uninstall lifecycle
+
+Fresh installation
+Existing symlink handling
+Reinstallation
+Uninstallation
+Preservation of unrelated files
+Runtime-state cleanup
+Behavior when dependencies are absent
+
+4.9 — Final documentation
+
+Architecture
+Installation
+Configuration
+Daily usage
+Supported input modes
+Lifecycle commands
+Port behavior
+Troubleshooting
+Portability assumptions
+Known limitations
+Final validation record
+
+
+The testing remains deliberately non-agentic: we are validating the terminal interface, local inference server lifecycle, configuration, portability, and reliability—not adding autonomous execution or tool-use behavior.
+
+1953 deliberation between Gemini and GPT:
+I would make the immediate plan:
+
+Phase	Action	Priority
+4.2B	Missing/invalid model, prompt, backend	Now
+4.2C	Numeric configuration validation	Now
+4.2D	Missing dependencies/diagnostics	Now
+4.2E	Model integrity verification	Add now
+4.2F	Large-input/context guardrail	Add now
+4.3	Model/server compatibility	Next
+4.5	Portability	High priority
+4.6	Context/performance/resource profiling	High priority
+4.8	Install/uninstall lifecycle	High priority
+4.4	Additional signal edge cases	Defer
