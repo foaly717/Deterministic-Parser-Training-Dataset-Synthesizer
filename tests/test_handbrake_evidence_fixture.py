@@ -22,18 +22,24 @@ def test_handbrake_evidence_fixture_loads():
     assert "--preset" in cli_options
 
 
-def test_handbrake_evidence_fixture_populates_constraints():
+def test_handbrake_evidence_fixture_does_not_invent_preset_values():
     source = Path("data/evidence/handbrakecli-help.txt")
 
     document = load_evidence(source)
 
-    assert document.constraints
+    cli_options = {
+        fact.value
+        for fact in document.facts
+        if fact.category == "cli_option"
+    }
 
-    preset_constraint = next(
+    assert "--preset" in cli_options
+    assert "--preset-list" in cli_options
+
+    preset_constraints = [
         constraint
         for constraint in document.constraints
         if constraint.name == "--preset"
-    )
+    ]
 
-    assert preset_constraint.allowed_values
-    assert preset_constraint.metadata["source_id"] == "handbrakecli-help"
+    assert preset_constraints == []

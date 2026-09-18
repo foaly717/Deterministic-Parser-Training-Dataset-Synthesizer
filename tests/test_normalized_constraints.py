@@ -1,26 +1,31 @@
-from dataset_tools.evidence.schema import NormalizedEvidenceFact
+from dataset_tools.evidence.constraints import EnumConstraint
+from dataset_tools.evidence.schema import (
+    EvidenceSource,
+    NormalizedEvidenceDocument,
+    NormalizedEvidenceFact,
+)
 
 
 def test_normalized_fact_can_store_constraints():
     fact = NormalizedEvidenceFact(
         category="constraint",
-        subject="HandBrakeCLI",
+        subject="ExampleCLI",
         predicate="allowed_value",
-        value="Fast",
+        value="alpha",
         metadata={
-            "applies_to": "--preset",
-            "source_id": "handbrakecli-help",
+            "applies_to": "--mode",
+            "source_id": "example-help",
         },
     )
 
     assert fact.category == "constraint"
-    assert fact.metadata["applies_to"] == "--preset"
+    assert fact.metadata["applies_to"] == "--mode"
 
 
 def test_constraint_is_not_parser_specific():
     fact = NormalizedEvidenceFact(
         category="constraint",
-        subject="PostgreSQL",
+        subject="ExampleTool",
         predicate="allowed_value",
         value="inner",
         metadata={
@@ -30,23 +35,20 @@ def test_constraint_is_not_parser_specific():
 
     assert fact.value == "inner"
 
-from dataset_tools.evidence.constraints import EnumConstraint
-from dataset_tools.evidence.schema import EvidenceSource, NormalizedEvidenceDocument
-
 
 def test_normalized_document_stores_constraints_as_canonical_objects():
     constraint = EnumConstraint(
-        name="handbrake-preset",
+        name="example-mode",
         category="cli_constraint",
-        subject="--preset",
-        allowed_values=["Fast 1080p30"],
-        metadata={"source_id": "handbrake-help"},
+        subject="--mode",
+        allowed_values=["alpha"],
+        metadata={"source_id": "example-help"},
     )
 
     document = NormalizedEvidenceDocument(
         source=EvidenceSource(
-            source_id="handbrake-help",
-            path="handbrake.txt",
+            source_id="example-help",
+            path="example.txt",
             source_type="text",
             sha256="abc",
         ),
@@ -54,5 +56,5 @@ def test_normalized_document_stores_constraints_as_canonical_objects():
         constraints=[constraint],
     )
 
-    assert document.constraints[0].name == "handbrake-preset"
-    assert document.constraints[0].metadata["source_id"] == "handbrake-help"
+    assert document.constraints[0].name == "example-mode"
+    assert document.constraints[0].metadata["source_id"] == "example-help"

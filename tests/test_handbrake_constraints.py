@@ -2,17 +2,17 @@ from dataset_tools.validators.constraints import validate_constraints
 from dataset_tools.validators.reason_codes import ValidationReasonCode
 
 
-def test_documented_preset_is_accepted():
-    constraints = {"--preset": {"Very Fast 1080p30", "HQ 1080p30 Surround"}}
-    response = 'HandBrakeCLI -i input.mp4 -o output.mp4 --preset "Very Fast 1080p30"'
+def test_documented_enum_value_is_accepted():
+    constraints = {"--mode": {"alpha", "beta"}}
+    response = 'ExampleCLI --mode "alpha"'
 
     failure = validate_constraints(response, constraints)
     assert failure is None
 
 
-def test_fabricated_preset_is_rejected():
-    constraints = {"--preset": {"Very Fast 1080p30", "HQ 1080p30 Surround"}}
-    response = 'HandBrakeCLI -i input.mp4 -o output.mp4 --preset "Nonexistent Preset"'
+def test_fabricated_enum_value_is_rejected():
+    constraints = {"--mode": {"alpha", "beta"}}
+    response = 'ExampleCLI --mode "gamma"'
 
     failure = validate_constraints(response, constraints)
     assert failure is not None

@@ -3,16 +3,16 @@ from dataset_tools.validators.reason_codes import ValidationReasonCode
 
 
 def test_documented_enum_value_is_accepted():
-    constraints = {"--encoder": {"x264", "x265", "vt_h264"}}
-    response = 'HandBrakeCLI -i input.mp4 -o output.mp4 --encoder "x264"'
+    constraints = {"--mode": {"alpha", "beta", "delta"}}
+    response = 'ExampleCLI --mode "alpha"'
 
     failure = validate_constraints(response, constraints)
     assert failure is None
 
 
 def test_fabricated_enum_value_is_rejected():
-    constraints = {"--encoder": {"x264", "x265", "vt_h264"}}
-    response = 'HandBrakeCLI -i input.mp4 -o output.mp4 --encoder "invalid_codec"'
+    constraints = {"--mode": {"alpha", "beta", "delta"}}
+    response = 'ExampleCLI --mode "gamma"'
 
     failure = validate_constraints(response, constraints)
     assert failure is not None

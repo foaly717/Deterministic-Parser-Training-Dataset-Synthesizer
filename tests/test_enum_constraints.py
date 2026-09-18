@@ -3,39 +3,39 @@ from dataset_tools.evidence.constraints import EnumConstraint
 
 def test_enum_constraint_preserves_documented_value():
     constraint = EnumConstraint(
-        name="handbrake-preset",
+        name="example-mode",
         category="cli_constraint",
-        subject="--preset",
-        allowed_values=["Fast", "HQ 1080p30 Surround"],
-        metadata={"source_id": "handbrakecli-help"},
+        subject="--mode",
+        allowed_values=["alpha", "beta"],
+        metadata={"source_id": "example-help"},
     )
 
-    assert "Fast" in constraint.allowed_values
+    assert "alpha" in constraint.allowed_values
 
 
 def test_enum_constraint_rejects_fabricated_value():
     constraint = EnumConstraint(
-        name="handbrake-preset",
+        name="example-mode",
         category="cli_constraint",
-        subject="--preset",
-        allowed_values=["Fast", "HQ 1080p30 Surround"],
-        metadata={"source_id": "handbrakecli-help"},
+        subject="--mode",
+        allowed_values=["alpha", "beta"],
+        metadata={"source_id": "example-help"},
     )
 
-    assert "High Profile" not in constraint.allowed_values
+    assert "gamma" not in constraint.allowed_values
 
 
 def test_enum_constraint_preserves_provenance():
     constraint = EnumConstraint(
-        name="handbrake-preset",
+        name="example-mode",
         category="cli_constraint",
-        subject="--preset",
-        allowed_values=["Fast"],
+        subject="--mode",
+        allowed_values=["alpha"],
         metadata={
-            "source_id": "handbrakecli-help",
+            "source_id": "example-help",
             "source_sha256": "a" * 64,
         },
     )
 
-    assert constraint.metadata["source_id"] == "handbrakecli-help"
+    assert constraint.metadata["source_id"] == "example-help"
     assert len(constraint.metadata["source_sha256"]) == 64

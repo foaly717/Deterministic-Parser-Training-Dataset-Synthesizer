@@ -4,15 +4,21 @@ from dataset_tools.validators.constraints import validate_constraints
 
 
 def test_equals_syntax_option_validation():
-    valid_options = {"HandBrakeCLI", "--preset", "-i", "-o"}
+    valid_options = {"ExampleCLI", "--mode", "-i", "-o"}
     evidence_index = EvidenceIndex(valid_options=valid_options)
 
-    ok, msg = validate_cli_response('HandBrakeCLI --preset="Fast 1080p30"', evidence_index)
+    ok, msg = validate_cli_response(
+        'ExampleCLI --mode="alpha"',
+        evidence_index,
+    )
     assert ok is True
 
 
 def test_equals_syntax_constraint_validation():
-    constraints = {"--preset": {"Fast 1080p30", "HQ 1080p30"}}
+    constraints = {"--mode": {"alpha", "beta"}}
 
-    failure = validate_constraints('HandBrakeCLI --preset="Fast 1080p30"', constraints)
+    failure = validate_constraints(
+        'ExampleCLI --mode="alpha"',
+        constraints,
+    )
     assert failure is None
