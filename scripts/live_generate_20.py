@@ -16,10 +16,6 @@ from dataset_tools.validators.pipeline import validate_candidate
 
 
 
-DEFAULT_HELP = Path("data/evidence/handbrakecli-help.txt")
-DEFAULT_OUTPUT = Path("data/raw/livefire_20.jsonl")
-
-
 def parse_model_json(text: str):
     text = text.strip()
     if text.startswith("```"):
@@ -35,8 +31,8 @@ def main() -> int:
     parser.add_argument("--provider", default=settings.provider)
     parser.add_argument("--model", default=settings.model)
     parser.add_argument("--endpoint", default=settings.endpoint)
-    parser.add_argument("--help-file", type=Path, default=DEFAULT_HELP)
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--help-file", type=Path, default=settings.help_file)
+    parser.add_argument("--output", type=Path, default=settings.output)
     parser.add_argument("--count", type=int, default=20)
     args = parser.parse_args()
 
