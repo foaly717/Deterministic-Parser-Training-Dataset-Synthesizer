@@ -20,4 +20,14 @@ def build_evidence_index(document):
             if allowed_values:
                 constraints.setdefault(fact.subject, set()).update(allowed_values)
 
-    return EvidenceIndex(valid_options=valid_options, constraints=constraints)
+    for constraint in getattr(document, "constraints", []):
+        subject = getattr(constraint, "subject", None)
+        allowed_values = getattr(constraint, "allowed_values", None)
+
+        if subject and allowed_values:
+            constraints.setdefault(subject, set()).update(allowed_values)
+
+    return EvidenceIndex(
+        valid_options=valid_options,
+        constraints=constraints,
+    )

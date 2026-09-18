@@ -1,17 +1,18 @@
 from pathlib import Path
 
-from .loaders.base import EvidenceLoader
-from .loaders.handbrakecli import HandBrakeCliLoader
-from .loaders.markdown import MarkdownEvidenceLoader
-from .loaders.manpage import ManPageLoader
-from .loaders.text import TextEvidenceLoader
+from dataset_tools.evidence.loaders.handbrakecli import HandBrakeCliLoader
+from dataset_tools.evidence.loaders.ffmpeg import FFmpegLoader
+from dataset_tools.evidence.loaders.manpage import ManPageLoader
+from dataset_tools.evidence.loaders.markdown import MarkdownEvidenceLoader
+from dataset_tools.evidence.loaders.text import TextEvidenceLoader
 
 
-LOADERS: list[EvidenceLoader] = [
+LOADERS = [
     HandBrakeCliLoader(),
+    FFmpegLoader(),
     MarkdownEvidenceLoader(),
-    ManPageLoader(),
     TextEvidenceLoader(),
+    ManPageLoader(),
 ]
 
 
@@ -20,6 +21,4 @@ def load_evidence(path: Path):
         if loader.supports(path):
             return loader.load(path)
 
-    raise ValueError(
-        f"No evidence loader available for {path}"
-    )
+    raise ValueError(f"No evidence loader available for: {path}")

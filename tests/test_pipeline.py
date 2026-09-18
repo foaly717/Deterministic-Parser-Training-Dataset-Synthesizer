@@ -71,3 +71,47 @@ def test_pipeline_rejects_structurally_invalid_candidate():
     assert result.status == "rejected"
     assert result.stage == "structure"
     assert result.validation_logs == ["Structural validation failed."]
+
+
+
+
+def test_pipeline_rejects_unsupported_enum_value_with_reason_code():
+    result = validate_candidate(
+        candidate('HandBrakeCLI --preset "Nonexistent Preset"'),
+        "HandBrakeCLI",
+        EvidenceIndex(
+            valid_options={"--preset"},
+            constraints={
+                "--preset": {"Very Fast 1080p30"}
+            },
+        ),
+    )
+
+    assert result.status == "rejected"
+    assert result.stage == "constraints"
+    assert result.reason_code == "UNSUPPORTED_ENUM_VALUE"
+    assert "Unsupported value for --preset: Nonexistent Preset" in result.validation_logs[-1]
+
+
+def test_pipeline_rejects_unsupported_option_with_reason_code():
+    result = validate_candidate(
+        candidate("HandBrakeCLI --not-a-real-option value"),
+        "HandBrakeCLI",
+        EvidenceIndex(valid_options={"--preset"}),
+    )
+
+    assert result.status == "rejected"
+    assert result.stage == "options"
+    assert result.reason_code == "UNSUPPORTED_OPTION"
+
+
+def test_pipeline_rejects_unexpected_executable_with_reason_code():
+    result = validate_candidate(
+        candidate("preset-tool --preset value"),
+        "HandBrakeCLI",
+        EvidenceIndex(valid_options={"--preset"}),
+    )
+
+    assert result.status == "rejected"
+    assert result.stage == "command"
+    assert result.reason_code == "UNEXPECTED_EXECUTABLE"
