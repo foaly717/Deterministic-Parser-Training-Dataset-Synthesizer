@@ -5,7 +5,7 @@ from dataset_tools.evidence.schema import NormalizedEvidenceDocument
 def extract_constraints(
     document: NormalizedEvidenceDocument,
 ) -> list[EnumConstraint]:
-    constraints = []
+    constraints: list[EnumConstraint] = []
 
     for fact in document.facts:
         if fact.extraction_type != "enum":
@@ -15,10 +15,11 @@ def extract_constraints(
             EnumConstraint(
                 name=fact.subject,
                 category=fact.category,
-                subject=fact.subject,
-                allowed_values=fact.metadata["allowed_values"],
+                subject=fact.metadata.get("applies_to", fact.subject),
+                allowed_values=list(fact.metadata["allowed_values"]),
                 metadata={
                     "source_id": document.source.source_id,
+                    **fact.metadata,
                 },
             )
         )

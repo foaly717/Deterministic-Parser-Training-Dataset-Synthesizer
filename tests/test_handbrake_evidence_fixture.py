@@ -20,3 +20,20 @@ def test_handbrake_evidence_fixture_loads():
     }
 
     assert "--preset" in cli_options
+
+
+def test_handbrake_evidence_fixture_populates_constraints():
+    source = Path("data/evidence/handbrakecli-help.txt")
+
+    document = load_evidence(source)
+
+    assert document.constraints
+
+    preset_constraint = next(
+        constraint
+        for constraint in document.constraints
+        if constraint.name == "--preset"
+    )
+
+    assert preset_constraint.allowed_values
+    assert preset_constraint.metadata["source_id"] == "handbrakecli-help"

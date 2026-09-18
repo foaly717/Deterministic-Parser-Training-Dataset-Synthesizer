@@ -21,3 +21,14 @@ def test_text_loader_creates_normalized_document(tmp_path):
     assert document.source.sha256
     assert len(document.facts) == 2
     assert document.facts[0].value == "alpha"
+
+from dataset_tools.evidence.registry import load_evidence
+
+
+def test_loaded_document_populates_constraints(tmp_path):
+    source = tmp_path / "sample.txt"
+    source.write_text("plain evidence\\n", encoding="utf-8")
+
+    document = load_evidence(source)
+
+    assert document.constraints == []

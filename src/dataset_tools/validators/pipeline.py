@@ -5,6 +5,7 @@ from dataset_tools.generator.runner import validate_candidate_structure
 from dataset_tools.validators.command import validate_cli_command
 from dataset_tools.validators.options import validate_cli_response
 from dataset_tools.validators.constraints import validate_constraints
+from dataset_tools.validators.reason_codes import ValidationReasonCode
 
 
 @dataclass
@@ -32,9 +33,9 @@ def validate_candidate(
 
     logs = ["Structural validation passed."]
 
-    command_ok, command_message = validate_cli_command(item["response"], expected_tool)
-    logs.append(command_message)
-    if not command_ok:
+    command_failure = validate_cli_command(item["response"], expected_tool)
+    if command_failure:
+        logs.append(command_failure.message)
         return ValidationResult(
             status="rejected",
             stage="command",
@@ -52,9 +53,9 @@ def validate_candidate(
             validation_logs=logs,
         )
 
-    constraint_ok, constraint_message = validate_constraints(item["response"], evidence_index.constraints)
-    logs.append(constraint_message)
-    if not constraint_ok:
+    constraint_failure = validate_constraints(item["response"], evidence_index.constraints)
+    if constraint_failure:
+        logs.append(constraint_failure.message)
         return ValidationResult(
             status="rejected",
             stage="constraints",
