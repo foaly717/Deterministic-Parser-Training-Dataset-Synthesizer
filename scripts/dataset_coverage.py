@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 
+import argparse
 import json
 from collections import Counter
 from pathlib import Path
 
 
-INPUT = Path("data/raw/livefire_20.jsonl")
-
-
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=Path, required=True)
+    args = parser.parse_args()
+
     options = Counter()
     statuses = Counter()
     total = 0
 
-    with INPUT.open(encoding="utf-8") as handle:
+    with args.input.open(encoding="utf-8") as handle:
         for line in handle:
             record = json.loads(line)
             total += 1
