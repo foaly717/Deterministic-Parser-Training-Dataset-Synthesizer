@@ -25,19 +25,19 @@ def test_live_generation_validation_batch_records_results(tmp_path, monkeypatch)
 
     accepted = [
         r for r in records
-        if r["status"] == "accepted"
+        if r["validation"]["status"] == "accepted"
     ]
 
     rejected = [
         r for r in records
-        if r["status"] == "rejected"
+        if r["validation"]["status"] == "rejected"
     ]
 
     assert len(accepted) == 2
     assert len(rejected) == 2
 
     reasons = {
-        r["reason_code"]
+        r["validation"]["reason_code"]
         for r in rejected
     }
 
@@ -45,5 +45,5 @@ def test_live_generation_validation_batch_records_results(tmp_path, monkeypatch)
     assert "UNSUPPORTED_OPTION" in reasons
 
     for record in rejected:
-        assert record["validation_logs"]
+        assert record["validation"]["validation_logs"]
         assert record["candidate"]["response"]

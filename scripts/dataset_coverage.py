@@ -19,7 +19,7 @@ def main() -> int:
         for line in handle:
             record = json.loads(line)
             total += 1
-            statuses[record["status"]] += 1
+            statuses[record["validation"]["status"]] += 1
 
             parsed = record.get("parsed")
             if not isinstance(parsed, dict):

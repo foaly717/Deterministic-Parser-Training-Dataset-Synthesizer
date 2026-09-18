@@ -6,6 +6,7 @@ from dataset_tools.evidence.loaders.handbrakecli import HandBrakeCliLoader
 from dataset_tools.evidence.extract_constraints import extract_constraints
 from dataset_tools.evidence.index import build_evidence_index
 from dataset_tools.validators.pipeline import validate_candidate
+from dataset_tools.validators.serialization import serialize_validation_result
 
 
 OUTPUT = Path("data/raw/live_validation_results.jsonl")
@@ -125,14 +126,15 @@ def main():
                 evidence_index,
             )
 
+            validation = serialize_validation_result(
+                result,
+            )
+
             record = {
                 "id": str(uuid.uuid4()),
                 "expected": item["expected"],
-                "status": result.status,
-                "stage": result.stage,
-                "reason_code": result.reason_code,
-                "validation_logs": result.validation_logs,
                 "candidate": candidate,
+                "validation": validation,
             }
 
             handle.write(

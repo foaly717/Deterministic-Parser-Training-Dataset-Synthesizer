@@ -3,6 +3,7 @@ import json
 from dataset_tools.evidence.registry import load_evidence
 from dataset_tools.evidence.index import build_evidence_index
 from dataset_tools.validators.pipeline import validate_candidate
+from dataset_tools.validators.serialization import serialize_validation_result
 
 EVIDENCE = Path("data/evidence/handbrakecli-help.txt")
 OUT = Path("data/generation_runs/handbrake_validation_results.jsonl")
@@ -53,16 +54,22 @@ def main():
                 evidence_index=index,
             )
 
-            record = {
-                "prompt": prompt,
-                "response": candidate["response"],
-                "status": result.status,
-                "stage": result.stage,
-                "reason_code": result.reason_code,
-                "logs": result.validation_logs,
-            }
+            record = serialize_validation_result(
+                result,
+                candidate=candidate,
+                extra={
+                    "prompt": prompt,
+                    "response": candidate["response"],
+                },
+            )
 
-            print(record["status"], "::", record["stage"], "::", prompt)
+            print(
+                record["validation"]["status"],
+                "::",
+                record["validation"]["stage"],
+                "::",
+                prompt,
+            )
             handle.write(json.dumps(record) + "\n")
 
 if __name__ == "__main__":

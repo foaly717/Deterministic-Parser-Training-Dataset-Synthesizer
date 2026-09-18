@@ -16,6 +16,10 @@ from dataset_tools.evidence.index import build_evidence_index
 from dataset_tools.generator.planner import select_generation_fact
 from dataset_tools.generator.prompt import build_single_fact_prompt
 from dataset_tools.validators.pipeline import validate_candidate
+from dataset_tools.validators.serialization import (
+    serialize_validation_failure,
+    serialize_validation_result,
+)
 
 
 def parse_model_json(text: str):
@@ -90,10 +94,6 @@ def main() -> int:
                 "generator_model": args.model,
                 "raw_response": None,
                 "parsed": None,
-                "structurally_valid": False,
-                "command_valid": False,
-                "option_valid": False,
-                "status": "rejected",
                 "validation": None,
             }
 
@@ -143,7 +143,11 @@ def main() -> int:
                 sys.stdout.write("\r")
                 sys.stdout.flush()
 
-                record["validation"] = f"JSON/request failure: {exc}"
+                record["validation"] = serialize_validation_failure(
+                    stage="parse",
+                    reason_code="INVALID_JSON",
+                    message=f"JSON/request failure: {exc}",
+                )
                 parse_rejections += 1
 
                 handle.write(
@@ -175,8 +179,10 @@ def main() -> int:
                 continue
 
             if not isinstance(parsed, dict):
-                record["validation"] = (
-                    "JSON output must be exactly one object."
+                record["validation"] = serialize_validation_failure(
+                    stage="parse",
+                    reason_code="INVALID_JSON_SHAPE",
+                    message="JSON output must be exactly one object.",
                 )
                 parse_rejections += 1
 
@@ -214,10 +220,9 @@ def main() -> int:
                 evidence_index,
             )
 
-            record["validation"] = result.validation_logs
-
-            if result.stage != "structure":
-                record["structurally_valid"] = True
+            record["validation"] = serialize_validation_result(
+                result,
+            )
 
             if isinstance(parsed.get("response"), str):
                 command_display = parsed["response"].strip() or "<empty command>"
@@ -233,9 +238,6 @@ def main() -> int:
                 status = "REJECTED"
             else:
                 accepted += 1
-                record["status"] = "accepted"
-                record["command_valid"] = True
-                record["option_valid"] = True
                 status = "ACCEPTED"
 
             handle.write(

@@ -4,6 +4,7 @@ import json
 from dataset_tools.evidence.registry import load_evidence
 from dataset_tools.evidence.extract_constraints import extract_constraints
 from dataset_tools.validators.pipeline import validate_candidate
+from dataset_tools.validators.serialization import serialize_validation_result
 from dataset_tools.evidence.index import build_evidence_index
 
 
@@ -101,13 +102,14 @@ def main():
             evidence_index=index,
         )
 
-        record = {
-            "prompt": prompt,
-            "response": response,
-            "passed": result.passed,
-            "stage": result.stage,
-            "logs": result.logs,
-        }
+        record = serialize_validation_result(
+            result,
+            candidate=candidate,
+            extra={
+                "prompt": prompt,
+                "response": response,
+            },
+        )
 
         results.append(record)
 
@@ -118,7 +120,7 @@ def main():
         print()
         print("PASS" if result.passed else "FAIL")
         print(result.stage)
-        for log in result.logs:
+        for log in result.validation_logs:
             print(" -", log)
 
     output = Path("handbrake_generation_validation_results.json")

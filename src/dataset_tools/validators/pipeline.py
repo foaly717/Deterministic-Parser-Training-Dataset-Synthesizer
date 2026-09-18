@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 from dataset_tools.evidence.index import EvidenceIndex
-from dataset_tools.generator.runner import validate_candidate_structure
+from dataset_tools.validators.structure import validate_candidate_structure
 from dataset_tools.validators.command import validate_cli_command
 from dataset_tools.validators.options import validate_cli_response
 from dataset_tools.validators.constraints import validate_constraints

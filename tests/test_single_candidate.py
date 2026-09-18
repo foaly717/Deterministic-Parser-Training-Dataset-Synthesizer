@@ -1,4 +1,4 @@
-from dataset_tools.generator.runner import validate_candidate_structure
+from dataset_tools.validators.structure import validate_candidate_structure
 
 
 def test_candidate_structure_accepts_single_object():
