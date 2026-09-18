@@ -1,10 +1,11 @@
 from pathlib import Path
 import hashlib
 
+from dataset_tools.evidence.ids import document_id, fact_id
 from dataset_tools.evidence.schema import (
-    EvidenceSource,
     NormalizedEvidenceDocument,
     NormalizedEvidenceFact,
+    Provenance,
 )
 
 from dataset_tools.parsers.cli_help import parse_cli_help
@@ -19,40 +20,49 @@ class HandBrakeCliLoader(EvidenceLoader):
 
     def load(self, path: Path) -> NormalizedEvidenceDocument:
         content = path.read_text(encoding="utf-8")
+        sha256 = hashlib.sha256(content.encode("utf-8")).hexdigest()
+        source_id = path.stem
+        doc_id = document_id(source_id, sha256)
 
-        sha256 = hashlib.sha256(
-            content.encode("utf-8")
-        ).hexdigest()
-
-        source = EvidenceSource(
-            source_id=path.stem,
-            path=str(path),
-            source_type="handbrakecli",
-            sha256=sha256,
-        )
-
-        facts = [
-            NormalizedEvidenceFact(
-                category="cli_option",
-                subject=fact.tool or "HandBrakeCLI",
-                predicate="supports",
-                value=fact.name,
-                metadata={
-                    "kind": "option",
-                    "aliases": fact.aliases,
-                    "argument": fact.argument,
-                    "description": fact.description,
-                    "source_id": fact.source_id,
-                    "source_line_start": fact.line_start,
-                    "source_line_end": fact.line_end,
-                    "section": fact.section,
-                },
+        facts = []
+        for parsed_fact in parse_cli_help(path):
+            provenance = Provenance(
+                source_id=source_id,
+                source_sha256=sha256,
+                line_start=parsed_fact.line_start,
+                line_end=parsed_fact.line_end,
+                section=parsed_fact.section,
             )
-            for fact in parse_cli_help(path)
-        ]
 
+            facts.append(
+                NormalizedEvidenceFact(
+                    fact_id=fact_id(
+                        doc_id,
+                        "cli_option",
+                        parsed_fact.tool or "HandBrakeCLI",
+                        "supports",
+                        parsed_fact.name,
+                        provenance.model_dump(),
+                    ),
+                    document_id=doc_id,
+                    category="cli_option",
+                    subject=parsed_fact.tool or "HandBrakeCLI",
+                    predicate="supports",
+                    value=parsed_fact.name,
+                    provenance=provenance,
+                    metadata={
+                        "kind": "option",
+                        "aliases": parsed_fact.aliases,
+                        "argument": parsed_fact.argument,
+                        "description": parsed_fact.description,
+                    },
+                )
+            )
 
         return NormalizedEvidenceDocument(
-            source=source,
+            document_id=doc_id,
+            source_id=source_id,
+            source_type="handbrakecli",
+            source_sha256=sha256,
             facts=facts,
         )

@@ -1,6 +1,27 @@
 from .schema import (
-    EvidenceSource,
-    NormalizedEvidenceFact,
+    ConstraintType,
+    DependencyConstraint,
+    DerivedConstraint,
+    EnumConstraint,
+    FactCategory,
+    MutualExclusionConstraint,
     NormalizedEvidenceDocument,
+    NormalizedEvidenceFact,
+    Provenance,
+    RangeConstraint,
+    TypeConstraint,
 )
-from .constraints import Constraint, EnumConstraint
+
+__all__ = [
+    "ConstraintType",
+    "DependencyConstraint",
+    "DerivedConstraint",
+    "EnumConstraint",
+    "FactCategory",
+    "MutualExclusionConstraint",
+    "NormalizedEvidenceDocument",
+    "NormalizedEvidenceFact",
+    "Provenance",
+    "RangeConstraint",
+    "TypeConstraint",
+]

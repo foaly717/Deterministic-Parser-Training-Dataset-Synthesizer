@@ -1,60 +1,40 @@
-from dataset_tools.evidence.constraints import EnumConstraint
 from dataset_tools.evidence.schema import (
-    EvidenceSource,
-    NormalizedEvidenceDocument,
-    NormalizedEvidenceFact,
+    EnumConstraint,
+    TypeConstraint,
 )
 
 
-def test_normalized_fact_can_store_constraints():
-    fact = NormalizedEvidenceFact(
-        category="constraint",
-        subject="ExampleCLI",
-        predicate="allowed_value",
-        value="alpha",
-        metadata={
-            "applies_to": "--mode",
-            "source_id": "example-help",
-        },
-    )
-
-    assert fact.category == "constraint"
-    assert fact.metadata["applies_to"] == "--mode"
-
-
-def test_constraint_is_not_parser_specific():
-    fact = NormalizedEvidenceFact(
-        category="constraint",
-        subject="ExampleTool",
-        predicate="allowed_value",
-        value="inner",
-        metadata={
-            "applies_to": "JOIN",
-        },
-    )
-
-    assert fact.value == "inner"
-
-
-def test_normalized_document_stores_constraints_as_canonical_objects():
+def test_enum_constraint_requires_values():
     constraint = EnumConstraint(
-        name="example-mode",
-        category="cli_constraint",
-        subject="--mode",
-        allowed_values=["alpha"],
-        metadata={"source_id": "example-help"},
+        constraint_id="test-enum",
+        target_entity="--mode",
+        source_fact_ids=["fact-a", "fact-b"],
+        allowed_values=["alpha", "beta"],
     )
 
-    document = NormalizedEvidenceDocument(
-        source=EvidenceSource(
-            source_id="example-help",
-            path="example.txt",
-            source_type="text",
-            sha256="abc",
-        ),
-        facts=[],
-        constraints=[constraint],
+    assert constraint.constraint_type == "enum"
+    assert constraint.target_entity == "--mode"
+    assert sorted(constraint.allowed_values) == [
+        "alpha",
+        "beta",
+    ]
+    assert constraint.source_fact_ids == [
+        "fact-a",
+        "fact-b",
+    ]
+
+
+def test_type_constraint_preserves_source_lineage():
+    constraint = TypeConstraint(
+        constraint_id="test-type",
+        target_entity="--preset",
+        source_fact_ids=["fact-preset"],
+        expected_type="str",
     )
 
-    assert document.constraints[0].name == "example-mode"
-    assert document.constraints[0].metadata["source_id"] == "example-help"
+    assert constraint.constraint_type == "type"
+    assert constraint.target_entity == "--preset"
+    assert constraint.expected_type == "str"
+    assert constraint.source_fact_ids == [
+        "fact-preset",
+    ]

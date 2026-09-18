@@ -15,7 +15,7 @@ def test_registry_selects_markdown_loader(tmp_path):
 
     document = load_evidence(source)
 
-    assert document.source.source_type == "markdown"
+    assert document.source_type == "markdown"
 
 
 def test_registry_selects_text_loader(tmp_path):
@@ -28,7 +28,7 @@ def test_registry_selects_text_loader(tmp_path):
 
     document = load_evidence(source)
 
-    assert document.source.source_type == "text"
+    assert document.source_type == "text"
 
 
 def test_registry_rejects_unknown_extension(tmp_path):

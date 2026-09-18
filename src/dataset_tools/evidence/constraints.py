@@ -1,15 +1,17 @@
-from dataclasses import dataclass, field
-from typing import Any
+from dataset_tools.evidence.schema import (
+    DependencyConstraint,
+    DerivedConstraint,
+    EnumConstraint,
+    MutualExclusionConstraint,
+    RangeConstraint,
+    TypeConstraint,
+)
 
-
-@dataclass
-class Constraint:
-    name: str
-    category: str
-    subject: str
-    metadata: dict[str, Any] = field(default_factory=dict)
-
-
-@dataclass
-class EnumConstraint(Constraint):
-    allowed_values: list[str] = field(default_factory=list)
+__all__ = [
+    "DerivedConstraint",
+    "DependencyConstraint",
+    "EnumConstraint",
+    "MutualExclusionConstraint",
+    "RangeConstraint",
+    "TypeConstraint",
+]

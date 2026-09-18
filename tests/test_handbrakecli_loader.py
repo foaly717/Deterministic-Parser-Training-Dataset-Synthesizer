@@ -8,7 +8,7 @@ def test_handbrakecli_loader_produces_cli_facts():
 
     document = load_evidence(source)
 
-    assert document.source.source_type == "handbrakecli"
+    assert document.source_type == "handbrakecli"
 
     options = {
         fact.value
@@ -28,15 +28,15 @@ def test_handbrakecli_loader_produces_cli_facts():
     assert preset.metadata["argument"] == "<string>"
     assert preset.metadata["description"]
     assert "-Z" in preset.metadata["aliases"]
-    assert preset.metadata["source_line_start"]
-    assert preset.metadata["section"]
+    assert preset.provenance.line_start
+    assert preset.provenance.section
     preset = next(
         fact
         for fact in document.facts
         if fact.value == "--preset"
     )
 
-    assert preset.metadata["section"] == "General Options"
+    assert preset.provenance.section == "General Options"
     assert preset.metadata["argument"] == "<string>"
     assert preset.metadata["description"]
-    assert preset.metadata["source_line_start"]
+    assert preset.provenance.line_start

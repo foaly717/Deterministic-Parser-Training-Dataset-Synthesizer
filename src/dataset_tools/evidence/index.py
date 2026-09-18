@@ -1,5 +1,10 @@
 from dataclasses import dataclass, field
 
+from dataset_tools.evidence.schema import (
+    DerivedConstraint,
+    NormalizedEvidenceDocument,
+)
+
 
 @dataclass
 class EvidenceIndex:
@@ -7,27 +12,27 @@ class EvidenceIndex:
     constraints: dict[str, set[str]] = field(default_factory=dict)
 
 
-def build_evidence_index(document):
+def build_evidence_index(
+    document: NormalizedEvidenceDocument,
+    constraints: list[DerivedConstraint] | None = None,
+) -> EvidenceIndex:
     valid_options: set[str] = set()
-    constraints: dict[str, set[str]] = {}
+    constraint_values: dict[str, set[str]] = {}
 
     for fact in document.facts:
         if fact.category == "cli_option" and fact.predicate == "supports":
-            valid_options.add(fact.value)
+            valid_options.add(str(fact.value))
 
-        elif fact.category == "cli_constraint" and fact.extraction_type == "enum":
-            allowed_values = fact.metadata.get("allowed_values")
+    for constraint in constraints or []:
+        if hasattr(constraint, "allowed_values"):
+            allowed_values = getattr(constraint, "allowed_values")
             if allowed_values:
-                constraints.setdefault(fact.subject, set()).update(allowed_values)
-
-    for constraint in getattr(document, "constraints", []):
-        subject = getattr(constraint, "subject", None)
-        allowed_values = getattr(constraint, "allowed_values", None)
-
-        if subject and allowed_values:
-            constraints.setdefault(subject, set()).update(allowed_values)
+                constraint_values.setdefault(
+                    constraint.target_entity,
+                    set(),
+                ).update(allowed_values)
 
     return EvidenceIndex(
         valid_options=valid_options,
-        constraints=constraints,
+        constraints=constraint_values,
     )

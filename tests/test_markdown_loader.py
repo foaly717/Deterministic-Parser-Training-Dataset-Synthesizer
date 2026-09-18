@@ -11,7 +11,7 @@ def test_markdown_loader_selected(tmp_path):
 
     document = load_evidence(source)
 
-    assert document.source.source_type == "markdown"
-    assert document.source.sha256
+    assert document.source_type == "markdown"
+    assert document.source_sha256
     assert len(document.facts) == 2
     assert document.facts[0].category == "markdown"

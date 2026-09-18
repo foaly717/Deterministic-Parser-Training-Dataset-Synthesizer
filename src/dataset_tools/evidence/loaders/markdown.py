@@ -1,10 +1,11 @@
 from pathlib import Path
 import hashlib
 
+from dataset_tools.evidence.ids import document_id, fact_id
 from dataset_tools.evidence.schema import (
-    EvidenceSource,
     NormalizedEvidenceDocument,
     NormalizedEvidenceFact,
+    Provenance,
 )
 
 from .base import EvidenceLoader
@@ -17,30 +18,46 @@ class MarkdownEvidenceLoader(EvidenceLoader):
 
     def load(self, path: Path) -> NormalizedEvidenceDocument:
         content = path.read_text(encoding="utf-8")
+        sha256 = hashlib.sha256(content.encode("utf-8")).hexdigest()
+        source_id = path.stem
+        doc_id = document_id(source_id, sha256)
 
-        sha256 = hashlib.sha256(
-            content.encode("utf-8")
-        ).hexdigest()
+        facts = []
+        for line_number, line in enumerate(content.splitlines(), start=1):
+            if not line.strip():
+                continue
 
-        source = EvidenceSource(
-            source_id=path.stem,
-            path=str(path),
-            source_type="markdown",
-            sha256=sha256,
-        )
-
-        facts = [
-            NormalizedEvidenceFact(
-                category="markdown",
-                subject=path.name,
-                predicate="contains",
-                value=line,
+            provenance = Provenance(
+                source_id=source_id,
+                source_sha256=sha256,
+                line_start=line_number,
+                line_end=line_number,
+                raw_snippet=line,
             )
-            for line in content.splitlines()
-            if line.strip()
-        ]
+
+            facts.append(
+                NormalizedEvidenceFact(
+                    fact_id=fact_id(
+                        doc_id,
+                        "markdown",
+                        path.name,
+                        "contains",
+                        line,
+                        provenance.model_dump(),
+                    ),
+                    document_id=doc_id,
+                    category="markdown",
+                    subject=path.name,
+                    predicate="contains",
+                    value=line,
+                    provenance=provenance,
+                )
+            )
 
         return NormalizedEvidenceDocument(
-            source=source,
+            document_id=doc_id,
+            source_id=source_id,
+            source_type="markdown",
+            source_sha256=sha256,
             facts=facts,
         )

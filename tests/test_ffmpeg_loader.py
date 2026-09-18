@@ -20,3 +20,20 @@ def test_ffmpeg_loader_parses_help_text(tmp_path: Path):
     assert "-h" in values
     assert "-y" in values
     assert "-b:a" in values
+
+
+def test_ffmpeg_loader_extracts_options_from_usage_syntax(tmp_path: Path):
+    help_text = """
+usage: ffmpeg [options] [[infile options] -i infile]...
+ -h <arg>          print help
+ -y                overwrite output files
+"""
+    file_path = tmp_path / "ffmpeg-help.txt"
+    file_path.write_text(help_text, encoding="utf-8")
+
+    doc = FFmpegLoader().load(file_path)
+    values = {f.value for f in doc.facts}
+
+    assert "-i" in values
+    assert "-h" in values
+    assert "-y" in values

@@ -3,6 +3,9 @@
 import argparse
 import json
 import re
+import sys
+import threading
+import time
 from pathlib import Path
 
 from dataset_tools.config.settings import get_settings
@@ -13,7 +16,6 @@ from dataset_tools.evidence.index import build_evidence_index
 from dataset_tools.generator.planner import select_generation_fact
 from dataset_tools.generator.prompt import build_single_fact_prompt
 from dataset_tools.validators.pipeline import validate_candidate
-
 
 
 def parse_model_json(text: str):
@@ -48,11 +50,16 @@ def main() -> int:
     # Restrict to cli_option facts for both tool detection and generation —
     # the constraint fact's subject is an option name (e.g. "--preset"), not
     # a tool name, and would corrupt the tool-uniqueness check below if included.
-    cli_option_facts = [fact for fact in document.facts if fact.category == "cli_option"]
+    cli_option_facts = [
+        fact for fact in document.facts
+        if fact.category == "cli_option"
+    ]
 
     tools = {fact.subject for fact in cli_option_facts if fact.subject}
     if len(tools) != 1:
-        raise ValueError(f"Expected exactly one documented tool, found: {sorted(tools)}")
+        raise ValueError(
+            f"Expected exactly one documented tool, found: {sorted(tools)}"
+        )
 
     expected_tool = next(iter(tools))
     sha256 = document.source.sha256
@@ -64,7 +71,17 @@ def main() -> int:
     option_rejections = 0
     parse_rejections = 0
 
+    tried_commands: list[tuple[int, str, str]] = []
+
+    print()
+    print("=== LIVE GENERATION ===")
+    print(f"Model: {args.model}")
+    print(f"Count: {args.count}")
+    print()
+
     with args.output.open("w", encoding="utf-8") as handle:
+        tried_header_printed = False
+
         for attempt in range(args.count):
             record = {
                 "attempt": attempt + 1,
@@ -80,33 +97,130 @@ def main() -> int:
                 "validation": None,
             }
 
+            elapsed = 0.0
+            command_display = "<no valid command>"
+
             try:
                 fact = select_generation_fact(cli_option_facts, attempt)
                 prompt = build_single_fact_prompt(fact)
-                raw = client.generate(prompt, 1024)
+
+                stop_timer = threading.Event()
+                start_time = time.monotonic()
+
+                def show_progress() -> None:
+                    while not stop_timer.wait(1.0):
+                        elapsed_now = time.monotonic() - start_time
+                        sys.stdout.write(
+                            f"\rCandidate: {attempt + 1:02d}/{args.count} | "
+                            f"generating | elapsed: {elapsed_now:.1f}s"
+                        )
+                        sys.stdout.flush()
+
+                sys.stdout.write(
+                    f"Candidate: {attempt + 1:02d}/{args.count} | "
+                    f"generating | elapsed: 0.0s"
+                )
+                sys.stdout.flush()
+
+                timer_thread = threading.Thread(
+                    target=show_progress,
+                    daemon=True,
+                )
+                timer_thread.start()
+
+                try:
+                    raw = client.generate(prompt, 1024)
+                finally:
+                    stop_timer.set()
+                    timer_thread.join()
+
+                elapsed = time.monotonic() - start_time
                 record["raw_response"] = raw
                 parsed = parse_model_json(raw)
                 record["parsed"] = parsed
+
             except Exception as exc:
+                sys.stdout.write("\r")
+                sys.stdout.flush()
+
                 record["validation"] = f"JSON/request failure: {exc}"
                 parse_rejections += 1
-                handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-                print(f"{attempt + 1:02d}: PARSE/REQUEST REJECTED — {exc}")
+
+                handle.write(
+                    json.dumps(record, ensure_ascii=False) + "\n"
+                )
+
+                tried_commands.append(
+                    (
+                        attempt + 1,
+                        "REJECTED",
+                        "<no valid command: JSON/request failure>",
+                    )
+                )
+
+                print(
+                    f"Candidate: {attempt + 1:02d}/{args.count} | "
+                    f"complete | {elapsed:.1f}s | "
+                    f"PARSE/REQUEST REJECTED — {exc}"
+                )
+                if not tried_header_printed:
+                    print()
+                    print("=== TRIED COMMANDS ===")
+                    tried_header_printed = True
+
+                print(
+                    f"{attempt + 1:02d} REJECTED  | "
+                    f"<no valid command: JSON/request failure>"
+                )
                 continue
 
             if not isinstance(parsed, dict):
-                record["validation"] = "JSON output must be exactly one object."
+                record["validation"] = (
+                    "JSON output must be exactly one object."
+                )
                 parse_rejections += 1
-                handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-                print(f"{attempt + 1:02d}: JSON SHAPE REJECTED")
+
+                handle.write(
+                    json.dumps(record, ensure_ascii=False) + "\n"
+                )
+
+                tried_commands.append(
+                    (
+                        attempt + 1,
+                        "REJECTED",
+                        "<no valid command: invalid JSON shape>",
+                    )
+                )
+
+                print(
+                    f"Candidate: {attempt + 1:02d}/{args.count} | "
+                    f"complete | {elapsed:.1f}s | "
+                    f"JSON SHAPE REJECTED"
+                )
+                if not tried_header_printed:
+                    print()
+                    print("=== TRIED COMMANDS ===")
+                    tried_header_printed = True
+
+                print(
+                    f"{attempt + 1:02d} REJECTED  | "
+                    f"<no valid command: invalid JSON shape>"
+                )
                 continue
 
-            result = validate_candidate(parsed, expected_tool, evidence_index)
+            result = validate_candidate(
+                parsed,
+                expected_tool,
+                evidence_index,
+            )
 
             record["validation"] = result.validation_logs
 
             if result.stage != "structure":
                 record["structurally_valid"] = True
+
+            if isinstance(parsed.get("response"), str):
+                command_display = parsed["response"].strip() or "<empty command>"
 
             if result.status != "accepted":
                 if result.stage == "structure":
@@ -115,14 +229,41 @@ def main() -> int:
                     command_rejections += 1
                 elif result.stage == "options":
                     option_rejections += 1
+
+                status = "REJECTED"
             else:
                 accepted += 1
                 record["status"] = "accepted"
                 record["command_valid"] = True
                 record["option_valid"] = True
+                status = "ACCEPTED"
 
-            handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-            print(attempt + 1, record["status"].upper())
+            handle.write(
+                json.dumps(record, ensure_ascii=False) + "\n"
+            )
+
+            tried_commands.append(
+                (
+                    attempt + 1,
+                    status,
+                    command_display,
+                )
+            )
+
+            print(
+                f"Candidate: {attempt + 1:02d}/{args.count} | "
+                f"complete | {elapsed:.1f}s | {status}"
+            )
+
+            if not tried_header_printed:
+                print()
+                print("=== TRIED COMMANDS ===")
+                tried_header_printed = True
+
+            print(
+                f"{attempt + 1:02d} {status:<10} | "
+                f"{command_display}"
+            )
 
     print()
     print("=== LIVEFIRE SUMMARY ===")
