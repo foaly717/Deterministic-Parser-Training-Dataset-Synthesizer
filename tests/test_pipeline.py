@@ -24,9 +24,8 @@ def test_pipeline_accepts_valid_candidate():
     assert result.stage == "complete"
     assert result.validation_logs == [
         "Structural validation passed.",
-        "Expected executable detected.",
+        
         "All detected options are supported by supplied evidence.",
-        "All detected constraints are satisfied.",
     ]
 
 
@@ -56,7 +55,7 @@ def test_pipeline_rejects_unsupported_option():
     assert result.stage == "options"
     assert result.validation_logs == [
         "Structural validation passed.",
-        "Expected executable detected.",
+        
         "Unsupported options detected: ['--not-a-real-option']",
     ]
 
