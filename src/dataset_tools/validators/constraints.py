@@ -1,4 +1,5 @@
 import re
+import shlex
 
 from dataset_tools.validators.failures import ValidationFailure
 from dataset_tools.validators.reason_codes import ValidationReasonCode
@@ -8,11 +9,18 @@ def validate_constraints(
     response: str,
     constraints: dict[str, set[str]],
 ) -> ValidationFailure | None:
-    for subject, allowed_values in constraints.items():
-        pattern = rf"{re.escape(subject)}\s+\"([^\"]+)\""
-        matches = re.findall(pattern, response)
+    tokens = shlex.split(response)
 
-        for value in matches:
+    for subject, allowed_values in constraints.items():
+        for index, token in enumerate(tokens):
+            if token != subject:
+                continue
+
+            if index + 1 >= len(tokens):
+                continue
+
+            value = tokens[index + 1].strip("\"'")
+
             if value not in allowed_values:
                 return ValidationFailure(
                     ValidationReasonCode.UNSUPPORTED_ENUM_VALUE,

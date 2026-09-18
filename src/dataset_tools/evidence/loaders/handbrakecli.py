@@ -10,6 +10,37 @@ from dataset_tools.evidence.schema import (
 
 from dataset_tools.parsers.cli_help import parse_cli_help
 
+
+def extract_enum_values(description: str | None) -> list[str]:
+    if not description:
+        return []
+
+    values = []
+    collecting = False
+
+    for line in description.splitlines():
+        value = line.strip()
+
+        if value.endswith(":"):
+            collecting = True
+            continue
+
+        if collecting:
+            if not value:
+                continue
+
+            if (
+                " " not in value
+                and ":" not in value
+                and "=" not in value
+                and len(value) < 40
+            ):
+                values.append(value)
+            else:
+                collecting = False
+
+    return values
+
 from .base import EvidenceLoader
 
 
@@ -33,6 +64,39 @@ class HandBrakeCliLoader(EvidenceLoader):
                 line_end=parsed_fact.line_end,
                 section=parsed_fact.section,
             )
+
+
+            enum_values = extract_enum_values(
+                parsed_fact.description
+            )
+
+            for enum_value in enum_values:
+                enum_provenance = Provenance(
+                    source_id=source_id,
+                    source_sha256=sha256,
+                    line_start=parsed_fact.line_start,
+                    line_end=parsed_fact.line_end,
+                    section=parsed_fact.section,
+                )
+
+                facts.append(
+                    NormalizedEvidenceFact(
+                        fact_id=fact_id(
+                            doc_id,
+                            "enum_value",
+                            parsed_fact.name,
+                            "enumerates",
+                            enum_value,
+                            enum_provenance.model_dump(),
+                        ),
+                        document_id=doc_id,
+                        category="enum_value",
+                        subject=parsed_fact.name,
+                        predicate="enumerates",
+                        value=enum_value,
+                        provenance=enum_provenance,
+                    )
+                )
 
             facts.append(
                 NormalizedEvidenceFact(
