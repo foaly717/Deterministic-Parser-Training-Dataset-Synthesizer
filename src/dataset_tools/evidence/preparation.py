@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-from types import MappingProxyType
-from typing import Mapping
 
 from dataset_tools.evidence.extract_constraints import extract_constraints
 from dataset_tools.evidence.schema import (
@@ -18,7 +16,6 @@ class PreparedEvidence:
     constraints: tuple[DerivedConstraint, ...]
     cli_option_facts: tuple[NormalizedEvidenceFact, ...]
     valid_options: frozenset[str]
-    constraint_values: Mapping[str, frozenset[str]]
     expected_tool: str
 
 
@@ -54,20 +51,6 @@ def prepare_evidence(
 
     constraints = tuple(extract_constraints(document))
 
-    constraint_values: dict[str, frozenset[str]] = {}
-
-    for constraint in constraints:
-        allowed_values = getattr(
-            constraint,
-            "allowed_values",
-            None,
-        )
-
-        if allowed_values:
-            constraint_values[constraint.target_entity] = (
-                frozenset(allowed_values)
-            )
-
     return PreparedEvidence(
         document=document,
         constraints=constraints,
@@ -75,9 +58,6 @@ def prepare_evidence(
         valid_options=frozenset(
             str(fact.value)
             for fact in cli_option_facts
-        ),
-        constraint_values=MappingProxyType(
-            constraint_values
         ),
         expected_tool=next(iter(tools)),
     )

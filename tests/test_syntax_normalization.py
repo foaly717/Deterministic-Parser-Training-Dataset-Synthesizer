@@ -1,5 +1,6 @@
 from dataset_tools.validators.constraints import validate_constraints
-from dataset_tools.validators.options import validate_cli_response
+from dataset_tools.parsers.cli_parser import parse_cli_command
+from dataset_tools.validators.options import validate_options
 
 
 def test_equals_syntax_option_validation():
@@ -10,8 +11,10 @@ def test_equals_syntax_option_validation():
         "-o",
     })
 
-    ok, msg = validate_cli_response(
+    ok, msg = validate_options(
+        parse_cli_command(
         'ExampleCLI --mode="alpha"',
+        ),
         valid_options,
     )
 

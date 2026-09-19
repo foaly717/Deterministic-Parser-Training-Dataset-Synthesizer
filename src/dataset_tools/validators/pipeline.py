@@ -32,8 +32,12 @@ def validate_candidate(
 
     logs = ["Structural validation passed."]
 
-    command_failure = validate_cli_command(
+    parsed_command = parse_cli_command(
         item["response"],
+    )
+
+    command_failure = validate_cli_command(
+        parsed_command,
         prepared.expected_tool,
     )
 
@@ -45,10 +49,6 @@ def validate_candidate(
             reason_code="UNEXPECTED_EXECUTABLE",
             validation_logs=logs,
         )
-
-    parsed_command = parse_cli_command(
-        item["response"],
-    )
 
     option_ok, option_message = validate_options(
         parsed_command,
@@ -66,8 +66,8 @@ def validate_candidate(
         )
 
     constraint_failure = validate_constraints(
-        item["response"],
-        prepared.constraint_values,
+        parsed_command,
+        prepared.constraints,
     )
 
     if constraint_failure:

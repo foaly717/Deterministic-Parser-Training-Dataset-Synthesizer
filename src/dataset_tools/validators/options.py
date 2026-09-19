@@ -24,22 +24,3 @@ def validate_options(
         )
 
     return True, "All detected options are supported by supplied evidence."
-
-
-def validate_cli_response(
-    response: str,
-    valid_options: frozenset[str],
-) -> tuple[bool, str]:
-    """Compatibility wrapper for legacy string callers.
-
-    New validation paths should use validate_options().
-    """
-
-    from dataset_tools.parsers.cli_parser import parse_cli_command
-
-    command = parse_cli_command(response)
-
-    return validate_options(
-        command,
-        valid_options,
-    )

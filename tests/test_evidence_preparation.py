@@ -2,6 +2,7 @@ from pathlib import Path
 
 from dataset_tools.evidence.preparation import prepare_evidence
 from dataset_tools.evidence.registry import load_evidence
+from dataset_tools.evidence.schema import EnumConstraint
 
 
 def test_prepare_evidence_builds_authoritative_operational_view():
@@ -17,9 +18,16 @@ def test_prepare_evidence_builds_authoritative_operational_view():
     assert "--encoder" in prepared.valid_options
     assert prepared.cli_option_facts
 
-    format_values = prepared.constraint_values["--format"]
+    format_constraint = next(
+        constraint
+        for constraint in prepared.constraints
+        if (
+            isinstance(constraint, EnumConstraint)
+            and constraint.target_entity == "--format"
+        )
+    )
 
-    assert format_values == {
+    assert set(format_constraint.allowed_values) == {
         "av_mkv",
         "av_mp4",
         "av_webm",

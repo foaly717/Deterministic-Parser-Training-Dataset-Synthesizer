@@ -37,3 +37,17 @@ def test_parser_handles_boolean_flag():
 def test_parser_rejects_empty_command():
     with pytest.raises(CLIParseError):
         parse_cli_command("")
+
+
+def test_cli_parser_rejects_multiple_commands():
+    from dataset_tools.parsers.cli_parser import CLIParseError
+
+    try:
+        parse_cli_command(
+            "HandBrakeCLI --preset-export MyPreset\n"
+            "Then verify the output."
+        )
+    except CLIParseError:
+        return
+
+    assert False, "Expected CLIParseError for multiline command"

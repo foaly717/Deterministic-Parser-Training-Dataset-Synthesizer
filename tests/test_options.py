@@ -1,4 +1,5 @@
-from dataset_tools.validators.options import validate_cli_response
+from dataset_tools.parsers.cli_parser import parse_cli_command
+from dataset_tools.validators.options import validate_options
 
 
 VALID_OPTIONS = frozenset({
@@ -11,8 +12,10 @@ VALID_OPTIONS = frozenset({
 
 
 def test_supported_long_option_is_accepted():
-    ok, message = validate_cli_response(
+    ok, message = validate_options(
+        parse_cli_command(
         "HandBrakeCLI --preset-import-file my_presets.json",
+        ),
         VALID_OPTIONS,
     )
 
@@ -21,8 +24,10 @@ def test_supported_long_option_is_accepted():
 
 
 def test_unsupported_option_is_rejected():
-    ok, message = validate_cli_response(
+    ok, message = validate_options(
+        parse_cli_command(
         "HandBrakeCLI --not-a-real-option input.mkv",
+        ),
         VALID_OPTIONS,
     )
 
@@ -31,8 +36,10 @@ def test_unsupported_option_is_rejected():
 
 
 def test_executable_suffix_is_not_treated_as_option():
-    ok, message = validate_cli_response(
+    ok, message = validate_options(
+        parse_cli_command(
         "ffmpeg-cli --preset-export MyPreset",
+        ),
         VALID_OPTIONS,
     )
 
@@ -41,8 +48,10 @@ def test_executable_suffix_is_not_treated_as_option():
 
 
 def test_tool_executable_suffix_is_not_treated_as_option():
-    ok, message = validate_cli_response(
+    ok, message = validate_options(
+        parse_cli_command(
         "preset-tool --preset-import-file my_presets.json",
+        ),
         VALID_OPTIONS,
     )
 

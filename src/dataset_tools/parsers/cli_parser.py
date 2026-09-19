@@ -19,7 +19,14 @@ def parse_cli_command(response: str) -> ParsedCommand:
       --flag=value
     """
 
-    tokens = shlex.split(response.strip())
+    normalized = response.strip()
+
+    if "\n" in normalized:
+        raise CLIParseError(
+            "Command must contain exactly one terminal command."
+        )
+
+    tokens = shlex.split(normalized)
 
     if not tokens:
         raise CLIParseError("Command cannot be empty.")
