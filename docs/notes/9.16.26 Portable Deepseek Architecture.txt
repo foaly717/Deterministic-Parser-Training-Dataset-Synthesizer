@@ -1,0 +1,22 @@
+Deep-seek architecture outline:
+ds-start
+    Start llama-server if it isn't already running.
+    Validate model/backend/config first.
+    Wait for /health.
+    Own server PID/log lifecycle.
+
+ask-ds
+    Assume the backend is available.
+    Send the user's prompt.
+    Return the model response.
+    Do not start or stop infrastructure.
+
+ds-status
+    Report whether the server is running.
+    Show backend, model, endpoint, and runtime configuration.
+    Do not modify anything.
+
+ds-stop
+    Stop the managed llama-server.
+    Clean up its PID state.
+    Do not affect unrelated llama-server processes.

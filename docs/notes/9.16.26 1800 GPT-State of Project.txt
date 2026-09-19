@@ -1,0 +1,1030 @@
+You are building a portable, local-first terminal assistant around llama.cpp and a local coding-capable LLM. The eventual product is intended to be something you can install on different Linux machines and interact with primarily from the terminal.
+
+The architecture is deliberately separating four concerns:
+
+                 ┌──────────────────────┐
+                 │   Terminal user      │
+                 └──────────┬───────────┘
+                            │
+                      ask-ds <prompt>
+                            │
+                 ┌──────────▼───────────┐
+                 │   llama-server       │
+                 │   localhost API      │
+                 └──────────┬───────────┘
+                            │
+                       local model
+                            │
+                 ┌──────────▼───────────┐
+                 │ DeepSeek-Coder-V2    │
+                 │ Lite Q4_K_M          │
+                 └──────────────────────┘
+
+Lifecycle:
+  ds-start  → start/manage server
+  ds-status → observe
+  ds-stop   → stop/clean up
+  ask-ds    → inference only
+
+Future:
+  ask-ds / agent
+       │
+       ▼
+  sandboxed execution harness
+       │
+       ├── filesystem controls
+       ├── command controls
+       ├── time/resource limits
+       └── explicit safety boundary
+
+The important architectural decision is that the LLM itself is not being given arbitrary host execution authority. The eventual agent/tool layer will sit behind a deliberately constrained execution harness.
+
+What Has Been Accomplished
+1. Established a working local inference stack
+
+You have a known-good combination of:
+
+Ubuntu/Linux
+llama.cpp
+llama-server
+DeepSeek-Coder-V2-Lite Instruct
+Q4_K_M GGUF
+local HTTP API
+deterministic generation settings
+
+Current model:
+
+DeepSeek-Coder-V2-Lite-Instruct-Q4_K_M.gguf
+
+Size:
+
+9.7 GB
+10,364,416,768 bytes
+
+SHA-256:
+
+603bd3f8a0281d16571da7c08bd661ee17ff0d1be6fcbd1b42242da257ef0bb8
+
+That gives you a concrete model artifact that can be validated when moving the bundle between machines.
+
+2. Established known-good llama-server configuration
+
+Current tuning:
+
+context       8192
+parallel      1
+threads       4
+flash-attn    auto
+max_tokens    1536
+temperature   0
+
+Current default endpoint:
+
+127.0.0.1:8080
+
+The server is therefore local-only rather than exposed to the LAN.
+
+3. Separated lifecycle management from inference
+
+This was a significant architectural improvement.
+
+Previously, ask-ds could implicitly start the server. It is now explicitly inference-only.
+
+The intended contract is:
+
+ds-start
+
+Owns:
+
+startup
+model loading
+port selection
+health checking
+PID state
+server log
+ask-ds
+
+Owns:
+
+accepting the user's prompt
+constructing the API request
+calling llama-server
+returning the model response
+
+It does not start or stop anything.
+
+ds-status
+
+Owns:
+
+read-only diagnostics
+current configuration
+server state
+PID
+endpoint
+
+It does not mutate lifecycle state.
+
+ds-stop
+
+Owns:
+
+verifying process identity
+stopping the managed server
+removing lifecycle state
+
+This separation is important for eventually putting an agent on top of the infrastructure.
+
+4. Hardened process ownership
+
+A particularly important problem was discovered and fixed.
+
+The original stop logic effectively trusted:
+
+PID file → kill PID
+
+That is unsafe because PIDs are reusable.
+
+The current ds-stop verifies that the PID actually belongs to the expected llama-server by checking:
+
+/proc/<pid>/exe
+command line
+configured model path
+configured host
+configured port
+
+So an unrelated process cannot be killed merely because its PID happens to appear in the assistant's PID file.
+
+You explicitly tested this with an unrelated process, and it was protected.
+
+This is one of the more important safety foundations of the project.
+
+5. Made the bundle genuinely portable
+
+The initial implementation contained machine-specific paths.
+
+Those have been removed from the core bundle design.
+
+Instead:
+
+BUNDLE_ROOT
+    ↓
+config
+lib
+models
+scripts
+
+The scripts determine their location dynamically.
+
+This means the bundle can theoretically live at:
+
+/mnt/staging/working_portable_agent_bundle
+
+or:
+
+/home/user/tools/terminal-assistant
+
+or another filesystem location without rewriting the scripts.
+
+6. Fixed symlink portability
+
+Installing:
+
+~/.local/bin/ds-status
+    ↓
+/mnt/staging/working_portable_agent_bundle/scripts/ds-status
+
+initially exposed an important Bash behavior: BASH_SOURCE[0] reflected the symlink path rather than the actual bundle location.
+
+That produced:
+
+/home/lincolnbrennan/.local/lib/common.sh
+
+instead of the bundle's lib/common.sh.
+
+All four scripts now resolve themselves using:
+
+SCRIPT_PATH="$(readlink -f -- "${BASH_SOURCE[0]}")"
+
+before determining BUNDLE_ROOT.
+
+That makes the symlink-based installation model work.
+
+7. Built the portable bundle structure
+
+Current working bundle:
+
+working_portable_agent_bundle/
+├── config/
+│   ├── assistant.env
+│   └── system-prompt.txt
+├── docs/
+│   ├── current-environment.txt
+│   ├── current-server-process.txt
+│   └── llama-ds-server.log
+├── lib/
+│   └── common.sh
+├── models/
+│   └── DeepSeek-Coder-V2-Lite-Instruct-Q4_K_M.gguf
+├── scripts/
+│   ├── ask-ds
+│   ├── ds-start
+│   ├── ds-status
+│   └── ds-stop
+└── install.sh
+
+There is also a frozen known-good baseline at:
+
+/mnt/staging/frozen_portable_agent_bundle
+
+which is being kept immutable while the working bundle evolves.
+
+That is a good development practice at this stage.
+
+8. Built the installer
+
+The installer follows the desired deployment model:
+
+User decides where the bundle lives; installer exposes commands through symlinks.
+
+It installs:
+
+~/.local/bin/ask-ds
+~/.local/bin/ds-start
+~/.local/bin/ds-status
+~/.local/bin/ds-stop
+
+pointing into the chosen bundle.
+
+It does not:
+
+copy the model
+install llama.cpp
+modify .bashrc
+start llama-server
+create runtime state
+overwrite arbitrary existing commands
+
+It also performs shell syntax checks and protects unrelated existing symlinks/files.
+
+The installer has been run successfully.
+
+9. Established temporary alternate-port behavior
+
+You added an important operational feature.
+
+If:
+
+127.0.0.1:8080
+
+is occupied by something other than the managed llama-server, ds-start does not simply fail.
+
+It asks:
+
+Try a different port? [y/N]
+
+If accepted, it asks for another port.
+
+That alternate port is intended to be session state, not a permanent configuration change.
+
+So:
+
+assistant.env
+    PORT=8080
+
+remains unchanged.
+
+10. Broadened port detection
+
+Initially, the collision detector effectively asked:
+
+Does something respond to the llama-server HTTP health endpoint?
+
+That misses arbitrary TCP services.
+
+It now uses:
+
+ss -H -ltn "sport = :${PORT}"
+
+So it detects a TCP listener regardless of protocol.
+
+You tested:
+
+HTTP
+python3 -m http.server 8080 --bind 127.0.0.1
+
+Detected correctly.
+
+Non-HTTP TCP
+nc -l 8080
+
+Also detected correctly.
+
+This is the correct direction for protecting the port boundary.
+
+11. Improved runtime cleanup
+
+The runtime directory is:
+
+/tmp/terminal-assistant
+
+and now has explicit state for:
+
+llama-server.pid
+active-port
+llama-server.log
+
+ds-stop has just been updated to clean:
+
+rm -f "${PID_FILE}" "${ACTIVE_PORT_FILE}"
+
+So alternate-port state is explicitly removed when the server is stopped.
+
+12. Established the system prompt
+
+The model is instructed that it is a local terminal assistant focused on:
+
+Python
+pandas
+numpy
+SQL
+R
+Linux administration
+Docker
+Jellyfin
+HandBrake
+MakeMKV
+
+You also established a project-wide preference for Astral's uv for Python environment/dependency management rather than pip-based workflows.
+
+The system prompt also explicitly tells the model not to invent CLI flags, configuration keys, or environment variables.
+
+What Remains
+
+There are really three layers left:
+
+Layer 1 — Portable runtime
+        ↓
+Layer 2 — Reliable agent/tool execution
+        ↓
+Layer 3 — Productized terminal UX
+
+Layer 1 is close, but not completely finished.
+
+Layer 1 — Finish the Portable Runtime
+A. Finish the lifecycle test matrix
+
+This is the immediate next step.
+
+We have tested the major happy paths, but we should systematically test state transitions.
+
+Normal lifecycle
+stopped
+  ↓
+ds-start
+  ↓
+running
+  ↓
+ask-ds
+  ↓
+ds-stop
+  ↓
+stopped
+Already running
+ds-start
+ds-start
+
+Second invocation should not create another server.
+
+Inference while stopped
+ds-stop
+ask-ds ...
+
+Should produce a clean instruction to run:
+
+ds-start
+
+and must not start anything.
+
+Unmanaged port
+
+Already substantially tested.
+
+Need to verify both:
+
+N → no state change
+Y → alternate port
+Alternate-port lifecycle
+
+This is the next specific test.
+
+Verify:
+
+8080 occupied
+→ choose 8081
+→ llama-server on 8081
+→ ask-ds uses 8081
+→ ds-status reports 8081
+→ ds-stop
+→ active-port disappears
+
+Then:
+
+ds-start
+
+should return to:
+
+8080
+
+rather than remembering 8081.
+
+B. Fix/verify the active-port state architecture
+
+There is one subtle issue worth resolving before calling this layer finished.
+
+common.sh needs a clean distinction between:
+
+CONFIGURED_PORT
+
+and:
+
+ACTIVE_PORT
+
+Conceptually:
+
+assistant.env
+    PORT=8080
+        │
+        ▼
+CONFIGURED_PORT=8080
+        │
+        ├── normal session → ACTIVE_PORT=8080
+        │
+        └── collision → ACTIVE_PORT=8081
+
+The configured value should never be overwritten permanently.
+
+This should be made explicit in common.sh rather than relying on cleanup behavior.
+
+C. Handle managed-but-unhealthy server state
+
+There is another lifecycle edge case.
+
+Suppose:
+
+PID exists
+llama-server matches our process identity
+but /health != 200
+
+That is different from:
+
+no server
+
+and different from:
+
+unmanaged process owns port
+
+The eventual state model should distinguish:
+
+STOPPED
+STARTING
+RUNNING
+DEGRADED / UNHEALTHY
+CONFLICT
+
+ds-start should not mistake its own unhealthy server for an unrelated port conflict.
+
+This is worth fixing before adding more agent behavior.
+
+D. Improve startup failure cleanup
+
+If llama-server exits during startup, cleanup is already mostly handled.
+
+The timeout path should also clean its state consistently:
+
+PID_FILE
+ACTIVE_PORT_FILE
+
+rather than leaving runtime artifacts behind.
+
+E. Improve ds-stop edge cases
+
+Current process-identity protection is good.
+
+Remaining cases to explicitly test:
+
+stale PID file
+PID reused by unrelated process
+PID file missing
+managed process already exited
+alternate-port process
+server process alive but health endpoint unavailable
+unrelated llama-server using the same model
+unrelated llama-server using another model
+
+The expected principle is:
+
+ds-stop may only stop the exact process instance that the bundle can positively identify as its own.
+
+F. Validate the installer on a clean location
+
+The installer has been tested against the existing environment.
+
+A proper portability test should simulate:
+
+bundle copied to /some/other/location
+
+then:
+
+/some/other/location/install.sh
+
+and verify all symlinks point to the new bundle.
+
+Also test:
+
+existing unrelated symlink
+existing regular file
+dangling symlink
+existing symlink to this exact bundle
+
+The installer already contains defenses for these; this is verification rather than a redesign.
+
+G. Decide whether llama.cpp remains an external dependency
+
+Current architecture:
+
+portable bundle
+    ├── scripts
+    ├── config
+    └── model
+
+external:
+    llama-server
+
+This is a sensible first portable architecture.
+
+Later you can consider:
+
+bundle/
+└── runtime/
+    └── llama-server
+
+but that introduces:
+
+architecture differences
+CPU/GPU backend differences
+binary compatibility
+larger distribution size
+upgrade management
+
+So I would leave that decision until the execution harness is working.
+
+Layer 2 — Sandboxed Execution Harness
+
+This is the major remaining engineering project.
+
+The current assistant is fundamentally:
+
+prompt
+  ↓
+LLM
+  ↓
+text response
+
+The desired assistant is:
+
+prompt
+  ↓
+LLM
+  ↓
+structured tool request
+  ↓
+policy layer
+  ↓
+sandbox
+  ↓
+command
+  ↓
+result
+  ↓
+LLM
+  ↓
+response
+
+The LLM should propose an action; the harness decides whether/how that action executes.
+
+A. Define the agent/tool contract
+
+This should be specified before implementing lots of tools.
+
+Something along the lines of:
+
+tool_request
+{
+    tool: "...",
+    arguments: {...}
+}
+
+Potential initial tools:
+
+shell
+read_file
+write_file
+list_directory
+run_python
+
+But each needs a strict contract.
+
+B. Define filesystem boundaries
+
+For example:
+
+/workspace
+
+could be the agent's writable workspace.
+
+Outside it:
+
+read-only
+
+or:
+
+inaccessible
+
+depending on policy.
+
+This is particularly important because the eventual assistant will be used for Linux administration and file manipulation.
+
+C. Define command policy
+
+Do not simply give the model:
+
+subprocess.run(..., shell=True)
+
+and call that a sandbox.
+
+The harness should control:
+
+executable
+arguments
+working directory
+environment
+stdin
+stdout
+stderr
+timeout
+resource limits
+filesystem visibility
+network access
+D. Establish execution modes
+
+A useful model is:
+
+Read-only
+
+Things such as:
+
+ls
+find
+cat
+grep
+file
+stat
+Workspace write
+
+Things such as:
+
+create file
+modify file
+run formatter
+run tests
+convert data
+Elevated/destructive
+
+Things such as:
+
+sudo
+rm outside workspace
+package installation
+system configuration
+service management
+
+These should not silently inherit the same permissions as ordinary workspace operations.
+
+E. Build an actual sandbox boundary
+
+The precise mechanism can be evaluated separately, but candidates include combinations of Linux primitives such as:
+
+namespaces
+bubblewrap
+seccomp
+cgroups
+mount isolation
+read-only mounts
+network namespace
+resource limits
+
+The important point is architectural:
+
+LLM
+≠
+security boundary
+
+The OS-level execution environment must provide the boundary.
+
+F. Add execution audit logging
+
+Every execution should eventually record something like:
+
+timestamp
+tool
+arguments
+working directory
+policy decision
+exit code
+duration
+stdout
+stderr
+
+This will make debugging the agent dramatically easier.
+
+Layer 3 — Terminal Assistant UX
+
+Once execution is reliable, the user-facing interaction can become more sophisticated.
+
+The desired interaction is approximately:
+
+$ ask-ds "Take /workspace/foo.txt and turn it into CSV."
+
+Agent:
+  inspect file
+  ↓
+  tool request
+  ↓
+  sandbox executes inspection
+  ↓
+  result returned
+  ↓
+  model determines conversion
+  ↓
+  tool request
+  ↓
+  sandbox executes conversion
+  ↓
+  verify output
+  ↓
+  report completion
+
+This is substantially different from simply asking the model for a shell command.
+
+Granular File-Level Work Remaining
+config/assistant.env
+
+Likely changes:
+
+explicitly distinguish configured/default port from runtime port
+potentially add future sandbox configuration
+potentially add execution time/resource defaults
+
+Keep this file machine/configuration oriented.
+
+config/system-prompt.txt
+
+Likely changes later:
+
+define tool-use expectations
+tell model not to execute commands itself
+specify structured tool-call format
+specify when to inspect versus modify
+explain sandbox semantics
+
+Do not overload it with security enforcement. The harness must enforce those rules independently.
+
+lib/common.sh
+
+This is the next major file to finish.
+
+Remaining work:
+
+Make CONFIGURED_PORT vs active port explicit.
+Finalize ACTIVE_PORT_FILE.
+Keep port_is_occupied() TCP-listener based.
+Add robust active-port validation.
+Improve managed/unhealthy state detection.
+Centralize process identity logic.
+Centralize cleanup helpers.
+Possibly add logging helpers.
+Ensure all state transitions are deterministic.
+
+This file should become the common lifecycle foundation rather than accumulating application-specific logic.
+
+scripts/ds-start
+
+Remaining work:
+
+Finalize active-port handling.
+Handle managed-but-unhealthy server.
+Clean all state on startup failure.
+Test alternate-port startup.
+Test alternate-port reuse after stop.
+Test stale runtime state.
+Potentially improve startup diagnostics from llama-server log.
+scripts/ds-stop
+
+Current immediate change is complete.
+
+Remaining tests:
+
+normal stop
+alternate-port stop
+stale PID
+PID reuse
+unmanaged process
+missing PID
+already-dead process
+
+Potential cleanup should eventually be centralized in common.sh.
+
+scripts/ds-status
+
+Potential improvements:
+
+Instead of simply:
+
+running
+stopped
+
+eventually report:
+
+State: RUNNING
+PID: ...
+Endpoint: ...
+Process identity: verified
+Health: healthy
+Port ownership: verified
+
+or:
+
+State: CONFLICT
+Endpoint: ...
+Port owner: unmanaged
+
+But this should remain read-only.
+
+scripts/ask-ds
+
+The current version is deliberately simple.
+
+Remaining work is mainly around the transition from:
+
+chat client
+
+to:
+
+agent client
+
+Eventually it will need:
+
+structured model output
+tool-call parsing
+tool execution loop
+execution result injection
+iteration limits
+failure handling
+cancellation
+audit logging
+
+That should probably be a new agent layer rather than continuing to make ask-ds a giant Bash script.
+
+install.sh
+
+Mostly complete.
+
+Remaining:
+
+clean-machine portability test
+relocation test
+protected-existing-command tests
+potentially installer version reporting
+possibly model integrity verification
+
+No major architectural changes are needed right now.
+
+Likely New Files
+
+Once the lifecycle layer is frozen, I would expect the project to grow roughly toward:
+
+portable_agent_bundle/
+├── config/
+│   ├── assistant.env
+│   ├── system-prompt.txt
+│   └── tools/
+│       └── ...
+│
+├── docs/
+│   ├── architecture.md
+│   ├── security-model.md
+│   ├── installation.md
+│   └── ...
+│
+├── lib/
+│   ├── common.sh
+│   ├── process.sh
+│   └── ...
+│
+├── models/
+│   └── ...
+│
+├── scripts/
+│   ├── ask-ds
+│   ├── ds-start
+│   ├── ds-status
+│   ├── ds-stop
+│   └── ...
+│
+├── agent/
+│   ├── agent.py
+│   ├── protocol.py
+│   ├── tools.py
+│   └── ...
+│
+├── sandbox/
+│   ├── executor.py
+│   ├── policy.py
+│   ├── filesystem.py
+│   └── ...
+│
+├── tests/
+│   ├── test_lifecycle.sh
+│   ├── test_process_ownership.sh
+│   ├── test_port_conflicts.sh
+│   ├── test_installer.sh
+│   └── ...
+│
+└── install.sh
+
+The exact division between agent/, sandbox/, and lib/ should be decided when we design the tool contract.
+
+What Needs to Happen Next
+
+I would proceed in this order:
+
+Phase 1 — Finish lifecycle infrastructure
+
+Now:
+
+Verify ds-stop cleanup.
+Run the alternate-port lifecycle test.
+Verify active-port disappears after stop.
+Verify next ds-start returns to 8080.
+Test stale PID/runtime state.
+Test managed-but-unhealthy server behavior.
+Test all process-ownership failure cases.
+Phase 2 — Freeze the runtime interface
+
+Once those pass:
+
+Freeze common.sh.
+Freeze the four lifecycle commands.
+Run a clean relocation/install test.
+Compare working bundle against the frozen baseline.
+Create a new known-good portable bundle snapshot.
+Phase 3 — Build the execution contract
+
+Then:
+
+Define the model → tool-request protocol.
+Define tool schemas.
+Define workspace/filesystem policy.
+Define command policy.
+Define timeout/resource policy.
+Define audit format.
+Define sandbox boundary.
+Phase 4 — Implement the sandbox
+Build the smallest possible execution harness.
+Test it independently of the LLM.
+Add filesystem isolation.
+Add process/resource limits.
+Add network restrictions.
+Add audit logging.
+Attack-test the boundary.
+Phase 5 — Put the LLM behind it
+Add structured tool calling.
+Build the agent loop.
+Add tool-result feedback.
+Add iteration limits.
+Add failure/retry behavior.
+Integrate with ask-ds.
+Phase 6 — Productize the terminal UX
+Define the final command surface.
+Add concise progress/status output.
+Add cancellation.
+Add session/history behavior if desired.
+Make the resulting bundle portable across machines with different hardware/backends.
+Current Project State
+
+In one sentence:
+
+The project has moved from “prove that a local LLM can answer questions” to “build a portable, process-safe local inference runtime,” and that runtime is now substantially working; the next major milestone is a properly isolated execution harness that allows the model to become an agent without making the host itself the model's sandbox.
+
+The immediate engineering milestone is therefore not more model experimentation. It is to finish and systematically test the lifecycle/runtime layer, freeze that foundation, and then move into the sandbox/tool-contract design.
