@@ -66,7 +66,7 @@ def main() -> int:
         )
 
     expected_tool = next(iter(tools))
-    sha256 = document.source.sha256
+    sha256 = document.source_sha256
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
     accepted = 0
