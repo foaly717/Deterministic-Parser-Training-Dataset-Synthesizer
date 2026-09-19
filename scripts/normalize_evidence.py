@@ -18,7 +18,7 @@ def main() -> int:
     args.output.parent.mkdir(parents=True, exist_ok=True)
 
     args.output.write_text(
-        json.dumps(document.to_dict(), indent=2) + "\n",
+        json.dumps(document.model_dump(), indent=2) + "\n",
         encoding="utf-8",
     )
 
