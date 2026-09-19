@@ -8,18 +8,12 @@
 - Option coverage reporting.
 - Normalized evidence document schema.
 
-## Current validated dataset
+## Current generation and validation state
 
-Source:
-- data/evidence/handbrakecli-help.txt
-
-Generation:
-- Model: Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf
-- Attempts: 50
-- Accepted: 50
-- Unique instructions: 50
-- Unique responses: 50
-- Duplicate responses: 0
+- The repository contains experimental generation and validation runs used to exercise the pipeline.
+- Run outputs under `data/raw/` are experimental artifacts, not finalized training data.
+- No finalized problem:answer training dataset has been produced, curated, or accepted for final use.
+- There is currently no dataset-promotion or export step that turns accepted generation records into a final training dataset.
 
 ## Next work
 
