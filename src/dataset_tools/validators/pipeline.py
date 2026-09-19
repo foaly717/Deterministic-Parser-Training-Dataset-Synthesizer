@@ -3,7 +3,8 @@ from dataclasses import dataclass, field
 from dataset_tools.evidence.preparation import PreparedEvidence
 from dataset_tools.validators.command import validate_cli_command
 from dataset_tools.validators.constraints import validate_constraints
-from dataset_tools.validators.options import validate_cli_response
+from dataset_tools.parsers.cli_parser import parse_cli_command
+from dataset_tools.validators.options import validate_options
 from dataset_tools.validators.structure import validate_candidate_structure
 
 
@@ -45,8 +46,12 @@ def validate_candidate(
             validation_logs=logs,
         )
 
-    option_ok, option_message = validate_cli_response(
+    parsed_command = parse_cli_command(
         item["response"],
+    )
+
+    option_ok, option_message = validate_options(
+        parsed_command,
         valid_options=prepared.valid_options,
     )
 
