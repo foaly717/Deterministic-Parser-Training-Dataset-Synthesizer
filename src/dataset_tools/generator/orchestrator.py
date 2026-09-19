@@ -10,7 +10,7 @@ from dataset_tools.llm.client import LLMClient
 class GenerationRequest:
     """Inputs controlling one deterministic generation attempt."""
 
-    fact_ids: tuple[str, ...]
+    fact_id: str
     max_tokens: int = 512
 
 
@@ -32,27 +32,17 @@ class Generator:
     def generate(
         self,
         prepared: PreparedEvidence,
-        request: GenerationRequest | None = None,
+        request: GenerationRequest,
     ) -> GenerationResult:
-        request = request or GenerationRequest()
-
         if request.max_tokens < 1:
             raise ValueError("max_tokens must be >= 1")
-
-        if not request.fact_ids:
-            raise ValueError("At least one fact_id is required.")
-
-        if len(request.fact_ids) != 1:
-            raise ValueError(
-                "Current generator supports exactly one fact_id."
-            )
 
         facts_by_id = {
             fact.fact_id: fact
             for fact in prepared.cli_option_facts
         }
 
-        fact_id = request.fact_ids[0]
+        fact_id = request.fact_id
 
         if fact_id not in facts_by_id:
             raise KeyError(

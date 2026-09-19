@@ -77,7 +77,7 @@ def test_generator_uses_prepared_evidence_and_parses_model_output(
     result = generator.generate(
         prepared_evidence,
         GenerationRequest(
-            fact_ids=(prepared_evidence.cli_option_facts[0].fact_id,),
+            fact_id=prepared_evidence.cli_option_facts[0].fact_id,
             max_tokens=321,
         ),
     )
@@ -105,41 +105,11 @@ def test_generator_selection_is_deterministic(prepared_evidence):
     result = generator.generate(
         prepared_evidence,
         GenerationRequest(
-            fact_ids=(selected_fact.fact_id,),
+            fact_id=selected_fact.fact_id,
         ),
     )
 
     assert f"name: {selected_fact.value}" in result.prompt
-
-
-def test_generator_rejects_empty_fact_ids(prepared_evidence):
-    generator = Generator(MockLLMClient())
-
-    with pytest.raises(ValueError, match="At least one fact_id"):
-        generator.generate(
-            prepared_evidence,
-            GenerationRequest(fact_ids=()),
-        )
-
-
-def test_generator_rejects_multiple_fact_ids_until_supported(
-    prepared_evidence,
-):
-    generator = Generator(MockLLMClient())
-
-    fact_ids = tuple(
-        fact.fact_id
-        for fact in prepared_evidence.cli_option_facts[:2]
-    )
-
-    with pytest.raises(
-        ValueError,
-        match="exactly one fact_id",
-    ):
-        generator.generate(
-            prepared_evidence,
-            GenerationRequest(fact_ids=fact_ids),
-        )
 
 
 def test_generator_rejects_unknown_fact_id(prepared_evidence):
@@ -149,7 +119,7 @@ def test_generator_rejects_unknown_fact_id(prepared_evidence):
         generator.generate(
             prepared_evidence,
             GenerationRequest(
-                fact_ids=("missing-fact-id",),
+                fact_id="missing-fact-id",
             ),
         )
 
@@ -161,7 +131,7 @@ def test_generator_rejects_invalid_max_tokens(prepared_evidence):
         generator.generate(
             prepared_evidence,
             GenerationRequest(
-                fact_ids=(prepared_evidence.cli_option_facts[0].fact_id,),
+                fact_id=prepared_evidence.cli_option_facts[0].fact_id,
                 max_tokens=0,
             ),
         )
