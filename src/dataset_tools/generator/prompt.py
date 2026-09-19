@@ -55,45 +55,6 @@ def format_evidence_context(facts: list[NormalizedEvidenceFact]) -> str:
     return "\n\n".join(sections)
 
 
-def build_candidate_prompt(
-    facts: list[NormalizedEvidenceFact],
-    sample_size: int = 10,
-) -> str:
-    """Build a deterministic grounded prompt for single-example generation."""
-    if sample_size < 1:
-        raise ValueError("sample_size must be >= 1")
-
-    if sample_size < len(facts):
-        step = max(1, len(facts) // sample_size)
-        selected = facts[::step][:sample_size]
-    else:
-        selected = facts
-
-    if not selected:
-        raise ValueError("At least one evidence fact is required")
-
-    context = format_evidence_context(selected)
-
-    return f"""{GENERATOR_SYSTEM_PROMPT}
-
-Target CLI evidence:
-
-{context}
-
-Generate exactly ONE high-quality terminal instruction-response training pair
-grounded exclusively in the evidence above.
-
-The "response" field must be exactly one terminal command that the user can
-run. It must begin with the exact documented tool name from the evidence.
-
-Output exactly ONE JSON object with these fields:
-"instruction", "context", "response".
-
-Do not output additional JSON objects, arrays, Markdown fences, or explanatory
-text outside the JSON object.
-"""
-
-
 def build_single_fact_prompt(
     fact: NormalizedEvidenceFact,
 ) -> str:

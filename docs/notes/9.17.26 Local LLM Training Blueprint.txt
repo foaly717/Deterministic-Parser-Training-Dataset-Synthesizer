@@ -1,3 +1,7 @@
+Status: Obsolete
+Created: 2026-09-17
+Obsolete since: 2026-09-18
+
 9.17.26 Local LLM Training Blueprint:
 Prompt:
 I'm interested in downloading model training datasets to train a local model from the following:

@@ -1,22 +1,16 @@
 from pathlib import Path
 
 from dataset_tools.evidence.loaders.handbrakecli import HandBrakeCliLoader
-from dataset_tools.evidence.extract_constraints import extract_constraints
-from dataset_tools.evidence.index import build_evidence_index
+from dataset_tools.evidence.preparation import prepare_evidence
 from dataset_tools.validators.pipeline import validate_candidate
 
 
 def test_handbrake_generation_positive_and_negative():
-    doc = HandBrakeCliLoader().load(
+    document = HandBrakeCliLoader().load(
         Path("data/evidence/handbrakecli-help.txt")
     )
 
-    constraints = extract_constraints(doc)
-
-    index = build_evidence_index(
-        doc,
-        constraints,
-    )
+    prepared = prepare_evidence(document)
 
     valid = {
         "instruction": (
@@ -49,14 +43,12 @@ def test_handbrake_generation_positive_and_negative():
 
     valid_result = validate_candidate(
         valid,
-        "HandBrakeCLI",
-        index,
+        prepared,
     )
 
     invalid_result = validate_candidate(
         invalid,
-        "HandBrakeCLI",
-        index,
+        prepared,
     )
 
     assert valid_result.status == "accepted"

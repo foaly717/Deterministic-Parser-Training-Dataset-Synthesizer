@@ -1,3 +1,7 @@
+Status: Obsolete
+Created: 2026-09-17
+Obsolete since: 2026-09-18
+
 Deterministic Dataset Validation Blueprint
 To avoid scope creep, build a lightweight Python validation package in a clean `uv` environment. The goal of the first experiment is **not** to build a general-purpose documentation parser or training system. It is to establish a reproducible pipeline that can generate candidate SFT examples and reject examples that cannot be supported by the source material.
 

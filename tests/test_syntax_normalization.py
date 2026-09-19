@@ -1,16 +1,20 @@
-from dataset_tools.evidence.index import EvidenceIndex
-from dataset_tools.validators.options import validate_cli_response
 from dataset_tools.validators.constraints import validate_constraints
+from dataset_tools.validators.options import validate_cli_response
 
 
 def test_equals_syntax_option_validation():
-    valid_options = {"ExampleCLI", "--mode", "-i", "-o"}
-    evidence_index = EvidenceIndex(valid_options=valid_options)
+    valid_options = frozenset({
+        "ExampleCLI",
+        "--mode",
+        "-i",
+        "-o",
+    })
 
     ok, msg = validate_cli_response(
         'ExampleCLI --mode="alpha"',
-        evidence_index,
+        valid_options,
     )
+
     assert ok is True
 
 
@@ -21,4 +25,5 @@ def test_equals_syntax_constraint_validation():
         'ExampleCLI --mode="alpha"',
         constraints,
     )
+
     assert failure is None

@@ -1,26 +1,26 @@
 from pathlib import Path
 
+from dataset_tools.evidence.preparation import prepare_evidence
 from dataset_tools.evidence.registry import load_evidence
-from dataset_tools.evidence.extract_constraints import extract_constraints
-from dataset_tools.evidence.index import build_evidence_index
+from dataset_tools.evidence.schema import (
+    EnumConstraint,
+    FactCategory,
+    NormalizedEvidenceDocument,
+    NormalizedEvidenceFact,
+    Provenance,
+)
 from dataset_tools.validators.pipeline import validate_candidate
 
 
-def _load_ffmpeg_index():
+def _load_ffmpeg_evidence():
     document = load_evidence(
         Path("data/evidence/ffmpeg-help.txt")
     )
-
-    constraints = extract_constraints(document)
-
-    return build_evidence_index(
-        document,
-        constraints,
-    )
+    return prepare_evidence(document)
 
 
 def test_ffmpeg_documented_option_is_accepted():
-    evidence_index = _load_ffmpeg_index()
+    prepared = _load_ffmpeg_evidence()
 
     candidate = {
         "instruction": "Show ffmpeg version information.",
@@ -28,18 +28,14 @@ def test_ffmpeg_documented_option_is_accepted():
         "response": "ffmpeg -version",
     }
 
-    result = validate_candidate(
-        candidate,
-        "ffmpeg",
-        evidence_index,
-    )
+    result = validate_candidate(candidate, prepared)
 
     assert result.status == "accepted"
     assert result.stage == "complete"
 
 
 def test_ffmpeg_fabricated_option_is_rejected():
-    evidence_index = _load_ffmpeg_index()
+    prepared = _load_ffmpeg_evidence()
 
     candidate = {
         "instruction": "Use an unsupported ffmpeg option.",
@@ -47,11 +43,7 @@ def test_ffmpeg_fabricated_option_is_rejected():
         "response": "ffmpeg --does-not-exist",
     }
 
-    result = validate_candidate(
-        candidate,
-        "ffmpeg",
-        evidence_index,
-    )
+    result = validate_candidate(candidate, prepared)
 
     assert result.status == "rejected"
     assert result.stage == "options"
@@ -59,14 +51,6 @@ def test_ffmpeg_fabricated_option_is_rejected():
 
 
 def test_fabricated_enum_value_is_rejected():
-    from dataset_tools.evidence.schema import (
-        EnumConstraint,
-        FactCategory,
-        NormalizedEvidenceDocument,
-        NormalizedEvidenceFact,
-        Provenance,
-    )
-
     provenance = Provenance(
         source_id="enum-integration",
         source_sha256="abc123",
@@ -86,21 +70,29 @@ def test_fabricated_enum_value_is_rejected():
                 predicate="supports",
                 value="--mode",
                 provenance=provenance,
-            )
+            ),
+            NormalizedEvidenceFact(
+                fact_id="fact-alpha",
+                document_id="enum-doc",
+                category=FactCategory.ENUM_VALUE,
+                subject="--mode",
+                predicate="enumerates",
+                value="alpha",
+                provenance=provenance,
+            ),
+            NormalizedEvidenceFact(
+                fact_id="fact-beta",
+                document_id="enum-doc",
+                category=FactCategory.ENUM_VALUE,
+                subject="--mode",
+                predicate="enumerates",
+                value="beta",
+                provenance=provenance,
+            ),
         ],
     )
 
-    constraint = EnumConstraint(
-        constraint_id="mode-values",
-        target_entity="--mode",
-        source_fact_ids=["fact-mode"],
-        allowed_values=["alpha", "beta"],
-    )
-
-    evidence_index = build_evidence_index(
-        document,
-        [constraint],
-    )
+    prepared = prepare_evidence(document)
 
     candidate = {
         "instruction": "Use an unsupported mode.",
@@ -108,11 +100,7 @@ def test_fabricated_enum_value_is_rejected():
         "response": 'ExampleCLI --mode "gamma"',
     }
 
-    result = validate_candidate(
-        candidate,
-        "ExampleCLI",
-        evidence_index,
-    )
+    result = validate_candidate(candidate, prepared)
 
     assert result.status == "rejected"
     assert result.stage == "constraints"

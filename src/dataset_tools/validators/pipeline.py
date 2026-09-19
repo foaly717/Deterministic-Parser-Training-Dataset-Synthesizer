@@ -1,11 +1,10 @@
 from dataclasses import dataclass, field
 
-from dataset_tools.evidence.index import EvidenceIndex
-from dataset_tools.validators.structure import validate_candidate_structure
+from dataset_tools.evidence.preparation import PreparedEvidence
 from dataset_tools.validators.command import validate_cli_command
-from dataset_tools.validators.options import validate_cli_response
 from dataset_tools.validators.constraints import validate_constraints
-from dataset_tools.validators.reason_codes import ValidationReasonCode
+from dataset_tools.validators.options import validate_cli_response
+from dataset_tools.validators.structure import validate_candidate_structure
 
 
 @dataclass
@@ -18,10 +17,9 @@ class ValidationResult:
 
 def validate_candidate(
     item: dict,
-    expected_tool: str,
-    evidence_index: EvidenceIndex,
+    prepared: PreparedEvidence,
 ) -> ValidationResult:
-    """Run candidate validation in deterministic stages."""
+    """Run candidate validation against prepared authoritative evidence."""
 
     if not validate_candidate_structure(item):
         return ValidationResult(
@@ -33,7 +31,11 @@ def validate_candidate(
 
     logs = ["Structural validation passed."]
 
-    command_failure = validate_cli_command(item["response"], expected_tool)
+    command_failure = validate_cli_command(
+        item["response"],
+        prepared.expected_tool,
+    )
+
     if command_failure:
         logs.append(command_failure.message)
         return ValidationResult(
@@ -43,8 +45,13 @@ def validate_candidate(
             validation_logs=logs,
         )
 
-    option_ok, option_message = validate_cli_response(item["response"], evidence_index=evidence_index)
+    option_ok, option_message = validate_cli_response(
+        item["response"],
+        valid_options=prepared.valid_options,
+    )
+
     logs.append(option_message)
+
     if not option_ok:
         return ValidationResult(
             status="rejected",
@@ -53,7 +60,11 @@ def validate_candidate(
             validation_logs=logs,
         )
 
-    constraint_failure = validate_constraints(item["response"], evidence_index.constraints)
+    constraint_failure = validate_constraints(
+        item["response"],
+        prepared.constraint_values,
+    )
+
     if constraint_failure:
         logs.append(constraint_failure.message)
         return ValidationResult(

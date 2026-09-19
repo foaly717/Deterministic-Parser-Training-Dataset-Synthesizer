@@ -6,7 +6,7 @@ from dataset_tools.evidence.schema import (
     NormalizedEvidenceFact,
     Provenance,
 )
-from dataset_tools.generator.prompt import format_evidence_context, build_candidate_prompt, build_single_fact_prompt
+from dataset_tools.generator.prompt import format_evidence_context, build_single_fact_prompt
 
 
 @pytest.fixture
@@ -52,12 +52,6 @@ def test_format_evidence_context(sample_fact):
     assert "tool: HandBrakeCLI" in context
     assert "name: --preset" in context
     assert "aliases: -Z" in context
-
-
-def test_build_candidate_prompt(sample_fact):
-    prompt = build_candidate_prompt([sample_fact])
-    assert "Target CLI evidence:" in prompt
-    assert "HandBrakeCLI" in prompt
 
 
 def test_build_single_fact_prompt(sample_fact):
