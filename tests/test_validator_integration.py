@@ -3,11 +3,14 @@ from pathlib import Path
 from dataset_tools.evidence.preparation import prepare_evidence
 from dataset_tools.evidence.registry import load_evidence
 from dataset_tools.evidence.schema import (
-    EnumConstraint,
-    FactCategory,
+    ArtifactIdentity,
+    DocumentFormat,
+    DocumentMetadata,
     NormalizedEvidenceDocument,
     NormalizedEvidenceFact,
     Provenance,
+    SemanticPredicate,
+    ToolIdentity,
 )
 from dataset_tools.validators.pipeline import validate_candidate
 
@@ -52,40 +55,43 @@ def test_ffmpeg_fabricated_option_is_rejected():
 
 def test_fabricated_enum_value_is_rejected():
     provenance = Provenance(
-        source_id="enum-integration",
-        source_sha256="abc123",
+        line_start=1,
+        line_end=1,
+        section="enum-integration",
     )
 
     document = NormalizedEvidenceDocument(
         document_id="enum-doc",
-        source_id="enum-integration",
-        source_type="test",
-        source_sha256="abc123",
+        artifact=ArtifactIdentity(
+            source_id="enum-integration",
+            source_sha256="abc123",
+        ),
+        metadata=DocumentMetadata(
+            format=DocumentFormat.CLI_HELP,
+            tool=ToolIdentity(name="ExampleCLI"),
+        ),
         facts=[
             NormalizedEvidenceFact(
                 fact_id="fact-mode",
                 document_id="enum-doc",
-                category=FactCategory.CLI_OPTION,
                 subject="ExampleCLI",
-                predicate="supports",
+                predicate=SemanticPredicate.SUPPORTS,
                 value="--mode",
                 provenance=provenance,
             ),
             NormalizedEvidenceFact(
                 fact_id="fact-alpha",
                 document_id="enum-doc",
-                category=FactCategory.ENUM_VALUE,
                 subject="--mode",
-                predicate="enumerates",
+                predicate=SemanticPredicate.ENUMERATES,
                 value="alpha",
                 provenance=provenance,
             ),
             NormalizedEvidenceFact(
                 fact_id="fact-beta",
                 document_id="enum-doc",
-                category=FactCategory.ENUM_VALUE,
                 subject="--mode",
-                predicate="enumerates",
+                predicate=SemanticPredicate.ENUMERATES,
                 value="beta",
                 provenance=provenance,
             ),

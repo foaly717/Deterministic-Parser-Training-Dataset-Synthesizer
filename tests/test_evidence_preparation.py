@@ -2,7 +2,14 @@ from pathlib import Path
 
 from dataset_tools.evidence.preparation import prepare_evidence
 from dataset_tools.evidence.registry import load_evidence
-from dataset_tools.evidence.schema import EnumConstraint
+from dataset_tools.evidence.schema import (
+    ArtifactIdentity,
+    DocumentFormat,
+    DocumentMetadata,
+    EnumConstraint,
+    NormalizedEvidenceDocument,
+    ToolIdentity,
+)
 
 
 def test_prepare_evidence_builds_authoritative_operational_view():
@@ -49,8 +56,17 @@ def test_prepare_evidence_derives_constraints_once():
 
 
 def test_prepare_evidence_rejects_document_without_cli_options():
-    document = load_evidence(
-        Path("data/evidence/sample-man-page.txt")
+    document = NormalizedEvidenceDocument(
+        document_id="document-empty-cli-options",
+        artifact=ArtifactIdentity(
+            source_id="empty-cli-options",
+            source_sha256="a" * 64,
+        ),
+        metadata=DocumentMetadata(
+            format=DocumentFormat.CLI_HELP,
+            tool=ToolIdentity(name="HandBrakeCLI"),
+        ),
+        facts=[],
     )
 
     try:

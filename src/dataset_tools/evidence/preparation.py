@@ -5,13 +5,12 @@ from dataset_tools.evidence.schema import (
     DerivedConstraint,
     NormalizedEvidenceDocument,
     NormalizedEvidenceFact,
+    SemanticPredicate,
 )
 
 
 @dataclass(frozen=True)
 class PreparedEvidence:
-    """Immutable operational view of normalized evidence."""
-
     document: NormalizedEvidenceDocument
     constraints: tuple[DerivedConstraint, ...]
     cli_option_facts: tuple[NormalizedEvidenceFact, ...]
@@ -22,15 +21,10 @@ class PreparedEvidence:
 def prepare_evidence(
     document: NormalizedEvidenceDocument,
 ) -> PreparedEvidence:
-    """Prepare normalized evidence for generation and validation."""
-
     cli_option_facts = tuple(
         fact
         for fact in document.facts
-        if (
-            fact.category == "cli_option"
-            and fact.predicate == "supports"
-        )
+        if fact.predicate is SemanticPredicate.SUPPORTS
     )
 
     if not cli_option_facts:
@@ -38,26 +32,18 @@ def prepare_evidence(
             "Evidence document contains no supported CLI options."
         )
 
-    tools = {
-        fact.subject
-        for fact in cli_option_facts
-        if fact.subject
-    }
-
-    if len(tools) != 1:
+    if document.metadata.tool is None:
         raise ValueError(
             "Evidence document must identify exactly one CLI tool."
         )
 
-    constraints = tuple(extract_constraints(document))
-
     return PreparedEvidence(
         document=document,
-        constraints=constraints,
+        constraints=tuple(extract_constraints(document)),
         cli_option_facts=cli_option_facts,
         valid_options=frozenset(
             str(fact.value)
             for fact in cli_option_facts
         ),
-        expected_tool=next(iter(tools)),
+        expected_tool=document.metadata.tool.name,
     )

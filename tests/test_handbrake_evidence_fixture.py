@@ -1,7 +1,8 @@
 from pathlib import Path
 
-from dataset_tools.evidence.registry import load_evidence
 from dataset_tools.evidence.extract_constraints import extract_constraints
+from dataset_tools.evidence.registry import load_evidence
+from dataset_tools.evidence.schema import DocumentFormat, SemanticPredicate
 
 
 def test_handbrake_evidence_fixture_loads():
@@ -9,15 +10,17 @@ def test_handbrake_evidence_fixture_loads():
 
     document = load_evidence(source)
 
-    assert document.source_id == "handbrakecli-help"
-    assert document.source_type == "handbrakecli"
-    assert document.source_sha256
+    assert document.artifact.source_id == "handbrakecli-help"
+    assert document.artifact.source_sha256
+    assert document.metadata.format is DocumentFormat.CLI_HELP
+    assert document.metadata.tool is not None
+    assert document.metadata.tool.name == "HandBrakeCLI"
     assert len(document.facts) > 0
 
     cli_options = {
         fact.value
         for fact in document.facts
-        if fact.category == "cli_option"
+        if fact.predicate is SemanticPredicate.SUPPORTS
     }
 
     assert "--preset" in cli_options
@@ -31,7 +34,7 @@ def test_handbrake_evidence_fixture_does_not_invent_preset_values():
     cli_options = {
         fact.value
         for fact in document.facts
-        if fact.category == "cli_option"
+        if fact.predicate is SemanticPredicate.SUPPORTS
     }
 
     assert "--preset" in cli_options

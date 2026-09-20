@@ -1,17 +1,21 @@
 from dataset_tools.evidence.preparation import prepare_evidence
 from dataset_tools.evidence.schema import (
-    EnumConstraint,
-    FactCategory,
+    ArtifactIdentity,
+    DocumentFormat,
+    DocumentMetadata,
     NormalizedEvidenceDocument,
     NormalizedEvidenceFact,
     Provenance,
+    SemanticPredicate,
+    ToolIdentity,
 )
 from dataset_tools.validators.pipeline import validate_candidate
 
 
 PROVENANCE = Provenance(
-    source_id="pipeline-test",
-    source_sha256="abc123",
+    line_start=1,
+    line_end=1,
+    section="pipeline-test",
 )
 
 
@@ -24,9 +28,8 @@ def _document(
         NormalizedEvidenceFact(
             fact_id=f"option-{option}",
             document_id="pipeline-doc",
-            category=FactCategory.CLI_OPTION,
             subject="HandBrakeCLI",
-            predicate="supports",
+            predicate=SemanticPredicate.SUPPORTS,
             value=option,
             provenance=PROVENANCE,
         )
@@ -39,9 +42,8 @@ def _document(
                 NormalizedEvidenceFact(
                     fact_id=f"{option}-{value}",
                     document_id="pipeline-doc",
-                    category=FactCategory.ENUM_VALUE,
                     subject=option,
-                    predicate="enumerates",
+                    predicate=SemanticPredicate.ENUMERATES,
                     value=value,
                     provenance=PROVENANCE,
                 )
@@ -49,9 +51,14 @@ def _document(
 
     return NormalizedEvidenceDocument(
         document_id="pipeline-doc",
-        source_id="pipeline-test",
-        source_type="test",
-        source_sha256="abc123",
+        artifact=ArtifactIdentity(
+            source_id="pipeline-test",
+            source_sha256="abc123",
+        ),
+        metadata=DocumentMetadata(
+            format=DocumentFormat.CLI_HELP,
+            tool=ToolIdentity(name="HandBrakeCLI"),
+        ),
         facts=facts,
     )
 

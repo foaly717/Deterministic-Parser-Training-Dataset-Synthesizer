@@ -6,6 +6,7 @@ from collections import Counter
 from pathlib import Path
 
 from dataset_tools.evidence.registry import load_evidence
+from dataset_tools.evidence.schema import SemanticPredicate
 
 
 def main() -> int:
@@ -17,9 +18,9 @@ def main() -> int:
     document = load_evidence(args.evidence)
 
     documented = {
-        fact.value
+        str(fact.value)
         for fact in document.facts
-        if fact.category == "cli_option"
+        if fact.predicate is SemanticPredicate.SUPPORTS
     }
 
     observed = Counter()

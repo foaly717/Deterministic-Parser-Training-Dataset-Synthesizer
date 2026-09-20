@@ -109,7 +109,9 @@ def test_generator_selection_is_deterministic(prepared_evidence):
         ),
     )
 
-    assert f"name: {selected_fact.value}" in result.prompt
+    assert f"subject: {selected_fact.subject}" in result.prompt
+    assert f"predicate: {selected_fact.predicate.value}" in result.prompt
+    assert f"value: {selected_fact.value}" in result.prompt
 
 
 def test_generator_rejects_unknown_fact_id(prepared_evidence):

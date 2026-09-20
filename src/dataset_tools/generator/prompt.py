@@ -29,27 +29,36 @@ Rules:
 """
 
 
-def format_evidence_context(facts: list[NormalizedEvidenceFact]) -> str:
-    """Render structured evidence without discarding provenance."""
+def format_evidence_context(
+    facts: list[NormalizedEvidenceFact],
+) -> str:
+    """Render only canonical evidence fields, including provenance."""
     sections: list[str] = []
 
     for fact in facts:
-        aliases_list = fact.metadata.get("aliases") or []
-        aliases = ", ".join(aliases_list) if aliases_list else "none"
-        argument = fact.metadata.get("argument") or "none"
-        raw_description = fact.metadata.get("description")
-        description = raw_description.replace("\n", " ") if raw_description else "No description"
-        line_start = fact.metadata.get("source_line_start")
-        line_end = fact.metadata.get("source_line_end")
+        source_lines = "unspecified"
+        if fact.provenance.line_start is not None:
+            line_end = (
+                fact.provenance.line_end
+                if fact.provenance.line_end is not None
+                else fact.provenance.line_start
+            )
+            source_lines = f"{fact.provenance.line_start}-{line_end}"
 
         lines = [
-            f"tool: {fact.subject or 'none'}",
-            f"name: {fact.value}",
-            f"aliases: {aliases}",
-            f"argument: {argument}",
-            f"description: {description}",
-            f"source lines: {line_start}-{line_end}",
+            f"subject: {fact.subject}",
+            f"predicate: {fact.predicate.value}",
+            f"value: {fact.value}",
+            f"source lines: {source_lines}",
         ]
+
+        if fact.provenance.section is not None:
+            lines.append(f"section: {fact.provenance.section}")
+
+        if fact.provenance.raw_snippet is not None:
+            snippet = fact.provenance.raw_snippet.replace("\n", " ")
+            lines.append(f"source text: {snippet}")
+
         sections.append("\n".join(lines))
 
     return "\n\n".join(sections)

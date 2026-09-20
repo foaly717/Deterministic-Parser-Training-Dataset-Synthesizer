@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from dataset_tools.evidence.registry import load_evidence
+from dataset_tools.evidence.schema import DocumentFormat, SemanticPredicate
 
 
 def test_handbrakecli_loader_produces_cli_facts():
@@ -8,12 +9,15 @@ def test_handbrakecli_loader_produces_cli_facts():
 
     document = load_evidence(source)
 
-    assert document.source_type == "handbrakecli"
+    assert document.artifact.source_id == "handbrakecli-help"
+    assert document.metadata.format is DocumentFormat.CLI_HELP
+    assert document.metadata.tool is not None
+    assert document.metadata.tool.name == "HandBrakeCLI"
 
     options = {
         fact.value
         for fact in document.facts
-        if fact.category == "cli_option"
+        if fact.predicate is SemanticPredicate.SUPPORTS
     }
 
     assert "--preset" in options
@@ -22,21 +26,12 @@ def test_handbrakecli_loader_produces_cli_facts():
     preset = next(
         fact
         for fact in document.facts
-        if fact.value == "--preset"
+        if (
+            fact.predicate is SemanticPredicate.SUPPORTS
+            and fact.value == "--preset"
+        )
     )
 
-    assert preset.metadata["argument"] == "<string>"
-    assert preset.metadata["description"]
-    assert "-Z" in preset.metadata["aliases"]
+    assert preset.subject == "HandBrakeCLI"
     assert preset.provenance.line_start
-    assert preset.provenance.section
-    preset = next(
-        fact
-        for fact in document.facts
-        if fact.value == "--preset"
-    )
-
     assert preset.provenance.section == "General Options"
-    assert preset.metadata["argument"] == "<string>"
-    assert preset.metadata["description"]
-    assert preset.provenance.line_start

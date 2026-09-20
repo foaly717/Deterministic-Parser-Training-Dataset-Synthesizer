@@ -9,7 +9,13 @@ import pytest
 from pydantic import ValidationError
 
 from dataset_tools.evidence.preparation import PreparedEvidence
-from dataset_tools.evidence.schema import NormalizedEvidenceDocument
+from dataset_tools.evidence.schema import (
+    ArtifactIdentity,
+    DocumentFormat,
+    DocumentMetadata,
+    NormalizedEvidenceDocument,
+    ToolIdentity,
+)
 from dataset_tools.records.builder import (
     build_run_record,
     compute_prompt_sha256,
@@ -40,11 +46,15 @@ MAX_TOKENS = 128
 def make_prepared() -> PreparedEvidence:
     document = NormalizedEvidenceDocument(
         document_id="document-test-001",
-        source_id="source-test",
-        source_type="text",
-        source_sha256=SOURCE_SHA256,
+        artifact=ArtifactIdentity(
+            source_id="source-test",
+            source_sha256=SOURCE_SHA256,
+        ),
+        metadata=DocumentMetadata(
+            format=DocumentFormat.CLI_HELP,
+            tool=ToolIdentity(name="HandBrakeCLI"),
+        ),
         facts=[],
-        metadata={},
     )
 
     return PreparedEvidence(
@@ -79,8 +89,10 @@ def test_example_id_is_deterministic():
     )
 
     assert first == second
-    assert len(first) == 64
-    assert all(character in "0123456789abcdef" for character in first)
+    assert first.startswith("example_")
+    digest = first.removeprefix("example_")
+    assert len(digest) == 16
+    assert all(character in "0123456789abcdef" for character in digest)
 
 
 def test_example_id_preserves_none_vs_empty_context():

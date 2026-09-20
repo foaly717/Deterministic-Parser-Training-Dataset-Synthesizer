@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from dataset_tools.evidence.registry import load_evidence
+from dataset_tools.evidence.schema import DocumentFormat
 
 
 def test_registry_selects_markdown_loader(tmp_path):
@@ -15,10 +16,10 @@ def test_registry_selects_markdown_loader(tmp_path):
 
     document = load_evidence(source)
 
-    assert document.source_type == "markdown"
+    assert document.metadata.format is DocumentFormat.MARKDOWN
 
 
-def test_registry_selects_text_loader(tmp_path):
+def test_registry_rejects_generic_text_file(tmp_path):
     source = tmp_path / "notes.txt"
 
     source.write_text(
@@ -26,9 +27,8 @@ def test_registry_selects_text_loader(tmp_path):
         encoding="utf-8",
     )
 
-    document = load_evidence(source)
-
-    assert document.source_type == "text"
+    with pytest.raises(ValueError, match="No evidence loader available"):
+        load_evidence(source)
 
 
 def test_registry_rejects_unknown_extension(tmp_path):

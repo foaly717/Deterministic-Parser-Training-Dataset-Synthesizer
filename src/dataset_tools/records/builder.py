@@ -42,7 +42,7 @@ def _base_record_kwargs(
 ) -> dict:
     return {
         "fact_id": fact_id,
-        "source_sha256": prepared.document.source_sha256,
+        "source_sha256": prepared.document.artifact.source_sha256,
         "generator_provider": generator_provider,
         "generator_model": generator_model,
         "max_tokens": max_tokens,

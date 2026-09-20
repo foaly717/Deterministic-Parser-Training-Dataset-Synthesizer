@@ -24,13 +24,15 @@ def test_normalize_evidence_runs(tmp_path):
 
     document = json.loads(output.read_text(encoding="utf-8"))
 
-    assert document["source_id"] == "handbrakecli-help"
-    assert document["source_type"] == "handbrakecli"
-    assert document["source_sha256"]
+    assert document["artifact"]["source_id"] == "handbrakecli-help"
+    assert document["artifact"]["source_sha256"]
     assert document["document_id"]
+    assert document["metadata"]["format"] == "cli_help"
+    assert document["metadata"]["tool"]["name"] == "HandBrakeCLI"
     assert document["facts"]
 
     fact = document["facts"][0]
     assert fact["fact_id"]
     assert fact["document_id"] == document["document_id"]
-    assert fact["provenance"]["source_id"] == document["source_id"]
+    assert fact["provenance"]["line_start"] is not None
+    assert fact["provenance"]["line_end"] is not None

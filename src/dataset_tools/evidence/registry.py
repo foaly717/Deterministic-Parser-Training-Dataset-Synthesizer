@@ -3,7 +3,6 @@ from dataset_tools.evidence.loaders.ffmpeg import FFmpegLoader
 from dataset_tools.evidence.loaders.handbrakecli import HandBrakeCliLoader
 from dataset_tools.evidence.loaders.manpage import ManPageLoader
 from dataset_tools.evidence.loaders.markdown import MarkdownEvidenceLoader
-from dataset_tools.evidence.loaders.text import TextEvidenceLoader
 
 
 LOADERS = [
@@ -11,7 +10,6 @@ LOADERS = [
     FFmpegLoader(),
     CLIHelpLoader(),
     MarkdownEvidenceLoader(),
-    TextEvidenceLoader(),
     ManPageLoader(),
 ]
 
