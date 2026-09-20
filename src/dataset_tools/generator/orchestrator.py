@@ -1,3 +1,5 @@
+"""Generator orchestration with an explicit raw-generation boundary."""
+
 from dataclasses import dataclass
 
 from dataset_tools.candidates.parser import parse_candidate
@@ -15,6 +17,14 @@ class GenerationRequest:
 
 
 @dataclass(frozen=True)
+class RawGenerationResult:
+    """Exact rendered prompt and raw model response."""
+
+    prompt: str
+    raw_output: str
+
+
+@dataclass(frozen=True)
 class GenerationResult:
     """Raw and parsed output from one generation attempt."""
 
@@ -29,11 +39,11 @@ class Generator:
     def __init__(self, llm_client: LLMClient):
         self.llm_client = llm_client
 
-    def generate(
+    def _prepare_prompt(
         self,
         prepared: PreparedEvidence,
         request: GenerationRequest,
-    ) -> GenerationResult:
+    ) -> str:
         if request.max_tokens < 1:
             raise ValueError("max_tokens must be >= 1")
 
@@ -42,25 +52,41 @@ class Generator:
             for fact in prepared.cli_option_facts
         }
 
-        fact_id = request.fact_id
-
-        if fact_id not in facts_by_id:
+        if request.fact_id not in facts_by_id:
             raise KeyError(
                 "Requested fact_id is not present in prepared evidence: "
-                f"{fact_id}"
+                f"{request.fact_id}"
             )
 
-        fact = facts_by_id[fact_id]
+        return build_single_fact_prompt(facts_by_id[request.fact_id])
 
-        prompt = build_single_fact_prompt(fact)
+    def generate_raw(
+        self,
+        prepared: PreparedEvidence,
+        request: GenerationRequest,
+    ) -> RawGenerationResult:
+        """Execute exactly one model call without parsing its response."""
+        prompt = self._prepare_prompt(prepared, request)
         raw_output = self.llm_client.generate(
             prompt,
             request.max_tokens,
         )
-        candidate = parse_candidate(raw_output)
-
-        return GenerationResult(
+        return RawGenerationResult(
             prompt=prompt,
             raw_output=raw_output,
+        )
+
+    def generate(
+        self,
+        prepared: PreparedEvidence,
+        request: GenerationRequest,
+    ) -> GenerationResult:
+        """Execute generation and parse the returned candidate exactly once."""
+        raw_result = self.generate_raw(prepared, request)
+        candidate = parse_candidate(raw_result.raw_output)
+
+        return GenerationResult(
+            prompt=raw_result.prompt,
+            raw_output=raw_result.raw_output,
             candidate=candidate,
         )
