@@ -67,14 +67,13 @@ uv sync
 
 Evidence loaders are evaluated in a fixed registry order. The registry returns the first loader whose `supports()` method accepts the target path.
 
-| Priority | Loader                   | Actual matching rule                         |
-| -------- | ------------------------ | -------------------------------------------- |
-| 1        | `HandBrakeCliLoader`     | Exact filename `handbrakecli-help.txt`       |
-| 2        | `FFmpegLoader`           | Filename contains `ffmpeg`, case-insensitive |
-| 3        | `CLIHelpLoader`          | Filename suffix is `.txt` or `.help`         |
-| 4        | `MarkdownEvidenceLoader` | Filename suffix is `.md` or `.markdown`      |
-| 5        | `TextEvidenceLoader`     | Filename suffix is `.txt` or `.md`           |
-| 6        | `ManPageLoader`          | Filename contains `.man.` or has suffix `.1` |
+| Priority | Loader | Matching rule |
+| -------- | ------ | ------------- |
+| 1 | `CLIHelpLoader(tool_name="HandBrakeCLI", filename="handbrakecli-help.txt")` | Exact filename `handbrakecli-help.txt` |
+| 2 | `FFmpegLoader` | Filename contains `ffmpeg`, case-insensitive |
+| 3 | `CLIHelpLoader` | `.txt` or `.help` source containing CLI usage/option syntax |
+| 4 | `MarkdownEvidenceLoader` | `.md` or `.markdown` |
+| 5 | `ManPageLoader` | `.man.` filename, `.1` suffix, or recognized man-page content |
 
 Because matching is first-match, earlier loaders take precedence when multiple loaders support the same path.
 
@@ -87,24 +86,34 @@ Evidence is represented by `NormalizedEvidenceDocument` and `NormalizedEvidenceF
 A normalized document contains:
 
 * `document_id`
-* `source_id`
-* `source_type`
-* `source_sha256`
-* `facts`
+* `artifact`
 * `metadata`
+* `facts`
+
+`artifact` identifies the source with:
+
+* `source_id`
+* `source_sha256`
+* optional `path_or_uri`
+
+`metadata` describes source-level information separately from semantic evidence:
+
+* `format`
+* optional `tool`
+* optional `role`
 
 Facts contain:
 
 * `fact_id`
 * `document_id`
-* `category`
 * `subject`
 * `predicate`
 * `value`
 * `provenance`
-* `metadata`
 
-Provenance records the source identifier and hash together with source location information such as line range, section, and raw snippet when available.
+The semantic predicate vocabulary includes assertions such as `supports`, `enumerates`, `accepts_type`, `has_minimum`, `has_maximum`, `requires`, and `conflicts_with`.
+
+Provenance records source location information such as line range, section, and raw snippet when available. The source artifact identity and SHA-256 are held by the document rather than duplicated on every fact.
 
 Document, fact, and constraint identifiers are deterministic SHA-256 identifiers. They are produced from deterministically serialized JSON representations of their input components. Fact IDs therefore depend on the document ID, fact fields, and provenance rather than on an arbitrary generated identifier.
 

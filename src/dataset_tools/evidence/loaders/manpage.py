@@ -10,12 +10,28 @@ from dataset_tools.evidence.schema import (
     NormalizedEvidenceDocument,
     ToolIdentity,
 )
-from dataset_tools.parsers.man_page import parse_man_page
 
 
 class ManPageLoader(EvidenceLoader):
     def supports(self, path: Path) -> bool:
-        return ".man." in path.name or path.suffix == ".1"
+        if ".man." in path.name or path.suffix == ".1":
+            return True
+
+        if path.suffix.lower() != ".txt":
+            return False
+
+        try:
+            content = path.read_text(
+                encoding="utf-8",
+                errors="replace",
+            )
+        except OSError:
+            return False
+
+        return bool(
+            content.lstrip().startswith(".TH ")
+            and "\n.SH " in content
+        )
 
     def load(self, path: Path) -> NormalizedEvidenceDocument:
         content = path.read_text(encoding="utf-8")
@@ -27,8 +43,6 @@ class ManPageLoader(EvidenceLoader):
             source_id,
             source_sha256,
         )
-
-        parse_man_page(path, tool_name=path.stem)
 
         return NormalizedEvidenceDocument(
             document_id=document_id,

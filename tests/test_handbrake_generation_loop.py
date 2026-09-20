@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from dataset_tools.evidence.loaders.handbrakecli import HandBrakeCliLoader
+from dataset_tools.evidence.registry import load_evidence
 from dataset_tools.evidence.preparation import prepare_evidence
 from dataset_tools.validators.pipeline import validate_candidate
 
 
 def test_handbrake_generation_positive_and_negative():
-    document = HandBrakeCliLoader().load(
+    document = load_evidence(
         Path("data/evidence/handbrakecli-help.txt")
     )
 

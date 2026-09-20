@@ -6,7 +6,10 @@
 - Deterministic evidence-seeded generation.
 - Dataset diversity reporting.
 - Option coverage reporting.
-- Normalized evidence document schema.
+- Canonical normalized evidence document and fact schema.
+- Canonical documentation-ingestion boundary with registered evidence loaders.
+- Documentation ingestion separated from command parsing and `ParsedCommand` command IR.
+- Legacy `CLIOption` and `ManEntry` documentation contracts removed.
 
 ## Current generation and validation state
 
@@ -17,5 +20,5 @@
 
 ## Next work
 
-- Expand evidence ingestion with additional loaders.
-- Keep generation pipeline independent of source format and model.
+- Expand canonical evidence coverage with additional source-specific loaders and semantic extractors.
+- Continue keeping generation and validation independent of source format and model.

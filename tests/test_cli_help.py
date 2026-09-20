@@ -1,63 +1,110 @@
 from pathlib import Path
-import hashlib
 
-from dataset_tools.parsers.cli_help import parse_cli_help
+from dataset_tools.evidence.registry import load_evidence
+from dataset_tools.evidence.schema import SemanticPredicate
 
 
 HELP = Path("data/evidence/handbrakecli-help.txt")
 
 
-def facts():
-    return parse_cli_help(HELP)
+def test_cli_help_produces_canonical_support_facts():
+    document = load_evidence(HELP)
+
+    options = {
+        fact.value
+        for fact in document.facts
+        if fact.predicate is SemanticPredicate.SUPPORTS
+    }
+
+    assert "--preset" in options
+    assert "--audio" in options
+    assert "--vfr" in options
+    assert "--cfr" in options
+    assert "--pfr" in options
 
 
-def get(name):
-    matches = [f for f in facts() if f.name == name]
-    assert len(matches) == 1
-    return matches[0]
+def test_cli_help_preserves_declaration_provenance():
+    document = load_evidence(HELP)
 
-
-def test_preset():
-    f = get("--preset")
-    assert f.aliases == ["-Z"]
-    assert f.argument == "<string>"
-    assert f.line_start == 10
-    assert f.line_end == 12
-    assert f.parent_command is None
-    assert "Select preset by name" in f.description
-
-
-def test_audio():
-    f = get("--audio")
-    assert f.aliases == ["-a"]
-    assert f.argument == "<string>"
-    assert f.line_start == 183
-    assert f.line_end == 186
-    assert "Multiple output tracks" in f.description
-
-
-def test_independent_rate_options():
-    for name in ("--vfr", "--cfr", "--pfr"):
-        f = get(name)
-        assert f.aliases == []
-        assert f.argument is None
-        assert f.parent_command is None
-        assert "frame rate control" in f.description
-
-
-def test_multiline_description():
-    f = get("--disable-hw-decoding")
-    assert f.description == (
-        "Disable hardware decoding of the video track,\n"
-        "forcing software decoding instead"
+    preset = next(
+        fact
+        for fact in document.facts
+        if (
+            fact.predicate is SemanticPredicate.SUPPORTS
+            and fact.value == "--preset"
+        )
     )
 
+    assert preset.subject == "HandBrakeCLI"
+    assert preset.provenance.line_start == 10
+    assert preset.provenance.line_end == 12
+    assert preset.provenance.section == "General Options"
+    assert preset.provenance.raw_snippet
 
-def test_source_provenance():
-    text = HELP.read_text(encoding="utf-8")
-    expected = hashlib.sha256(text.encode("utf-8")).hexdigest()
-    assert get("--preset").source_sha256 == expected
+
+def test_cli_help_does_not_treat_preset_example_as_enum():
+    document = load_evidence(HELP)
+
+    values = {
+        fact.value
+        for fact in document.facts
+        if (
+            fact.predicate is SemanticPredicate.ENUMERATES
+            and fact.subject == "--preset"
+        )
+    }
+
+    assert values == set()
 
 
-def test_fact_count():
-    assert len(facts()) == 151
+def test_cli_help_extracts_documented_enumerations():
+    document = load_evidence(HELP)
+
+    values = {
+        fact.value
+        for fact in document.facts
+        if (
+            fact.predicate is SemanticPredicate.ENUMERATES
+            and fact.subject == "--format"
+        )
+    }
+
+    assert values == {"av_mp4", "av_mkv", "av_webm"}
+
+
+def test_cli_help_extracts_handbrake_enum_facts():
+    document = load_evidence(HELP)
+
+    enum_facts = [
+        fact
+        for fact in document.facts
+        if fact.predicate is SemanticPredicate.ENUMERATES
+    ]
+
+    assert len(enum_facts) == 102
+
+
+def test_cli_help_preserves_generic_extractor_contract():
+    from dataset_tools.evidence.loaders.cli_help import (
+        extract_cli_option_facts,
+    )
+
+    sample_help = """Usage: tool [-v]
+
+  -h      show help
+  -r      raw output
+"""
+
+    facts = extract_cli_option_facts(
+        content=sample_help,
+        doc_id="doc_test_123",
+        subject="tool",
+    )
+
+    assert len(facts) == 3
+    assert [fact.value for fact in facts] == ["-v", "-h", "-r"]
+    assert facts[0].provenance.line_start == 1
+    assert facts[0].provenance.line_end == 1
+    assert facts[0].provenance.raw_snippet == "Usage: tool [-v]"
+    assert facts[1].provenance.line_start == 3
+    assert facts[2].provenance.line_start == 4

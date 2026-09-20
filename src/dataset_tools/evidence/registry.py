@@ -1,12 +1,14 @@
 from dataset_tools.evidence.loaders.cli_help import CLIHelpLoader
 from dataset_tools.evidence.loaders.ffmpeg import FFmpegLoader
-from dataset_tools.evidence.loaders.handbrakecli import HandBrakeCliLoader
 from dataset_tools.evidence.loaders.manpage import ManPageLoader
 from dataset_tools.evidence.loaders.markdown import MarkdownEvidenceLoader
 
 
 LOADERS = [
-    HandBrakeCliLoader(),
+    CLIHelpLoader(
+        tool_name="HandBrakeCLI",
+        filename="handbrakecli-help.txt",
+    ),
     FFmpegLoader(),
     CLIHelpLoader(),
     MarkdownEvidenceLoader(),
