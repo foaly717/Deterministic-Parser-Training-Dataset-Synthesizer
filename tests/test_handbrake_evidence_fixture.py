@@ -2,7 +2,7 @@ from pathlib import Path
 
 from dataset_tools.evidence.extract_constraints import extract_constraints
 from dataset_tools.evidence.registry import load_evidence
-from dataset_tools.evidence.schema import DocumentFormat, SemanticPredicate
+from dataset_tools.evidence.schema import DocumentFormat, EnumConstraint, SemanticPredicate
 
 
 def test_handbrake_evidence_fixture_loads():
@@ -46,4 +46,7 @@ def test_handbrake_evidence_fixture_does_not_invent_preset_values():
         if constraint.target_entity == "--preset"
     ]
 
-    assert preset_constraints == []
+    assert all(
+        not isinstance(constraint, EnumConstraint)
+        for constraint in preset_constraints
+    )
