@@ -21,8 +21,6 @@ The project separates **documented evidence**, **deterministic parsing and valid
 5. The generator selects evidence and builds a prompt.
 6. An LLM produces a candidate.
 7. The validator checks the candidate against the documented evidence.
-8. Experimental generation runs record the candidate and validation result under `data/raw/`.
-
 The deterministic pipeline ends at validation. LLM generation itself is not deterministic.
 
 ## Getting Started
@@ -49,15 +47,7 @@ uv sync
      --output /tmp/normalized-handbrake.json
    ```
 
-2. **Run experimental generation and validation:**
-
-   ```bash
-   uv run python scripts/live_generate_20.py \
-     --model Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf \
-     --output data/raw/experimental_run.jsonl
-   ```
-
-3. **Run the test suite:**
+2. **Run the test suite:**
 
    ```bash
    uv run pytest
@@ -143,31 +133,6 @@ The LLM boundary is represented by:
 LLMClient.generate(prompt, max_tokens)
 ```
 
-The current configuration is supplied through environment variables. No `.env` file loading is implemented.
-
-| Variable         | Default                                     |
-| ---------------- | ------------------------------------------- |
-| `MODEL_PROVIDER` | `openai_compatible`                         |
-| `MODEL_NAME`     | `default`                                   |
-| `MODEL_ENDPOINT` | `http://127.0.0.1:8080/v1/chat/completions` |
-| `HELP_FILE`      | `data/evidence/handbrakecli-help.txt`       |
-| `OUTPUT_FILE`    | `data/raw/livefire_20.jsonl`                |
-
-For example:
-
-```bash
-export MODEL_PROVIDER=openai_compatible
-export MODEL_NAME=Qwen3-30B-A3B-Instruct-2507-Q4_K_M.gguf
-export MODEL_ENDPOINT=http://127.0.0.1:8080/v1/chat/completions
-```
-
-`MODEL_NAME=default` is a configuration default, not an actual model selection. It indicates that no explicit model name was supplied; it does not identify usable model weights.
-
-The live-generation script also accepts `--provider`, `--model`, `--endpoint`, `--help-file`, and `--output`, which override the corresponding runtime settings for that invocation.
-
-The default endpoint is a local OpenAI-compatible HTTP endpoint suitable for a locally running `llama.cpp` server. No authentication is configured by the current runtime settings.
-
-The current generation configuration uses temperature `0`. The live generation path has been exercised with Qwen models; generation is still an experimental part of the pipeline.
 
 ## Validation
 
@@ -195,7 +160,7 @@ Current validation reason codes include:
 * `UNSUPPORTED_OPTION`
 * `UNSUPPORTED_ENUM_VALUE`
 
-The live-generation script also records parse/request failures separately, including invalid JSON and invalid JSON shape. Validation is deterministic for a given candidate and evidence index.
+Generation results can be assembled into canonical RunRecords containing the selected evidence fact, source identity, prompt metadata, raw model response, parsed candidate, and deterministic validation result.
 
 ## Repository Layout
 
@@ -203,7 +168,6 @@ The live-generation script also records parse/request failures separately, inclu
 data/
   evidence/       source evidence artifacts
   normalized/     normalized evidence artifacts
-  raw/             experimental generation and validation run output
 
 docs/
   current-state.md
@@ -213,7 +177,6 @@ scripts/           operational and analysis scripts
 
 src/
   dataset_tools/
-    config/        runtime configuration
     evidence/      loaders, normalized models, IDs, indexes, constraints
     generator/     evidence selection and prompt construction
     llm/           LLM client abstraction and implementations
@@ -250,22 +213,6 @@ uv run python scripts/normalize_evidence.py \
 
 The resulting JSON contains the normalized document, facts, provenance, and associated metadata.
 
-## Experimental Live Generation
-
-`live_generate_20.py` exercises the generation and validation boundary against an evidence source.
-
-A run records, for each attempt:
-
-* attempt number
-* source SHA-256
-* generator provider
-* generator model
-* raw model response
-* parsed candidate
-* validation result
-
-The live generator currently builds an evidence index directly from the loaded document. Constraint extraction is available separately through the evidence layer; the live-generation script does not currently perform a separate `extract_constraints()` call before building its index.
-
 ## Run Records
 
 Run records are useful for evaluating generation and validation behavior but are not currently a durable dataset contract.
@@ -277,17 +224,15 @@ In particular:
 
 ## Dataset Analysis
 
-The repository includes scripts and tests for analyzing experimental data, including dataset diversity and CLI option coverage.
+The repository includes scripts and tests for analyzing generation and validation records, including dataset diversity and CLI option coverage.
 
 These tools support evaluation of the generation pipeline. They do not imply that the analyzed records constitute a finalized training dataset.
 
 ## Current Generation State
 
-The repository contains experimental generation and validation runs used to exercise the pipeline.
+The generator currently selects documented evidence and produces an LLM-generated candidate. The candidate is parsed, validated deterministically against the prepared evidence, and can be represented as a canonical RunRecord.
 
-Files under `data/raw/` are run artifacts. They contain generation attempts, model/provider information, raw and parsed responses, and validation results. They are **not** a finalized training dataset.
-
-There is currently no implemented dataset-promotion or export step that turns accepted generation records into a final problem:answer dataset. The project therefore does **not** currently contain a finalized generated training dataset.
+RunRecords are evaluation artifacts rather than the final training-dataset contract. There is currently no implemented dataset-promotion or export step that turns accepted records into a final problem:answer dataset. The project therefore does **not** currently contain a finalized generated training dataset.
 
 ## Current Scope and Known Limitations
 
@@ -295,12 +240,11 @@ The current implementation is focused on deterministic evidence normalization, f
 
 Known limitations include:
 
-* generation is still experimental;
+* generation is not yet a finalized dataset-production workflow;
 * there is no finalized problem:answer dataset or dataset-promotion workflow;
 * only currently documented evidence can establish accepted values;
 * enum constraints are enforced, while other constraint types are modeled but not yet enforced;
 * the current HandBrakeCLI evidence does not derive preset-name enum values;
-* some live-generation edge cases remain, including shell-syntax cases and `--flag=value` handling;
 * parse/request failures are recorded as run-level validation failures;
 * the declared SQL/tree-sitter dependencies are not currently part of the evidence/validation implementation.
 

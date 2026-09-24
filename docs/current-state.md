@@ -13,8 +13,9 @@
 
 ## Current generation and validation state
 
-- The repository contains experimental generation and validation runs used to exercise the pipeline.
-- Run outputs under `data/raw/` are experimental artifacts, not finalized training data.
+- The generator selects documented evidence and produces an LLM-generated candidate.
+- Candidates are parsed and validated deterministically against prepared evidence.
+- Generation results can be represented as canonical RunRecords containing evidence identity, model/prompt metadata, candidate data, and validation results.
 - No finalized problem:answer training dataset has been produced, curated, or accepted for final use.
 - There is currently no dataset-promotion or export step that turns accepted generation records into a final training dataset.
 

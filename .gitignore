@@ -2,6 +2,3 @@ __pycache__/
 *.pyc
 .venv/
 *.egg-info/
-data/raw/*.jsonl
-data/raw/*.json
-data/generated/
