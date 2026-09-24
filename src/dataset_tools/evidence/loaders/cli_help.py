@@ -81,11 +81,20 @@ def _extract_enum_values(description: str) -> list[str]:
     return values
 
 
+def _extract_implied_options(description: str) -> list[str]:
+    return re.findall(
+        r"\bimplies\s+(--?[A-Za-z0-9][A-Za-z0-9_:-]*)\b",
+        description,
+        flags=re.IGNORECASE,
+    )
+
+
 def _build_declaration_facts(
     *,
     document_id: str,
     subject: str,
     flags: list[str],
+    argument: str | None,
     description: str,
     section: str | None,
     line_start: int,
@@ -124,6 +133,25 @@ def _build_declaration_facts(
         flags[0] if flags else subject,
     )
 
+    if argument is not None and argument.startswith("<") and argument.endswith(">"):
+        expected_type = argument[1:-1]
+        facts.append(
+            NormalizedEvidenceFact(
+                fact_id=compute_fact_id(
+                    document_id,
+                    primary_flag,
+                    SemanticPredicate.ACCEPTS_TYPE.value,
+                    expected_type,
+                    provenance.model_dump(),
+                ),
+                document_id=document_id,
+                subject=primary_flag,
+                predicate=SemanticPredicate.ACCEPTS_TYPE,
+                value=expected_type,
+                provenance=provenance,
+            )
+        )
+
     for enum_value in _extract_enum_values(description):
         facts.append(
             NormalizedEvidenceFact(
@@ -138,6 +166,24 @@ def _build_declaration_facts(
                 subject=primary_flag,
                 predicate=SemanticPredicate.ENUMERATES,
                 value=enum_value,
+                provenance=provenance,
+            )
+        )
+
+    for implied_option in _extract_implied_options(description):
+        facts.append(
+            NormalizedEvidenceFact(
+                fact_id=compute_fact_id(
+                    document_id,
+                    primary_flag,
+                    SemanticPredicate.REQUIRES.value,
+                    implied_option,
+                    provenance.model_dump(),
+                ),
+                document_id=document_id,
+                subject=primary_flag,
+                predicate=SemanticPredicate.REQUIRES,
+                value=implied_option,
                 provenance=provenance,
             )
         )
@@ -183,6 +229,7 @@ def extract_cli_option_facts(
                 document_id=doc_id,
                 subject=subject,
                 flags=current_flags,
+                argument=current_argument,
                 description="\n".join(current_description),
                 section=current_section,
                 line_start=current_start,
